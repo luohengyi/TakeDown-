@@ -1,0 +1,10 @@
+﻿1.HTTP访问控制（CORS）
+    Access-Control-Allow-Origin: * 表明，该资源可以被任意外域访问。如果服务端仅允许来自 http://foo.example 的访问，该首部字段的内容如下：
+
+    Access-Control-Allow-Origin: http://foo.example
+
+    首部字段 Access-Control-Request-Method 告知服务器，实际请求将使用 POST 方法。
+
+    首部字段 Access-Control-Request-Headers 告知服务器，实际请求将携带两个自定义请求首部字段：X-PINGOTHER 与 Content-Type。服务器据此决定，该实际请求是否被允许。
+
+	
