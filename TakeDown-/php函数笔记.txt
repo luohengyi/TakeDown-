@@ -1,0 +1,19 @@
+1.数组函数：
+        array_change_key_case(array,CASE_UPPER(CASE_LOWER))   //当第二个参数为CASE_UPPER时，将数组索引修改为大写
+
+        array_chunk(array,int,bool)                          //将一个数组差分为多个，得到一个二维数组，第二个参数为每个数组的多少个元素，最后一个数组可能个数会少，原始数组可能会是奇数
+
+        array_combine(a,b)                                   //将a数组的值作为键名，b的值作为键值 ，合并为一个新的数组
+
+        array_count_values(array)                            //将数组中的值作为键名，出现的次数作为键值，组成一个新的数组
+
+        array_diff_assoc(array,ayyay,ayyay,...)            //返回一个数组，包括了第一个数组中但是不在其他任何数组中的值
+
+        array_fill(int , int , mixed)                       //用mixed填充数组，键名由int开始到int结束
+
+        array_filter($array,'chek');                        //返回一个数组，依次将数组中的值传到chek函数中，如果返回true就保留，false就删除，建明不变
+
+        array_flip($array)                                 //将数组中的值作为键名，建明作为值，值得类型必须可以作为合法的键名，相同的值，会使用最后一个作为建明，其他的都会丢失
+
+
+

@@ -1,0 +1,35 @@
+							移动端布局
+1.设定缩放等级为1，使移动端缩预览器，不进行缩放：
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">     // 
+2.div的面积计算方式：                                                       //ie7一下不支持该属性
+	box-sizing: border-box;以边界向内计算 padding等  
+	 box-sizing: content-box;向外计算，padding等
+                        
+	*{
+		box-sizing: border-box;                                   //重置所有的计算方式
+	}
+
+3.设置不自动调节字体大小：
+		text-size-adjust: none;
+
+4.考虑到平板电脑的应用，所以布局在一个div里：
+	范围在：
+		min-width: 320px;
+            	max-width: 640px;
+		 margin: auto;      //超过640的margin:outo;
+5.媒体布局（在不同的宽度有不同的样式）：
+	
+	 @media(max-width: 400px)  {
+            div{
+                样式
+            }
+        }
+        
+        @media (min-width: 500) {
+            div{
+                样式
+            }
+        }
+		
+	400一下的样式和500以上的样式，400-500默认样式

@@ -1,0 +1,124 @@
+bind() 向匹配元素附加一个或更多事件处理器  $(selector).bind(event,data,function) 必需。规定添加到元素的一个或多个事件。由空格分隔多个事件。必须是有效的事件
+
+ one() 方法为被选元素附加一个或多个事件处理程序，并规定当事件发生时运行的函数。
+
+focus() 当元素获得焦点时，发生 focus 事件
+
+blur() 当元素失去焦点时，发生 blur事件
+
+change() 当元素的值发生改变时，会发生 change 事件。
+
+click() 当点击元素时，会发生 click 事件。
+
+dblclick() 当双击元素时，会发生 dblclick 事件。
+
+delegate() 向匹配元素的当前或未来的子元素附加一个或多个事件处理器 $("div").delegate("button","click",function(){$("p").slideToggle();});
+
+live() 通过 live() 方法附加的事件处理程序适用于匹配选择器的当前及未来的元素（比如由脚本创建的新元素）。 
+
+die() 移除所有通过 live() 函数添加的事件处理程序。 
+	例：
+
+	$("p").live("click",function(){
+   	   $(this).slideToggle();
+ 	 });
+
+  	 $("button").click(function(){
+    	   $("p").die();
+  	 });
+	
+
+	
+error() 当元素遇到错误（没有正确载入）时，发生 error 事件。比如图片没有加载时
+
+event.isDefaultPrevented() 返回 event 对象上是否调用了 event.preventDefault()。 
+
+event.pageX 数遍x位置 
+event.pageY 数遍y位置 
+
+	例： 通过移动鼠标不断获取鼠标坐标
+	$(document).mousemove(function(e){
+ 	  $("span").text("X: " + e.pageX + ", Y: " + e.pageY);
+	});
+
+
+event.result 指定事件触发的事件处理器返回的最后一个值。 
+
+event.timeStamp 该属性返回从 1970 年 1 月 1 日到事件发生时的毫秒数。 
+
+event.type 描述事件的类型。
+
+
+keydown() 触发、或将函数绑定到指定元素的 key down 事件       完整的 key press 过程分为两个部分：1. 按键被按下；2. 按键被松开。
+	$("input").keydown(function(event){ 
+    		$("div").html("Key: " + event.which);  event.which 指示按了哪个键或按钮。 
+  	});
+
+keypress() 每插入一个字符，就会发生 keypress 事件
+
+keyup() 当按钮被松开时，发生 keyup 事件。它发生在当前获得焦点的元素上。
+
+
+
+load() 当指定的元素（及子元素）已加载时，会发生 load() 事件。
+
+mousedown() 事件仅需要按键被按下，而不需要松开即可发生
+
+mouseup() 当在元素上放松鼠标按钮时，会发生 mouseup 事件
+
+mouseenter() 当鼠标指针穿过元素时，会发生 mouseenter 事件
+
+mouseleave() 当鼠标指针离开元素时，会发生 mouseleave 事件。
+
+mousemove() 当鼠标指针在指定的元素中移动时，就会发生 mousemove 事件。
+
+mouseout()鼠标指针从元素上移开时，发生 mouseout 事件。
+
+mouseover() 当鼠标指针位于元素上方时，会发生 mouseover 事件。
+
+
+ready() 当 DOM（文档对象模型） 已经加载，并且页面（包括图像）已经完全呈现时，会发生 ready 事件。
+
+resize() 当调整浏览器窗口的大小时，发生 resize 事件。
+
+scroll() 当用户滚动指定的元素时，会发生 scroll 事件。 scroll 事件适用于所有可滚动的元素和 window 对象（浏览器窗口）。
+
+select() 当 textarea 或文本类型的 input 元素中的文本被选择时，会发生 select 事件。 
+
+submit()submit() 方法触发 submit 事件，或规定当发生 submit 事件时运行的函数。
+
+toggle() toggle() 方法用于绑定两个或多个事件处理器函数，以响应被选元素的轮流的 click 事件。 该方法也可用于切换被选元素的 hide() 与 show() 方法。
+	$("p").toggle(
+  		function(){
+  			 $("body").css("background-color","green");
+			},
+
+  		function(){
+  			 $("body").css("background-color","red");
+			},
+
+ 		 function(){
+  			 $("body").css("background-color","yellow");
+			}
+
+		);
+
+
+trigger() 方法触发被选元素的指定事件类型。
+
+triggerHandler() 第一个被匹配元素的指定事件 
+
+unbind() 方法移除被选元素的事件处理程序。
+
+undelegate() 方法删除由 delegate() 方法添加的一个或多个事件处理程序。
+
+unload() 当用户离开页面时，会发生 unload 事件。
+
+		例：$(window).unload(function(){
+  			alert("Goodbye!");
+		    });
+
+$('p').slideToggle();通过使用滑动效果，在显示和隐藏状态之间切换 <p> 元素：
+
+$("p").replaceWith("<b>Hello world!</b>");   replaceWith() 方法用指定的 HTML 内容或元素替换被选元素。
+

@@ -1,0 +1,155 @@
+
+				-------------------------------------jquery文档笔记(未使用的知识)------------------------------
+
+
+
+1.appentTo的巧妙用法：
+	$("<div>", {
+ 	  "class": "test",
+	   text: "Click me!",
+	   style:"color:red",
+  	   click: function(){
+  	   	$(this).toggleClass("test");
+   	   }
+	 }).appendTo("body");
+2.size()
+	当前匹配的元素个数。与length 将返回相同的值。
+
+3.data元素存值:$("div").data("test", { first: 16, last: "pizza!" });
+
+4.removeData删除值$("div").removeData("greeting");
+
+5.选择器部分：
+	
+	$('*') 匹配所有元素
+
+	$('div>p') 匹配div下的所有p元素
+
+ 	$().next() 下一个元素
+
+	$().prev() 上一个元素
+
+	$('div ~p')匹配div后面所有同级的p
+
+	$('p:first')获取到所匹配的第一个元素
+
+	$('p:last')	获取到所匹配的获取最后个元素
+
+	$('input:not(:checked)')  复选框的未选中判断
+
+	$('input:checked(:checked)')  复选框的已选中判断
+	
+	 $('input:even') 匹配所有索引值为偶数的元素，从 0 开始计数
+
+ 	$('input:odd') 匹配所有索引值为奇数的元素，从 1 开始计数
+
+	$('input:gt(2)') 匹配所有大于给定索引值的元素
+	
+	$('input:lt(2)') 匹配所有小于给定索引值的元素
+
+	$('input:checked(checked)') 属性匹配器
+
+	$(':header') 匹配如 h1, h2, h3之类的标题元素
+
+	 $(':focus')如同其他伪类选择器（那些以":"开始），建议:focus前面用标记名称或其他选择;否则，通用选择("*")是不言而喻的。换句话说，$(':focus')等同为$('*:focus')。如果你正在寻找当前的焦点元素，$( 		document.activeElement )将检索，而不必搜索整个DOM树。
+
+	 $("div:contains('dsa')") 匹配包含给定文本的元素
+
+	 $("input:empty") 查找所有不包含子元素或者文本的空元素
+
+	$("div:has(h1)")  匹配含有选择器所匹配的元素的元素（例：包含h1标签的div元素）
+	
+	$("div :visible") 匹配所有的可见元素
+
+	$("div :disabled") 匹配所有的不可见元素
+
+6.ajax部分：
+	/?g=模块名&m=控制器名&a=方法名
+	
+	async：true/false (默认: true) 默认设置下，所有请求均为异步请求。如果需要发送同步请求，请将此选项设置为 false。注意，同步请求将锁住浏览器，用户其它操作必须等待请求完成才可以执行。
+
+	 $('div[class]').load("/Public/a.html") 将div里面的内容外置到a.html中 相当于include标签引入，但是以 POST 形式发送附加参数并在成功时显示信息
+
+	  $("div").ajaxStart(function(){                          //ajax请求时发生事件
+           		 alert("所有 AJAX 请求已开始");
+      	  });
+
+  	$("div").ajaxStop(function(){                              //ajax请求完成时发生事件
+          	 	 alert("所有 AJAX 请求已完成");
+      	  });
+
+	$("#msg").ajaxSuccess(function(evt, request, settings){    当 AJAX 请求成功后显示消息。
+  		 $(this).append("<li>请求成功!</li>");
+ 	});
+
+
+	$.ajaxSetup({                                        //为所有的ajax请求设置默认参数而不用每次都去设置参数
+         	  	 url:"{:U('Text/index')}",
+          	 	 type:"post",
+          		 dataType:"json",
+          		  data:{name:"ok"},
+               })
+
+	$("form").serialize()   // 获取标签下的所有input的值   序列表表格内容为字符串，用于 Ajax 请求。
+
+元素赛选部分：
+	$("p").addClass("selected");    为每个匹配的元素添加指定的类名。
+
+	$("p").removeClass("selected");  从匹配的元素中删除 'selected' 类
+
+	$("p").removeClass();   删除匹配元素的所有类
+
+	$("p").toggleClass("selected");  如果存在（不存在）就删除（添加）一个类。
+	
+	 $("div").slice(0,3)   选取一个匹配的子集  开始选取子集的位置。第一个元素是0.如果是负数，则可以从集合的尾部开始选起
+
+	 $(".a").parents().eq(0);   .parents可以获取该元素的所有的父节点，通过eq可以获取第几个父节点// 从自己父级开始逐级向上查找，找到了1个就会停下来
+
+	$(".a").closest(".c")    从自己开始逐级向上查找，找到了1个就会停下来
+
+	$(".a").nextAll()     查找当前元素之后所有的同辈元素。
+
+	.$(".a").prevAll()  查找当前元素之前所有的同辈元素。
+
+	$("form:first").trigger("submit")     执行一个事件
+
+效果部分：$("p").show(4000,function(){                                 //接受一个函数在show时执行
+  		 $(this).text("Animation Done...");
+	 });
+
+	(".a").slideDown()  功能和show一样，效果是向下排除元素
+
+	(".a").slideUp      功能和hide一样，效果是向上排除隐藏元素
+
+	(".a"). slideToggle  切换所有匹配元素的可见性，并在切换完成后可选地触发一个回调函数
+
+	(".a"). slideToggle   通过高度变化来切换所有匹配元素的可见性，并在切换完成后可选地触发一个回调函数
+
+	$(".a").fadeIn(10000);  通过不透明度的变化来实现所有匹配元素的淡入效果，并在动画完成后可选地触发一个回调函数
+                    
+	$(".a").fadeOut(); 通过不透明度的变化来实现所有匹配元素的淡出效果，并在动画完成后可选地触发一个回调函数
+
+
+
+工具： $.each(data['info'],function (i,n) {              //对象数组的便利
+                     console.log(i+":"+n);
+                 })
+
+
+	数组搜索：$.inArray( value, array [, fromIndex ] )     任意类型 用于查找的值。 Array类型 指定被查找的数组。
+
+	数组过滤： $.grep( [0,1,2], function(n,i){        返回一个数组，
+               			 return n > 0;
+              		   });
+
+	对象转数组：jQuery.makeArray(obj)   接受一个对象，返回一个数组
+
+	数组数据的调节：$.map( [0,1,2], function(n){                  // 原数组中每个元素扩展为一个包含其本身和其值加 1 的数组，并转换为一个新数组。
+  			   return n > 0 ? n + 1 : null;
+		            });
+
+
+
+
+
+

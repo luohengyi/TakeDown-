@@ -1,0 +1,496 @@
+环境配置:
+	1.全局地址配置NODE_PATH：%nodejs%\node_modules\npm\node_modules （nodejs的安装目录下）
+	（%appdata%\npm\node_modules）
+
+1.模块加载： require();
+2.npm 模块下载淘宝镜像配置：
+	a.配置下载地址： npm config set registry https://registry.npm.taobao.org
+	b.安装淘宝镜像管理 cnpm：npm install -g cnpm --registry=https://registry.npm.taobao.org
+3.卸载不需要的依赖模块,例如jQuery：cnpm uninstall jquery
+
+4.文件模块fs: require（'fs'）
+
+5.数据库模块mysql：
+
+  var mysql = require('mysql');
+
+ 1.没有条件时
+  var  connection=mysql.createConnection({host:'localhost','port':'3306','database':'test','user':'root','password':'root'});
+  	connection.query('select * from a',[],function (error,result) {   //@1.sql语句@2.参数@3.回调函数（error,success）success为查询数据
+	console.log(result);
+	connection.end();
+  })
+ 2.加条件
+ connection.query('select * from a where id=?',[1],function (error,success) {
+	console.log(success)
+	connection.end()
+ })
+ 3.多条件
+ connection.query('select * from a where id=? or id = ?',[1,2],function (error,success) {
+	console.log(success)
+	connection.end()
+ })
+ 4.数据库优化（优化打开关闭数据库的操作）链接池
+ var mysql = require('mysql');
+
+//制造链接池
+var  pool=mysql.createPool({host:'localhost','port':'3306','database':'test','user':'root','password':'root'});
+
+//获取链接
+pool.getConnection(function (err,conn) {
+	conn.query('select * from a',[],function (errs,data) {
+		console.log(data)
+		//释放链接
+		conn.release();
+	})
+})
+
+5.node.js服务器部署express:
+
+//加载模块
+var express = require('express');
+
+var app = express();
+
+//开启服务器
+app.listen(8080,function () {
+	console.log('启动服务器');
+})
+
+//中间健处理模式
+app.use(function (req,resp,next) {
+
+	req.a='我是1';
+	next();
+})
+app.use(function (req,resp,next) {
+	req.a +='我是2';
+	next();
+})
+
+app.use(function (req,resp,next) {
+	req.a+='我是3';
+	resp.send(req.a);
+})
+
+ 请求类型来部署中间健
+	 app.get('/',function (req,resp,next) {
+
+	    req.a='我是1';
+	    resp.send('世界你好！');
+
+	 })
+ 6.服务器调试工具supervisor：
+	因为是工具类的模块，所以安装为全局
+	启动服务器时不在用node运行js，使用supervisor.cmd运行，修改代买后supervisor会自动重启服务器
+
+ 7.mvc 框架
+    入口文件
+    var express = require('express');
+
+    var app = express();
+
+    app.listen(8080,function () {
+    	console.log('启动服务器');
+    })
+
+    app.use('/',require('./web/index'))
+    app.use('/user',require('./web/user'))
+
+    WEB目录下的操作control
+    index：
+    var express = require('express');
+    var router = module.exports = express.Router()
+
+
+    router.get('/',function (req,resp) {
+    	resp.send('用户界面');
+
+    })
+
+    router.get('/rest',function (req,resp) {
+    	resp.send('个人中心');
+    })
+
+    user：
+    var express = require('express');
+    var router = module.exports = express.Router()
+
+
+    router.get('/',function (req,resp) {
+        //响应视图render();
+    	resp.render('index.ejs',{
+        		data:"我是服务器"
+        	});
+
+    })
+
+    router.get('/rest',function (req,resp) {
+    	resp.send('个人中心');
+    })
+    views 视图目录
+	    依赖模块 ejs
+	    index.ejs：
+	      <!DOCTYPE html>
+          <html lang="en">
+          <head>
+          	<meta charset="UTF-8">
+          	<title>Title</title>
+          </head>
+          <body>
+	          世界你好！
+	          //获取服务器数据
+	          <%=data%>
+          </body>
+          </html>
+8.项目开发：
+	express生成器：
+	cnpm install express-generator -g
+	运行 express . 会自动生成mvc框架目录（一定加空隔，并且加载cnpm install模块），但是使用的是jade视图引擎
+	修改视图为ejs
+	1. express --help 打开帮助目录
+	2. express . -v ejs 修改视图引擎为ejs
+	3.cnpm install 加载模块！
+
+9.nod.js API
+    1.返回json数据： res.json({id:3});
+    2.重定向：res.redirect('http://www.baidu.com');
+    3.修改响应数据类型： res.type('text');res.send('<h1>asdsad</h1>')
+    4.路径传值（获取参数的方法：1.获取所有的参数：req.params 2.获取指定的参数：req.param('key')）：
+         router.get('/:id/:name', function(req, res, next) {
+           console.log(req.params);
+         });
+
+    5.获取表单数据：
+      get请求：req.query
+      post请求：req.body
+10.cookie-session
+   依赖于cookie-session
+
+   var cookie_session= require('cookie-session')({keys:['asdsa','asdsad']})
+
+   //调用session的中间健
+   router.use(cookie_session);
+
+
+   router.get('/', function(req, res, next) {
+
+        console.log(req.session);
+        res.render('index.ejs');
+   });
+
+   router.get('/set', function(req, res, next) {
+    req.session.userid = 5;
+    res.send('设置成功！');
+   });
+
+
+   router.get('/delete', function(req, res, next) {
+    delete req.session.userid;
+    res.send('删除成功！');
+   });
+
+
+   router.get('/clear', function(req, res, next) {
+    req.session= null;
+    res.send('清楚成功！');
+
+   });
+11.文上传组件  connect-multiparty :
+	依赖于 connect-multiparty
+    ar connect = require('connect-multiparty')({});
+
+    var fs = require('fs');
+
+	//由于不是所有的控制器都需要文件上传的功能，所以中间健在需要调用的请求地址去加载文件上传的中间建
+    router.post('/',connect,function(req, res, next) {
+        fs.rename(req.files.file.path,'./public/pp.txt')
+        res.render('index.ejs');
+    });
+
+
+                                                            ----------------vue---------------------
+
+1.安装
+	# 全局安装 vue-cli (安装vue 命令)
+      npm install --global vue-cli
+	# 创建一个基于 webpack 模板的新项目
+      vue init webpack my-project(项目名)
+2.项目结构
+
+     1.src > assets 存放公共文件地址 如全局的css，js，img
+     2.src > main.js 入口文件
+          组件结构：                //根组件
+            new Vue({
+              el: '#app',  //元素
+              router,
+              template: '<App/>',   //a.执行模板
+              components: { App }    //执行组件
+            })
+
+            a.模板构成：
+              1.template html部分
+              2.script 逻辑部分
+              3.style 样式部分
+
+
+
+           组件的搭建：
+            1.components 建立vue文件
+                <template>
+
+                  <div class="tst">
+                    <h1>tst</h1>
+
+                     <h2>{{title}}</h2>
+                     <h3>{{user.name}}</h3>   //模板赋值，对象的赋值方式
+                     <h7 v-text="user.user"></h7>
+
+                      <table border="1">
+
+                           <tr v-for="key in item">     //循环的使用 ，key在前，需要便利的变量在后面
+                               <td v-if="key.name == '罗恒'">{{key.name}}</td>  //if的使用 等于罗恒的显示，不等于的显示错误！
+                               <td v-else>错误i！</td>
+                               <td>{{key.data}}</td>
+                           </tr>
+
+                         </table>
+
+                    <button v-on:click="greet('adas')"></button>  //事件的调用
+
+
+                        <hr/>
+                            <!--计算属性-->
+                            <label>First Name</label>
+                            <input type="text" v-model="user.name">
+
+                            <label>Last Name</label>
+                            <input type="text" v-model="user.user">
+
+                            <h3>{{fullName}}</h3>
+
+
+                          <!--属性  props  -->
+                              <h2>{{msg}}</h2>
+
+
+
+
+
+                  </div>
+
+                </template>
+
+                <script>
+                 export default {
+                      name:'tst',
+                      props:{          //属性的赋值,属性可以在调用的时候传值
+                              msg:{
+                                   type:String,
+                                   default:"默认文字"
+                              }
+
+                           },
+                     data(){        //模板赋值
+                        return {
+                                      title:"世界你好！",
+                                      user:{
+                                         name:"罗恒一",
+                                         user:"luohengyi"
+                                      },
+                                     showName:false,
+                                     item:[
+                                       {name:false,data:12},
+                                       {name:"罗恒",data:13},
+                                       {name:'qwewq',data:123},
+                                       {name:"啊就打算几点",data:12312312},
+                                        ]
+                                 }
+                     },
+                     methods:{
+                           greet:function (val) {
+                             alert(val)
+                     },
+                     computed:{         //计算属性
+                           fullName:function () {
+                                      return this.user.name +'  '+this.user.user
+                                }
+                         }
+                 }
+
+                </script>
+
+                <style></style>
+
+           组件的调用 ：
+
+           <template>
+             <div id="app">
+
+               <tst msg='这是新的属性'></tst>   //正式调用组件，给组件重新赋予属性
+             </div>
+           </template>
+
+           <script>
+           import Tst from './components/tst'    //引入组件
+
+           export default {
+             name: 'app',
+             components: {
+               Tst                  //调用组件
+             }
+           }
+           </script>
+
+           <style>
+           #app {
+             font-family: 'Avenir', Helvetica, Arial, sans-serif;
+             -webkit-font-smoothing: antialiased;
+             -moz-osx-font-smoothing: grayscale;
+             text-align: center;
+             color: #2c3e50;
+             margin-top: 60px;
+           }
+           </style>
+
+
+           //用户管理demo：
+
+           <template>
+
+               <div class="users">
+                       <h1>Users</h1>
+
+                       <form action="" v-on:submit="addUser">
+                         <input type="text" v-model="newUser.name" placeholder="name">
+                         <input type="text" v-model="newUser.email" placeholder="email">
+                         <input type="submit" value="Submit" >
+                       </form>
+
+
+                       <ul>
+                           <li v-for="user in users">   //用户数组的便利
+
+                             <input type="checkbox" v-model="user.contacted" class="toggle">
+
+                               <span :class="{contacted:user.contacted}">   点击标注事件的实现
+                                 {{user.name}}:{{user.email}}
+                                 <button v-on:click="deletes(user)" >x</button>   删除事件的绑定
+                               </span>
+                           </li>
+
+                       </ul>
+
+               </div>
+
+           </template>
+
+           <script>
+               export default {
+                   name:'users',
+                   data(){
+                       return {
+                           newUser:{},
+                           users:[
+                                  { name : 'a',
+                                   email : 'a.com',
+                                   contacted : false
+                                  },
+                                   { name : 'b',
+                                   email : 'b.com',
+                                   contacted : false
+                                   },
+                                   { name : 'c',
+                                       email : 'c.com',
+                                       contacted : false
+                                   }
+                           ]
+                       }
+                   },
+                   methods:{
+                     addUser:function (e) {        //添加功能的实现
+                         this.users.push({
+                           name:this.newUser.name,
+                           email:this.newUser.email,
+                           contacted : false
+                         }
+                         )
+                         e.preventDefault();
+                     },
+                     deletes:function (user) {    //删除事件的处理
+                         this.users.splice(this.users.indexOf(user),1)
+                     }
+                   }
+               }
+
+           </script>
+
+           <style>
+                 .contacted{
+                   text-decoration: line-through;
+                 }
+           </style>
+
+
+
+           //vue-router 路由管理器（单页面的应用）
+            npm install vue-router  安装模块
+
+          main.js：
+          import VueRouter from 'vue-router'  导入模块
+                   //导入引用的模块
+          import Users from './components/users'
+          import Tst from './components/tst'
+
+          Vue.use(VueRouter)               调用Router中间键
+          Vue.config.productionTip = false
+
+          const router = new VueRouter({
+            mode:'history',
+            base:__dirname,
+            routes:[
+                   //配置路由
+              {path:"/",component: Users},
+              {path:'/text',component:Tst}
+
+              ]
+
+          })
+          /* eslint-disable no-new */
+          new Vue({
+            router,     //引用router
+            template: `<div id="app">
+                          <ul>
+                              <li>
+                                   <router-link to="/">Users</router-link>   组件的跳转
+                                   <router-link to="/text">Tst</router-link>
+                              </li>
+                          </ul>
+                          <router-view></router-view>   点击事件的执行
+                      </div>`
+
+          }).$mount('#app')   //绑定app
+
+        //组件之间的传值
+          1.  $emit 进行注册事件，
+              this.$emit('formSubmit',传出的值1,传出的值2);
+          2. 在组件调用的时候注册事件
+                v-on:formSubmit="tots"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

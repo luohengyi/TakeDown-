@@ -1,0 +1,35 @@
+	Request.Post("http://www.baidu.com").bodyForm(new BasicNameValuePair("id", "1"))      //发送数据
+
+   		==》》
+				    .execute().saveContent(new File("aa.jpg"));     //保存一个文件。没有返回类型
+
+
+				    .execute().returnContent()        // 返回请求内容 .asBytes();  //设置返回类型
+
+
+			new String(bs,"utf-8")    转换编码
+
+
+	Document document =  Jsoup.connect("http://www.nmc.gov.cn/publish/forecast/ASC/mianyang.html").get();     //通过网址解析，获取说有信息（包括html标签，和请求信息）
+
+														  //通过.data（）方法传送请求数据 ！！
+		
+			
+		Elements elements = document.select("a");       //通过document.select("a") ，获取标签元素，返回一个string数组；这里（）内写法和jq一样，包括属性的和值等等也是
+		
+		for (int i = 0; i < elements.size(); i++) {
+			
+			System.out.println(elements.get(i).attr("href")+elements.get(i).text());      //便利以便获取元素信息
+			
+		}
+
+
+
+	document 下的方法:
+
+		 .body()
+		 .head()
+		 .title()
+
+		获取以上标签下的节点
+		

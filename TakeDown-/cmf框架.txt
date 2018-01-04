@@ -1,0 +1,43 @@
+<form class="js-ajax-form" action="{:U('user/login/dologin')}" method="post">
+    <label for="input_username">账号</label>
+    <input type="text" id="input_username" name="username" placeholder="请输入用户名或者邮箱" class="span3">
+	
+    <label for="input_password">密码</label>
+    <input type="password" id="input_password" name="password" placeholder="请输入密码" class="span3">
+    
+    <label for="input_verify">验证码</label>
+    <input type="text" id="input_verify" name="verify"  placeholder="请输入验证码" class="span3">
+    {:sp_verifycode_img('length=4&font_size=15&width=100&height=35&charset=1234567890')}
+	
+    <button class="btn btn-primary js-ajax-submit" type="submit" data-wait="1500">确定</button>
+</form>
+
+
+
+
+
+加上类名为 js-ajax-form 的 form标签，配合类名为 js-ajax-submit 的提交按钮，在用户单击提交按钮时，会以 ajax 的方式提交表单，提交的地址为 form 的 action属性，提交方法为 form的 method 属性，凡是在 此form 里且有 name 属性的表单元素都会被提交;
+
+提交成功返回后，如果返回结果中有 referer 字段，页面会跳转到 referer 表示的地址。如果 没有referer 或者其为空，则会刷新当前页，或者等待一定时间(data-wait的值，单位 ms)
+
+后，再刷新当前页。
+
+
+
+<input class="js-datetime" type="text" id="input-datetime" placeholder="2013-01-04 09:20" name="datetime">
+
+加上js-datetime类名的text input标签在用户输入时间时，会弹出一个日历让用户选择时间
+
+<a href="你的url" class="js-ajax-dialog-btn" data-msg="确定还原吗？">还原</a>
+
+加上js-ajax-dialog-btn类名的a标签在单击后，会出现一个对话框，提示用户一些信息(信息内容为data-msg的属性值)，用户确定后会进行一个 ajax 请求，请求的 url为
+
+
+
+<ul class="nav nav-tabs qiwen_nav-tabs">
+    <li class="active"><a href="#">会员管理</a></li>
+    <li><a href="">开通会员</a></li>
+    <li><a href="">卡类管理</a></li>
+</ul>
+
+标签选择卡

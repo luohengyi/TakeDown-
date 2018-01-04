@@ -1,0 +1,24 @@
+drop database if exists us;
+create database us;
+use us;
+create table uses(
+	id int primary key auto_increment,
+	name varchar(20) not null,
+	password varchar(20) not null
+
+	unique(id,name )     //不能重复2个键值
+);
+
+insert into uses(name,password) values("18284360824","88");
+
+select * from uses;
+
+select count(*) from uses                //查询总条数
+
+select * from role  order by role 降序排列
+
+select * from role  order by role desc 升序排列
+
+select * from uses limit 1,5            //分页查询第页每页5条fe
+
+foreign key (副键id) references 主表名(参照id)    //关联2个表
