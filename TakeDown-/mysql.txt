@@ -1,15 +1,17 @@
 表结构操作：
 1.修改表明：ALTER TABLE 旧表名 RENAME 新表名;
   实例：alter table userinfo rename userinfomation;
-2.修改子弹数据类型：格式：ALTER TABLE 表名 MODIFY 属性名 数据类型;
+2.修改字段数据类型：格式：ALTER TABLE 表名 MODIFY 属性名 数据类型;
   实例：alter table news modify NewsTitle varchar(50);
 3.修改字段名称 格式：ALTER TABLE 表名 CHANGE  old属性名  new 属性名数据类型;
   实例：alter table news CHANGE  NewsId  NewNumber  int(10);
-4.格式：ALTER TABLE 表名 ADD 属性名1 数据类型 [完整性约束条件] [FIRST | AFTER 属性名2];
+4.增加字段：格式：ALTER TABLE 表名 ADD 属性名1 数据类型 [完整性约束条件] [FIRST | AFTER 属性名2];
     实例： alter table news add Newsfiled varchar(60) after newstitle;
           alter table news add Newsa varchar(60) first;
 5.删除字段： 格式：ALTER TABLE 表名 DROP 属性名;
    实例： alter table news drop newsfiled;
+6.外键约束：foreign key(user_id) references user(user_id)
+  将本表的user_id与主表user表的user_id关联
 
 数据操作：
 
@@ -17,4 +19,4 @@
 2.通配符：% 任意个数，_ 仅代表1个
 3.模糊查询，不包含 某个字符的：not like %a%
 4.数字区间：between 1 and 3；
-5.
+5.mysql
