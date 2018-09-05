@@ -1,0 +1,1 @@
+1.清空表 truncate table name 会清空id自增数
