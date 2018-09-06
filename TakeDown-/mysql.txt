@@ -21,5 +21,16 @@
 4.数字区间：between 1 and 3；
 5.mysql 
 6.函数exists(子查询) 例如：select * from user where exists(select id from user where id=1);
+7.分组条件：having 例:select sum(number) from user group by name having sum(number) >200;
 
 函数：
+1.平均值：avg(列名)
+2.保留小数：round(avg(列名),2)
+3.大写转化： ucase();
+4.小写转化：lcase
+5.提取字符：mid(列名，起始位置,截取长度)
+6.查看长度：length(列名)
+7.返回现在的时间：now()
+8.格式化日期：date_format(列名,格式)
+9.查找第一个值：first(列名)
+10.
