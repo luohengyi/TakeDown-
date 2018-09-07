@@ -22,6 +22,10 @@
 5.mysql 
 6.函数exists(子查询) 例如：select * from user where exists(select id from user where id=1);
 7.分组条件：having 例:select sum(number) from user group by name having sum(number) >200;
+8.备份文件：mysqldump -uroot -proot -p database user > D:xx\xx\x\user.sql. #也可以不加表名，直接倒出数据库
+9.倒入文件：use database
+	  source D:/xx/xx/x/user.sql;
+
 
 函数：
 1.平均值：avg(列名)
