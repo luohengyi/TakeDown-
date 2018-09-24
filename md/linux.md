@@ -148,7 +148,7 @@
 
 ###### 提权
 
-1. root 账户下visudo 
+1. root 账户下vi sudo 
 2. 此处添加账户
 3. Sudo yum install vim (使用sudo去提升权限
 
