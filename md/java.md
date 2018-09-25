@@ -6,6 +6,34 @@
 
 #### 语法
 
+##### 修饰符
+
+1. 默认修饰符：如果什么都不写那么方法只能在自己的类和同一个包中的类调用
+2. final
+   1. 字段：定义常量，该字符不能被修改了一半常量大写区别变量
+   2. 修饰类: 用final修饰的类不能被继承，即不能拥有自己的子类。
+   3. 修饰方法：此方法不能被重写.**重写的条件是子类继承这个方法，所以将父类的final方法用private修饰后子类可写一个一样的方法**
+3. public
+   1. 属性和方法：此方法或属性所在的类和以及子类，同一个包中的类，不同包中的类，都可以访问
+4. private
+   1. 属性和方法:只能**内部使用**；
+5. protected
+   1. 属性和方法:只能**内部和子类**使用；
+6. Static：静态成员的定义
+7. transien：（只能修饰变量）关键字表示制定属性不参与序列化
+   1. 序列化和反序列化：将类输入到io流中，实际就是持久化这个类
+      1. ObjectOutputStream outputStream = new ObjectOutputStream(**new**FileOutputStream("/Users/luohengyi/cs/cs.obj"));
+      2. 写入类:	outputStream.writeObject(**new** Cs());
+      3. 关闭流:    outputStream.close();
+      4. ObjectInputStream in = **new** ObjectInputStream(**new** FileInputStream("/Users/luohengyi/cs/cs.obj"));​	
+      5. 获取输入流：Cs cs =(Cs)in.readObject();
+      6. 总结:被序列化的类必须实现**<u>Serializable</u>**接口， transien修饰的字段在写入时会被忽略，<u>**这个序列机制是否是可以像php一样做一些配置功能呢？**</u>
+8. volatile:（只能修饰变量）当有多个线程在调用这个变量时，某一个线程更新数据后，确保每个线程数据同步
+9. abstract: 抽象方法，和抽象类的定义
+10. synchronized:（只能修饰方法）
+    1. 某个对象实例内，synchronized aMethod(){}可以防止多个线程同时访问这个对象的synchronized方法（如果一个对象有多个synchronized方法，只要一个线 程访问了其中的一个synchronized方法，其它线程不能同时访问这个对象中任何一个synchronized方法）。这时，不同的对象实例的 synchronized方法是不相干扰的。也就是说，其它线程照样可以同时访问相同类的另一个对象实例中的synchronized方法；
+    2. 某个类的范围，synchronized static aStaticMethod{}防止多个线程同时访问这个类中的synchronized static 方法。它可以对类的所有对象实例起作用。
+
 #####  常量 final
 
 1. 使用 final定义常量 类型可是是数组和8个基本类型
