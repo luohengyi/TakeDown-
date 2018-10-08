@@ -1,5 +1,23 @@
 # Java
 
+##### 概念
+
+1. JRE---核心类库，运行环境
+2. jdk—开发工具包
+   1. 编译工具javac.exe
+   2. 打包工具java.jar
+
+##### 项目结构
+
+1. src 源代码
+
+   1. package 命名规则 com.公司名.项目名.模块名.……
+
+2. lib  类库
+
+3. res 静态资源
+
+
 ## 开始
 
 1. 主方法：如果需要解释器来直接执行一个java类必须要有一个main，并且必须使用<u>**public static**</u>来修饰man，且必须使用 void 来申明返回值，该方法的形产必须是一个<u>**字符串数组**</u>
@@ -18,7 +36,7 @@
 4. private
    1. 属性和方法:只能**内部使用**；
 5. protected
-   1. 属性和方法:只能**内部和子类**使用；
+   1. 属性和方法:**内部和子类**使用,同一个**包中的其他类**；
 6. Static：静态成员的定义
 7. transien：（只能修饰变量）关键字表示制定属性不参与序列化
    1. 序列化和反序列化：将类输入到io流中，实际就是持久化这个类
@@ -27,12 +45,14 @@
       3. 关闭流:    outputStream.close();
       4. ObjectInputStream in = **new** ObjectInputStream(**new** FileInputStream("/Users/luohengyi/cs/cs.obj"));​	
       5. 获取输入流：Cs cs =(Cs)in.readObject();
-      6. 总结:被序列化的类必须实现**<u>Serializable</u>**接口， transien修饰的字段在写入时会被忽略，<u>**这个序列机制是否是可以像php一样做一些配置功能呢？**</u>
+      6. 总结:被序列化的类必须实现**<u>serializable</u>**接口， transien修饰的字段在写入时会被忽略，<u>**这个序列机制是否是可以像php一样做一些配置功能呢？**</u>
 8. volatile:（只能修饰变量）当有多个线程在调用这个变量时，某一个线程更新数据后，确保每个线程数据同步
 9. abstract: 抽象方法，和抽象类的定义
+   1. 一个类只能继承1个抽象类
+   2. 抽象类拥挤所有的基础类型和成员
 10. synchronized:（只能修饰方法）
-    1. 某个对象实例内，synchronized aMethod(){}可以防止多个线程同时访问这个对象的synchronized方法（如果一个对象有多个synchronized方法，只要一个线 程访问了其中的一个synchronized方法，其它线程不能同时访问这个对象中任何一个synchronized方法）。这时，不同的对象实例的 synchronized方法是不相干扰的。也就是说，其它线程照样可以同时访问相同类的另一个对象实例中的synchronized方法；
-    2. 某个类的范围，synchronized static aStaticMethod{}防止多个线程同时访问这个类中的synchronized static 方法。它可以对类的所有对象实例起作用。
+   1. 某个对象实例内，synchronized aMethod(){}可以防止多个线程同时访问这个对象的synchronized方法（如果一个对象有多个synchronized方法，只要一个线 程访问了其中的一个synchronized方法，其它线程不能同时访问这个对象中任何一个synchronized方法）。这时，不同的对象实例的 synchronized方法是不相干扰的。也就是说，其它线程照样可以同时访问相同类的另一个对象实例中的synchronized方法；
+   2. 某个类的范围，synchronized static aStaticMethod{}防止多个线程同时访问这个类中的synchronized static 方法。它可以对类的所有对象实例起作用。
 
 #####  常量 final
 
@@ -118,9 +138,39 @@
    1. Arrays.*fill*(a, 12); 一次只能填充一个值
    2. a[0]=11;
 
-###### 泛型 ArrayList
+###### 泛型  List ,ArrayList ,LinkedList
 
 1. 初始化：ArrayList arrayList = **new** ArrayList(); 不指定类型，什么都可以装
 2. ArrayList<Integer> arrayList = **new** ArrayList<Integer>(); //指定类型，值只能是这个类型
-3. 添加元素
+3. 添加元素：
    1. arrayList.add(12);
+   2. arrayList.add(1,12); //将新的元素放在第二个位置
+4. 删除元素：arrayList.remove(2); 元素下标
+5. 输出：List<Integer> list = **new** ArrayList<>();
+
+​		for (Integer integer : list) {
+
+​		System.**out**.println(integer);
+
+​		}
+
+##### 面向对象
+
+1. 继承：关键字 extends 。在java中，只能继承1个父类
+
+   1. 使用super调用父类的方法和属性
+   2. super() 方法直接调用父类的构造方法
+   3. 方法的重写：子类包含父类同名的方法（方法名相同，形参相同）
+   4. 方法的重载：方法名相同，形参不同
+
+2. 接口：
+
+   1. 定义接口
+
+      1. public interface  Movement {}   //不能用class了
+      2. 如果要定义访问级别只能是public
+      3. 只能定义常量，不能定义变量
+      4. 在接口个中定义的常量，实现类中，可以直接通过常量名访问 不需要加接口名
+      5. 接口里面的方法都是抽象或公共的所以和以省略 public和abstract
+      6. 接口的方法都必须在子类中实现
+      7. 135页，引用接口
