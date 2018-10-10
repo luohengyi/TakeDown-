@@ -12,10 +12,12 @@
 1. src 源代码
 
    1. package 命名规则 com.公司名.项目名.模块名.……
-
 2. lib  类库
-
 3. res 静态资源
+
+##### 计算机基础
+
+1. 通过码值循环0-9，a-z
 
 
 ## 开始
@@ -63,20 +65,20 @@
 
 ###### 数据类型
 
-1. 浮点型
+1. 浮点型，java中小数常量默认为double类型
    1. float 32位 无限制    （精度不高可能失真，末尾需要用f修饰且注意float是8位有效数字，第7位数字将会产生四舍五入,一般不用这个）**float** c =12.123f  
    2. double 32位 无限制   （双精度）可以处理16位有效数,超过16位，考虑使用BigDecimal类
-   3. BigDecimal 不能使用传统的+、-、*、/等算术运算符直接对其对象进行数学运算,而必须调用其相对应的方法
+   3. 解决精度丢失问题使用BigDecimal类，float或者double构造BigDecimal也会出现丢失，但是string构造BigDecimal不会出现丢失，BigDecimal 不能使用传统的+、-、*、/等算术运算符直接对其对象进行数学运算,而必须调用其相对应的方法
       1. public BigDecimal add(BigDecimal value);//加法
       2. public BigDecimal subtract(BigDecimal value);//减法 
       3. public BigDecimal multiply(BigDecimal value);//乘法
       4. public BigDecimal divide(BigDecimal value);//除法
    4. 科学计数法：**double** c =5.12e2;  实际是：5.12*10^2 该方法只能浮点类型使用
-2. 整数类型
+2. 整数类型 （这里的位数是二进制的位数）,java中整数常量默认为int类型
    1. byte 8位 -128 127
    2. short 16位 -32768 32767
    3. int  32位  -2147483648  2147483647
-   4. long 64位 无限制
+   4. long 64位 无限制，末尾带l标示改数字为long类型
 3. 字符类型
    1. char 64位 0～65535
    2. String
@@ -90,17 +92,40 @@
 ###### 类型转换
 
 1. 强制转换：只能同类型之间转化，不能 string=》int。
+   1. char可以强转int，ascall对照表
 2. 字符转int：Integer.*parseInt*(bString)
 3. 转字符：String.valueOf(Object);
 
 ##### 逻辑运算符
 
-1.  ++a
-   1. ++i是想把i自增1然后拿来用
-2. a++
-   1. 是先把a的值拿来用,然后在自增1
-3. equals()
+1. ++a，a++
+
+   1.  Int i =1;System.**err**.println(++i);  得到2
+   2.  Int i =1;System.**err**.println(i++);  得到1
+   3. 以上2种内存中i值都为2
+   4. int y;int i =1;y=i++;此处y=1；
+
+2. equals()
+
    1. 比较2个字符是否相同，该方法属于 String类
+
+3. 除发：/ 在java中整数相除得到商(**<u>只会保留整数部分</u>**)，会出现除不尽的，比如6/5得到1，**<u>浮点数相除会得到一个小数</u>**
+
+4. a+=1
+
+   1.  此处1为int，**<u>用+=不会做类型提升</u>**
+
+5. instanceof  判断一个类是否重属于宁外一个类
+
+   1. String name="";    //判断name是否是String类的实例对象
+
+      **if** (name **instanceof** String) {​		
+
+   ​		}
+
+6.  ^ ,a^b  a和b同时为false或者true时返回true；
+
+
 
 ##### 字符串 String
 
@@ -154,6 +179,17 @@
 
 ​		}
 
+##### 分支结构
+
+1. swicth语句可选择的类型只有五种 byte，int ,char, short,String
+
+#### 系统类
+
+1. java.util.Scanner;   //获取控制台输入
+   1. Scanner scanner = **new** Scanner(System.**in**);   
+   2. scanner.nextInt(); //获取输入
+   3. scanner.close(); //关闭流，防止内存占用
+
 ##### 面向对象
 
 1. 继承：关键字 extends 。在java中，只能继承1个父类
@@ -173,4 +209,5 @@
       4. 在接口个中定义的常量，实现类中，可以直接通过常量名访问 不需要加接口名
       5. 接口里面的方法都是抽象或公共的所以和以省略 public和abstract
       6. 接口的方法都必须在子类中实现
-      7. 135页，引用接口
+      7. 接口不能定义静态方法
+      8. 137页，引用接口
