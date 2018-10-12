@@ -71,6 +71,12 @@
    8.  less 可控分页
    9.  grep -n ‘搜索关键字’ +文件名 
 7. find 查找文件
+   1. 查找文件
+      find ./ -type f
+   2. 查找目录
+      find ./ -type d
+   3. 查找名字为test的文件或目录
+      find ./ -name test
 8. wc 统计个数
 9. 查看文件列表：ls （ls -al查看文件的详细信息）
 10. 清理缓存 yum clean packges
