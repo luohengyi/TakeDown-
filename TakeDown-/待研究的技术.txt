@@ -2,3 +2,4 @@
 2.sphinx 大数据搜索引擎
 3.core java（核心java）中高级提升
 4.java编程思想 
+5.利用idea工具远程调试代码
