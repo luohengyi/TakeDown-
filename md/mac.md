@@ -28,6 +28,10 @@
 4. 解压文件：
    1. tar： tar zxvf manpages-zh-1.5.1.tar.gz
    2. zip:  zip manpages-zh-1.5.1.tar.gz
+5. 网卡：
+   1. ifconfig 看一下要启的网卡 一般以 en开头三位。
+      sudo ifconfig en* down #停。
+      sudo ifconfig en* up #启
 
 #### php
 
