@@ -141,19 +141,45 @@
 ##### 字符串 String
 
 1. 初始化字符串：String aString = "asdfg";
+
 2. 索引：aString.charAt(3)  //获取第4个字符
+
 3. 追加字符串：aString = aString.concat("qqqq");  一般使用+=
+
 4. 比较字符：
    1.  aString.equals(bString)   区别大小写
-   2. aString.equalsIgnoreCase(bString)     不区别大小写
-5. 替换字符串： aString = aString.replace("a", "世界你好");   //将所有的a替换成世界你好
-6. 截取字符串：aString = aString.substring(0, 2);  //截取前2个字符
-7. 分割字符串：String cs[] = aString.split(".");  //以.分割字符，返回一个数组
-8. 大小写转化：
+   2.  aString.equalsIgnoreCase(bString)     不区别大小写
+   3.  aString.compareTo();  比较2个字符串，返回长度差值,分解为char逐个比较cos码，**<u>可用于字符串排序！</u>**
+
+5. 返回字符最后一次出现的下标：aString.lastIndexOf('a') 
+
+6. 替换字符串： aString = aString.replace("a", "世界你好");   //将所有的a替换成世界你好
+
+7. 截取字符串：aString = aString.substring(0, 2);  //截取前2个字符
+
+8. 分割字符串：String cs[] = aString.split(".");  //以.分割字符，返回一个数组
+
+9. 大小写转化：
    1. 大写：aString = aString.toUpperCase();
    2. 小写：aString = aString.toLowerCase();
-9. StringBuffer类：
-   1. 提供了一些字符串的复杂操作例如：字符反转,等等
+
+10. 返回常量池的地址引用：intern()
+
+11. **<u>StringBuffer类：</u>**他是String的2000多倍的性能，**安全高于StringBuilder**
+
+    1. 提供了一些字符串的复杂操作例如：字符反转,等等
+    2. StringBuffer stringBuffer = **new** StringBuffer();
+    3. 字符拼接：stringBuffer.append("a"); /**/他是 stringBuffer+=“a”的2千多倍**
+
+12. **<u>StringBuilder类</u>** 他是 **<u>StringBuffer 2倍类型</u>**
+
+    1. 拼接：
+
+       1. StringBuilder stringBuilder = **new** StringBuilder();
+
+       2. stringBuilder.append("a");
+
+          ​		
 
 ##### 数组 Arrays
 
@@ -177,29 +203,56 @@
 ###### 泛型  List ,ArrayList ,LinkedList
 
 1. 初始化：ArrayList arrayList = **new** ArrayList(); 不指定类型，什么都可以装
+
 2. ArrayList<Integer> arrayList = **new** ArrayList<Integer>(); //指定类型，值只能是这个类型
+
 3. 添加元素：
    1. arrayList.add(12);
    2. arrayList.add(1,12); //将新的元素放在第二个位置
+
 4. 删除元素：arrayList.remove(2); 元素下标
-5. 输出：List<Integer> list = **new** ArrayList<>();
 
-​		for (Integer integer : list) {
+5. 输出：
 
-​		System.**out**.println(integer);
+   1. ```java
+       List<Integer> list = **new** ArrayList<>();
+       ```
 
-​		}
+      	for (Integer integer : list) {
+
+              System.out.println(integer);
+          
+          }	
+      ```
+   
+      ```
+
 
 ##### 分支结构
 
 1. swicth语句可选择的类型只有五种 byte，int ,char, short,String
 
-#### 系统类
+### 系统类
 
 1. java.util.Scanner;   //获取控制台输入
    1. Scanner scanner = **new** Scanner(System.**in**);   
    2. scanner.nextInt(); //获取输入
-   3. scanner.close(); //关闭流，防止内存占用
+   3. scanner.next(); 如果有空格，那么空格后面的字符就不会获取
+   4. scanner.nextLine(); 接受一行的输入
+   5. scanner.hasNextXXX(); **判断用户有没有该类型的输入**
+   6. scanner.close(); //关闭流，防止内存占用
+2. 包装类
+   1. Integer
+      1. Integer.*toBinaryString*(15); 进制转换
+      2. Integer.*parseInt*(bString);转化为int
+3. 工具类
+   1. Math
+      1. cei();向上取整
+      2. floor();向下取整
+      3. round();四舍五入
+      4. 获取2个数之间的随机数，包含起点和终点：(**int**)(Math.*random*()*(end-start+1))+start;
+4. String
+   1. 
 
 #### Package和import机制
 
@@ -241,8 +294,8 @@
    5. 接口里面的方法都是抽象或公共的所以和以省略 public和abstract
    6. 接口的方法都必须在子类中实现
    7. **<u>接口不能定义静态方法</u>**
-   8. 接口只能定义静态常量属性
-   9. 接口没有构造器
+   8. 接口只能定义静态,常量属性
+   9. **接口没有构造器**
 
 ###### 抽象：abstract:
 
@@ -254,7 +307,9 @@
 
 ###### 重写和重载：
 
-1. **<u>重写</u>**：子类和父类同名的方法，排除父类private修饰，重写只针对可以被继承的方法
+1. **<u>重写</u>**：
+   1. @Override  @Override
+   2. 子类和父类同名的方法，排除父类private修饰，重写只针对可以被继承的方法.
 2. **<u>重载</u>**：同名方法，不同类型的形参数
 
 ###### 多态
@@ -301,6 +356,13 @@
          ```java
          class child{
          	
+         }
+         public static void main(String[] args) {
+         
+         		User user = new User();
+         		//在外部实例化一个内部类，理解为在一个类中开辟一个内部类内存空间
+         		User.child userChild = user.new child();
+         
          }
          ```
 
@@ -401,28 +463,18 @@
 1. Collection：Collection<String> collection = **new** ArrayList<>();
 
    1. 添加元素 ：  boolean add()  
-
    2. 删除元素：   boolean remove()     //这里**接受的是要删除的值**，而不是下标
-
    3. 返回当前集合中的元素个数：int size()
-
    4. 判断集合中是否有元素：boolean isEmpty()    //如果此 collection 不包含元素，则返回 true
-
    5. 是否含有某个对象：bollean contains().  //如果此 collection 包含指定的元素，则返回true
-
    6. 获取迭代器：iterator()
-
    7. 查询此集合是否包含宁外一个集合的所有元素：bollean containsAll() 接受一个集合参数
-
    8. 将其他集合的元素全部添加到本元素：bollean addAll(). //接受一个集合参数
-
    9. 删除本集合中的所有元素：boolean clear();                
-
    10. 从集合中删除宁外一个集合包含的所有元素：bollean removeall();//接受一个集合参数
-
    11. 从集合中删除宁外一个集合包**不含的**所有元素：bollean retainall();//接受一个集合参数
-
    12. 返回一个object 数组：toArray();
+   13. 
 
 
 

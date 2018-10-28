@@ -42,8 +42,16 @@
    1. 线程方式：fpm sudo pkill -INT -o php-fpm
    2. 安装的方法停止：brew services stop php@7.0
    3. 安装的方法启动：brew services start php@7.0
+   4. 重启：brew services restart php@7.0
 
-3. 拓展的安装：
+3. **配置/拓展**：
+
+   1. 在高版本的mac  brew版本中，**由于git上原homebrew/php已经停掉，新的均迁移到到brew/core上，因此之前的安装方法无法使用，请注意！！！！！**如果要使用brew安装拓展，要先配置命令：**brew tap kyslik/php** 
+   2. 安装拓展：brew install php71-mongodb 
+   3. 在 /usr/local/etc/php/ 对应的版本中添加相应的扩展
+   4. php -i | grep php.ini 查找**php.ini** 文件位置
+
+4. 拓展的安装：
 
    1. redis：
 
