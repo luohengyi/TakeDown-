@@ -174,6 +174,8 @@
     5. 删除下标s到e的字符：delete(start, end)；
     6. 替换一段字符：replace(start, end, str)；
     7. 字符反转：reverse();
+    8. indexOf(str);返回字符第一次出现的下标
+    9. lastIndexOf(str)；最后一个出现的位置
 
 12. **<u>：StringBuilder类</u>** 他是 **<u>StringBuffer 2倍类型</u>**
 
@@ -257,12 +259,50 @@
       2. floor();向下取整
       3. round();四舍五入
       4. 获取2个数之间的随机数，包含起点和终点：(**int**)(Math.*random*()*(end-start+1))+start;
+      5. max();获取2个数之间的较大数
+      6. min();获取2个数之间的较小数
+      7. pow(a, b);a的b次方。返回的是一个小数
+      8. sqrt(int a); 开方
+      9. 
 
-4. String
+4. 随机数
 
-5. Date
+   1. Random类
+      1. nextInt(int a); 返回一个0到a之间的随机数
 
-   1. 
+5. 系统类
+
+   1. system
+      1. gc();提醒系统进行垃圾回收，但是系统不会立刻回收
+      2. 复制数组：System.*arraycopy*(src, srcPos, dest, destPos, length);
+         1. src:来源数组
+         2. 来源数组起始位置
+         3. 目标数组
+         4. 目标数组起始位置
+         5. 复制来源数组的元素个数
+      3.  currentTimeMillis():
+         1. 返回以毫秒为单位的当前时间。
+         2. 1秒=1000毫秒，即1s=1000ms
+
+6. 超类
+
+   1. object
+
+      1. clone();可以实现对象的克隆，包括成员变量的数据复制，
+
+   2. 对象名 instanceof 类名
+
+      //表示：判断该对象名是否是该类名一个对象
+
+7. String
+
+8. Date
+
+   1. https://www.cnblogs.com/jxtx92/p/8005620.html
+
+9. BigInteger
+
+   1. 可以让超过Integer范围内的数据进行运算
 
 
 #### Package和import机制
