@@ -170,8 +170,12 @@
     1. 提供了一些字符串的复杂操作例如：字符反转,等等
     2. StringBuffer stringBuffer = **new** StringBuffer();
     3. 字符拼接：stringBuffer.append("a"); /**/他是 stringBuffer+=“a”的2千多倍**
+    4. 删除指定位置的字符：deleteCharAt(index);
+    5. 删除下标s到e的字符：delete(start, end)；
+    6. 替换一段字符：replace(start, end, str)；
+    7. 字符反转：reverse();
 
-12. **<u>StringBuilder类</u>** 他是 **<u>StringBuffer 2倍类型</u>**
+12. **<u>：StringBuilder类</u>** 他是 **<u>StringBuffer 2倍类型</u>**
 
     1. 拼接：
 
@@ -194,10 +198,10 @@
    4. 目标数组起始位置
    5. 复制来源数组的元素个数
 3. 数组比较：Arrays.equals(a, b);
-4. 数组排序：Arrays.*toString*(a)。//只能对数字类型的数组排序,无返回值
+4. 数组排序：Arrays.*sort*(a)。//只能对数字类型的数组排序,无返回值
 5. 查找数组：Arrays.binarySearch(cString, "b");   //数字类型的数组查找需要先排序否者可能不不准确
 6. 数组填充
-   1. Arrays.*fill*(a, 12); 一次只能填充一个值
+   1. Arrays.*fill*(a, 12); 将所有值变更为12
    2. a[0]=11;
 
 ###### 泛型  List ,ArrayList ,LinkedList
@@ -241,18 +245,25 @@
    4. scanner.nextLine(); 接受一行的输入
    5. scanner.hasNextXXX(); **判断用户有没有该类型的输入**
    6. scanner.close(); //关闭流，防止内存占用
+
 2. 包装类
    1. Integer
       1. Integer.*toBinaryString*(15); 进制转换
       2. Integer.*parseInt*(bString);转化为int
+
 3. 工具类
    1. Math
       1. cei();向上取整
       2. floor();向下取整
       3. round();四舍五入
       4. 获取2个数之间的随机数，包含起点和终点：(**int**)(Math.*random*()*(end-start+1))+start;
+
 4. String
+
+5. Date
+
    1. 
+
 
 #### Package和import机制
 
