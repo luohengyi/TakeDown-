@@ -527,6 +527,44 @@
    12. 返回一个object 数组：toArray();
    13. 
 
+##### 异常
+
+1. 异常的处理	
+
+   ```java
+   	try {
+   			
+   		} catch (Exception e) {
+   			// TODO: handle exception
+   			e.printStackTrace(); //将异常信息输出
+   			
+   		}
+   ```
+
+2. 异常的抛出
+
+   ```java
+   	public static void add() throws Exception {
+   	
+   		//在方法里将异常抛出，交给调用成处理
+   		
+   		throw new Exception("ads");
+   		
+   		//主动抛出异常
+   	}
+   
+   	try {
+   			add();  //在调用层做统一处理
+       } catch (Exception e) {
+   			// TODO Auto-generated catch block
+   			e.printStackTrace();
+       }
+   
+   ```
+
+3. 自定义异常类
+
+   1. 异常类必须继承于Exception类
 
 
 
