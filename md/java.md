@@ -20,17 +20,17 @@
 1. 通过码值循环0-9，a-z
 
 
-## 开始
+# 开始
 
 1. 主方法：如果需要解释器来直接执行一个java类必须要有一个main，并且必须使用<u>**public static**</u>来修饰man，且必须使用 void 来申明返回值，该方法的形产必须是一个<u>**字符串数组**</u>
 
-#### 语法
+## 语法
 
-##### 关键字
+### 关键字
 
 1. new：开辟内存空间，将内存空间指向对象，完成对象属性初始化
 
-##### 修饰符
+### 修饰符
 
 1. 默认修饰符：如果什么都不写那么方法只能在自己的类和同一个包中的类调用
 2. final
@@ -60,15 +60,15 @@
    1. 某个对象实例内，synchronized aMethod(){}可以防止多个线程同时访问这个对象的synchronized方法（如果一个对象有多个synchronized方法，只要一个线 程访问了其中的一个synchronized方法，其它线程不能同时访问这个对象中任何一个synchronized方法）。这时，不同的对象实例的 synchronized方法是不相干扰的。也就是说，其它线程照样可以同时访问相同类的另一个对象实例中的synchronized方法；
    2. 某个类的范围，synchronized static aStaticMethod{}防止多个线程同时访问这个类中的synchronized static 方法。它可以对类的所有对象实例起作用。
 
-#####  常量 final
+###  常量 final
 
 1. 使用 final定义常量 类型可是是数组和8个基本类型
 2. 常量不能修改通常是大写用于区别普通变量和常量
 3. 修饰类，方法，变量不可改变
 
-##### 变量
+### 变量
 
-###### 数据类型
+### 数据类型
 
 1. 浮点型，java中小数常量默认为double类型
    1. float 32位 无限制    （精度不高可能失真，末尾需要用f修饰且注意float是8位有效数字，第7位数字将会产生四舍五入,一般不用这个）**float** c =12.123f  
@@ -94,14 +94,14 @@
    2. 接口类型
    3. 数组类型
 
-###### 类型转换
+#### 类型转换
 
 1. 强制转换：只能同类型之间转化，不能 string=》int。
    1. char可以强转int，ascall对照表
 2. 字符转int：Integer.*parseInt*(bString)
 3. 转字符：String.valueOf(Object);
 
-##### 逻辑运算符
+#### 逻辑运算符
 
 1. ++a，a++
 
@@ -138,7 +138,7 @@
 
 
 
-##### 字符串 String
+#### 字符串 String
 
 1. 初始化字符串：String aString = "asdfg";
 
@@ -187,7 +187,7 @@
 
           ​		
 
-##### 数组 Arrays
+#### 数组 Arrays
 
 1. 定义数组
    1. int[] a= {1,2};
@@ -206,7 +206,7 @@
    1. Arrays.*fill*(a, 12); 将所有值变更为12
    2. a[0]=11;
 
-###### 泛型  List ,ArrayList ,LinkedList
+##### 泛型  List ,ArrayList ,LinkedList
 
 1. 初始化：ArrayList arrayList = **new** ArrayList(); 不指定类型，什么都可以装
 
@@ -234,7 +234,7 @@
       ```
 
 
-##### 分支结构
+#### 分支结构
 
 1. swicth语句可选择的类型只有五种 byte，int ,char, short,String
 
@@ -305,21 +305,21 @@
    1. 可以让超过Integer范围内的数据进行运算
 
 
-#### Package和import机制
+### Package和import机制
 
 1. 每个类有自己的类package地址如果调用不同包中的类，需要使用**import**倒入该类的package地址
 2. 如果不倒入，则需要new出完整地址如：**new** luohengyi.demo.Cs();
 
 
 
-#### 面向对象
+## 面向对象
 
-###### 成员变量：
+#### 成员变量：
 
 1. 静态成员变量
    1. 改变一个对象的静态成员变量，所有这一类的静态成员变量都会改变
 
-###### 继承： extends
+#### 继承： extends
 
 1. 关键字 extends 。在java中，只能继承1个父类
 2. 使用super调用父类的方法和属性
@@ -334,7 +334,7 @@
    3. 如果在默认构造器中调用了其他构造器，那么在执行之前会调用父类的构造方法
    4. 不管子类是否调用父类的构造器，系统都是自动的去调用父类的构造器，父类的构造器只能在子类的构造器中的第一行去调用,
 
-###### 接口：interface
+#### 接口：interface
 
 1. 定义接口<u>**（定义[规范越苏]和实现的分离）**</u>
 
@@ -348,7 +348,7 @@
    8. 接口只能定义静态,常量属性
    9. **接口没有构造器**
 
-###### 抽象：abstract:
+#### 抽象：abstract:
 
 1. 抽象方法，抽象类的定义：**public** **abstract**  （**<u>一类对象的模版</u>**）
 2. 一个类只能继承1个抽象类
@@ -356,14 +356,14 @@
 4. 抽象类可以有构造器，但不用于创建对象，是让子类调用这些构造器来完成属于抽象类的初始化操作
 5. 抽象方法必须在子类中实现
 
-###### 重写和重载：
+#### 重写和重载：
 
 1. **<u>重写</u>**：
    1. @Override  @Override
    2. 子类和父类同名的方法，排除父类private修饰，重写只针对可以被继承的方法.
 2. **<u>重载</u>**：同名方法，不同类型的形参数
 
-###### 多态
+#### 多态
 
 1. 强制多态：类型的自动转换：(向上转)
 
@@ -393,7 +393,7 @@
 
 3. 参数的多态：列如泛型
 
-###### 内部类
+#### 内部类
 
 1. 内部类类型：
    1. 成员内部类：	在外部类中定义个类,内部类可以直接访问外部类所有的成员
@@ -496,38 +496,92 @@
 
 4. 外部类不能访问内部类的细节
 
-###### 内存回收： Object=null;
+#### 内存回收： Object=null;
 
 1. 将对象值空，提醒系统回收这个对象
 
-#### 集合
-
-##### 类型
+## 集合
 
 1. Set：无序，不可重复
 2. list：有序，重复
 3. Map：有映射关系的集合
 4. Queue：jdk1.5后增加的一种集合体系
 
-##### 接口
+### Collection（接口） ：
 
-1. Collection：Collection<String> collection = **new** ArrayList<>();
+ Collection<String> collection = **new** ArrayList<>();
 
-   1. 添加元素 ：  boolean add()  
-   2. 删除元素：   boolean remove()     //这里**接受的是要删除的值**，而不是下标
-   3. 返回当前集合中的元素个数：int size()
-   4. 判断集合中是否有元素：boolean isEmpty()    //如果此 collection 不包含元素，则返回 true
-   5. 是否含有某个对象：bollean contains().  //如果此 collection 包含指定的元素，则返回true
-   6. 获取迭代器：iterator()
-   7. 查询此集合是否包含宁外一个集合的所有元素：bollean containsAll() 接受一个集合参数
-   8. 将其他集合的元素全部添加到本元素：bollean addAll(). //接受一个集合参数
-   9. 删除本集合中的所有元素：boolean clear();                
-   10. 从集合中删除宁外一个集合包含的所有元素：bollean removeall();//接受一个集合参数
-   11. 从集合中删除宁外一个集合包**不含的**所有元素：bollean retainall();//接受一个集合参数
-   12. 返回一个object 数组：toArray();
-   13. 
+1. 添加元素 ：  boolean add()  
+2. 删除元素：   boolean remove()     //这里**接受的是要删除的值**，而不是下标
+3. 返回当前集合中的元素个数：int size()
+4. 判断集合中是否有元素：boolean isEmpty()    //如果此 collection 不包含元素，则返回 true
+5. 是否含有某个对象：bollean contains().  //如果此 collection 包含指定的元素，则返回true
+6. 获取迭代器：iterator()
+7. 查询此集合是否包含宁外一个集合的所有元素：bollean containsAll() 接受一个集合参数
+8. 将其他集合的元素全部添加到本元素：bollean addAll(). //接受一个集合参数
+9. 删除本集合中的所有元素：boolean clear();                
+10. 从集合中删除宁外一个集合包含的所有元素：bollean removeall();//接受一个集合参数
+11. 从集合中删除宁外一个集合包**不含的**所有元素：bollean retainall();//接受一个集合参数
+12. 返回一个object 数组：toArray();
 
-##### 异常
+#### set（接口，无序不可重复）
+
+1. 一个不允许有相同元素的集合
+
+#### list（接口，有序可重复）
+
+1. add(index,value):在指定的位置添加元素。
+
+2. addAll(index,List):将集合list的所有元素添加到指定位置
+
+3. get(index):返回指定位置的元素
+
+4. ndexOf(O o ):返回o第一次出现的位置
+
+5. lastIndexOf(O o):返回o最后一次出现的位置
+
+6. remove(index):删除指定位置上的元素
+
+7. set(index,value):元素value替换指定位置index上的元素，并且返回旧的元素
+
+8.  迭代器的实现：
+
+   ```java
+    for (ListIterator iter = list.listIterator(1);iter.hasNext();) {
+   
+   		System.out.println(iter.next());
+   
+    }
+   ```
+
+
+##### ArrayList （读取数据）
+
+##### Vector（读取数据，线程安全）
+
+###### stack(先进后出)
+
+1. 后进入的数据在最上面，出栈从最上面出栈
+2. peek():返回第一个元素，最后进入的一个元素，但不会移除该元素
+3. pop():返回第一个元素并且移除
+4. push():将一个元素push进栈
+
+##### linkList（添加或删除数据）
+
+1. addFirst():将元素添加到首部
+2. addLast():将元素添加到尾部
+3. getFirst():获取第一个元素
+4. list.getLast()：返回尾部元素
+5. removeFirst():删除第一个
+6. removeLast():删除最后一个
+
+
+
+###### 
+
+
+
+#### 异常
 
 1. 异常的处理	
 
