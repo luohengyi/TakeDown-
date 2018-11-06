@@ -528,6 +528,55 @@
 
 1. 一个不允许有相同元素的集合
 
+##### hashset（无序不可重复）
+
+1. **无法直接单一查询，修改**但是可以通过迭代器去实现或者转化为其他集合类型，再转回来
+
+##### TreeSet（有序不重复集合）
+
+1. **无法直接单一查询，修改**但是可以通过迭代器去实现或者转化为其他集合类型，再转回来
+
+2. first():返回有序集合中的第一个元素
+
+3. last():返回最后一个元素
+
+4. subSet(A a,Zz):返回a到z之间的原属
+
+5. headSet(Aa):返回小于该元素的元素
+
+6. tailSet(Zz):返回所有大于该元素的元素
+
+7. 该集合的**元素必须实现comparator接口**用于自动排序
+
+8. 如果该元素已经有comparator接口了但是又不想用这个类，**可以使用Comparable接口**来初始化该集合
+
+   1. 例如一个string的集合自定义排序方式
+
+      ```java
+      public class Test  implements Comparator<String>{
+      
+      	@Override
+      	public int compare(String o1, String o2) {
+      		// TODO Auto-generated method stub
+      		return -1;
+      	}
+      	
+      	public static void main(String[] args) {
+      		
+      		 TreeSet<String> treeSet = new TreeSet(new Test());
+      		 
+      		 treeSet.add("a");
+      		 treeSet.add("b");
+      		 treeSet.add("c");
+      		 
+      		 System.out.println(treeSet);
+      		 
+      	}
+      
+      }
+      ```
+
+
 #### list（接口，有序可重复）
 
 1. add(index,value):在指定的位置添加元素。
@@ -575,13 +624,103 @@
 5. removeFirst():删除第一个
 6. removeLast():删除最后一个
 
+### Map
+
+1. put(k,v):添加元素 //如果后面的键名和前面的键名相同会覆盖之前的值
+
+2. remove(k):删除key的映射
+
+3. putAll(map);将宁外一个映射集合所有元素添加到本元素
+
+4. clear();删除本集合所有映射
+
+5. get(key);获取键名key映射的值
+
+6. replace(arg0, arg1);修改值
+
+7. containsKey(key);判断集合中键名是否存在
+
+8. containsValue(v);判断值是否存在
+
+9. size();返回当前映射大小
+
+10. isEmpty();判断本集合是否为空
+
+11. keySet();返回所有的key
+
+12. values();返回所有value
+
+13. entrySet();返回键值对的映射视图
+
+    1. getKey();获取该对象的值
+    2. getValue();获取该对象的值
+    3. setValue();修改值,该方法会修改源集合
+
+    ```java
+    //迭代器的使用
+    TreeMap<Integer, Integer> map = new TreeMap<>();
+    
+    map.put(2, 3);
+    
+    for (Entry<Integer, Integer> entry : map.entrySet()) {
+    	System.out.println(entry);
+    }
+    
+    ```
 
 
-###### 
+#### HashMap（无序唯一）
+
+#### Hashtable (线程安全)
 
 
 
-#### 异常
+#### TreeMap
+
+1. Comparator();返回比较器
+2. firstKey();返回此映射中当前第一个（最低）键。
+3. lastKey();返回映射中当前最后一个（最高）键。
+4. subMap(fromKey, toKey);返回此映射的部分视图，其键值的范围从 fromKey（包括）到 toKey（不包括）
+5. headMap(toKey);返回一个视图其键值严格小于 toKey
+6. tailMap(fromKey);返回一个视图其键值严格大于 toKey
+
+## 泛型
+
+1. 将方法参数的类型参数化，正价方法的使用性
+
+   ```java
+   public static void main(String[] args) {
+   
+   		Integer[] integers = { 1, 23, 4 };
+   		String[] strings = { "asd", "asad", "aasdas" };
+   		name(integers);
+   		name(strings);
+   	}
+   
+   	public static <E> void name(E[] name) {
+   		for (E e : name) {
+   			System.out.println(e);
+   		}
+   	}
+   ```
+
+2. 将类属性的类型参数化
+
+   ```java
+   public class Test<E> {
+   
+   	public E a;
+   
+   	public static void main(String[] args) {
+   
+   		Test<Integer> test = new Test<>();
+   	}
+   
+   }
+   ```
+
+
+## 异常
 
 1. 异常的处理	
 
@@ -619,6 +758,126 @@
 3. 自定义异常类
 
    1. 异常类必须继承于Exception类
+
+## I/O文件
+
+
+
+### File(文件操作)
+
+1. File('pash');  构造参数必须传入一个文件位置
+   1. 为了系统的可移植行，系统路径符号 ‘ : ’ 使用静态常量：**pathSeparator**
+   2. 为了系统的可移植行，系统路**径符号 ‘ / ’ 使用静态**常量：**separator**
+2. delete();  删除当前文件
+3. createNewFile();  创建一个新的文件，当目前文件不存在时
+4. exists();判断当前文件是否存在
+5. isDirectory();判断当前文件是否是一个目录
+6. length();返回当前文件的大小
+7. list();返回目录下的内容，**只有名称是一个string数组**
+8. listFiles();返回目录下的内容，所有内容**都有路径是一个file数组**
+9. mkdir();创建一个目录
+10. renameTo();重新命名此抽象路径名表示的文件。
+
+### BufferedReader(控制台读取数据)
+
+```java
+初始化输入流，从控制台输入文字
+BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+```
+
+1. read();读取单个字符
+2. readLine(); 读取一行字符
+3. close();关闭输入流
+
+### FileInputStream(字节输入流)
+
+1. **<u>以流的方式读取文件</u>**
+
+2. available();返回剩余可读取的字节数
+
+3. read();读取单个字符
+
+   1. read(byte[] b)    从此输入流中将最多 `b.length` 个字节的数据读入一个 byte 数组中
+
+   2. ```java
+      byte[] b= new byte[10];
+      fileInputStream.read(b);
+      for (byte c : b) {
+      	System.out.println((char)c);
+      }
+      ```
+
+#### InputStreamReader(字符输入流)
+
+1. ready();判断是否能读取，如果其输入缓冲区不为空，或者可从底层字节流读取字节，则 InputStreamReader 已做好被读取准备。
+
+2. read()；读取单个字符。
+
+   ```java
+   File file = new File("res/cs.txt");
+   		
+   FileInputStream fileInputStream = new FileInputStream(file);
+   
+   InputStreamReader reader = new InputStreamReader(fileInputStream);
+   
+   StringBuffer stringBuffer = new StringBuffer();
+   
+   while (reader.ready()) {
+       stringBuffer.append((char)reader.read());  //因为是读取单个字符所以这里转化为char
+   }
+   
+   		
+   System.out.println(stringBuffer);
+   ```
+
+
+### FileOutputStream（字节输出流）
+
+1. write(65); 将指定字节写入此文件输出流
+2. write(**new** **byte**[] {64,64,65});将数组逐个写入
+3. 如果文件不存在会创建一个文件
+
+#### OutputStreamWriter(字符输出流)
+
+1. append("沙发上发呆的事");将字符添加到写入流
+
+2. flush();执行写入
+
+   ```java
+   File file = new File("res/cs.txt");
+   
+   FileOutputStream fileOutputStream = new FileOutputStream(file);
+   
+   OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream,"UTF-8");   //此处指定写入编码，如果不指定将使用系统默认的编码
+   
+   outputStreamWriter.append("沙发上发呆的事");
+   
+   outputStreamWriter.flush();
+   ```
+
+### 文件复制
+
+```java
+File file = new File("res/11541492177_.pic.jpg");
+		
+FileInputStream fileInputStream = new FileInputStream(file);
+
+FileOutputStream fileOutputStream = new FileOutputStream("res/11pic.jpg");
+
+byte [] bs=new byte[1024];  //一次读取1024字节
+
+while (fileInputStream.read(bs)!=-1) {
+	fileOutputStream.write(bs);
+}
+```
+
+
+
+### RandomAccessFile(随机访问/速度较快)
+
+
+
+## AWT
 
 
 
