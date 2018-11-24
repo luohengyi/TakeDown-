@@ -51,7 +51,7 @@
       3. 关闭流:    outputStream.close();
       4. ObjectInputStream in = **new** ObjectInputStream(**new** FileInputStream("/Users/luohengyi/cs/cs.obj"));​	
       5. 获取输入流：Cs cs =(Cs)in.readObject();
-      6. 总结:被序列化的类必须实现**<u>serializable</u>**接口， transien修饰的字段在写入时会被忽略，<u>**这个序列机制是否是可以像php一样做一些配置功能呢？**</u>
+      6. 总结:被序列化的类必须**<u>实现serializable</u>**接口， transien修饰的字段在写入时会被忽略，<u>**这个序列机制是否是可以像php一样做一些配置功能呢？**</u>
 8. volatile:（只能修饰变量）当有多个线程在调用这个变量时，某一个线程更新数据后，确保每个线程数据同步
 9. abstract: 抽象方法，和抽象类的定义
    1. 一个类只能继承1个抽象类
@@ -65,6 +65,7 @@
 1. 使用 final定义常量 类型可是是数组和8个基本类型
 2. 常量不能修改通常是大写用于区别普通变量和常量
 3. 修饰类，方法，变量不可改变
+4. 方法参数中修饰参数，再该方法中不能修改该方法的引用
 
 ### 变量
 
@@ -165,27 +166,86 @@
 
 10. 返回常量池的地址引用：intern()
 
-11. **<u>StringBuffer类：</u>**他是String的2000多倍的性能，**安全高于StringBuilder**
+##### StringBuffer
 
-    1. 提供了一些字符串的复杂操作例如：字符反转,等等
-    2. StringBuffer stringBuffer = **new** StringBuffer();
-    3. 字符拼接：stringBuffer.append("a"); /**/他是 stringBuffer+=“a”的2千多倍**
-    4. 删除指定位置的字符：deleteCharAt(index);
-    5. 删除下标s到e的字符：delete(start, end)；
-    6. 替换一段字符：replace(start, end, str)；
-    7. 字符反转：reverse();
-    8. indexOf(str);返回字符第一次出现的下标
-    9. lastIndexOf(str)；最后一个出现的位置
+1. 类**他是String的2000多倍的性能，**安全高于StringBuilder**
+2. 提供了一些字符串的复杂操作例如：字符反转,等等
+3. StringBuffer stringBuffer = **new** StringBuffer();
+4. 字符拼接：stringBuffer.append("a"); /**/他是 stringBuffer+=“a”的2千多倍**
+5. 删除指定位置的字符：deleteCharAt(index);
+6. 删除下标s到e的字符：delete(start, end)；
+7. 指定位置添加字符：insert(int,String);
+8. 替换一段字符：replace(start, end, str)；
+9. 字符反转：reverse();
+10. indexOf(str);返回字符第一次出现的下标
+11. lastIndexOf(str)；最后一个出现的位置
 
-12. **<u>：StringBuilder类</u>** 他是 **<u>StringBuffer 2倍类型</u>**
+##### StringBuilder类
 
-    1. 拼接：
+1. 他是StringBuffer 2倍类型
+2. 拼接：
+   1. StringBuilder stringBuilder = **new** StringBuilder();
+   2. stringBuilder.append("a");
 
-       1. StringBuilder stringBuilder = **new** StringBuilder();
+##### 正则
 
-       2. stringBuilder.append("a");
+1. 规则：
 
-          ​		
+   1. \ \代表1个\
+
+   2. \ n 换行
+
+   3. \ r 回车
+
+   4. [abc] ：abc中的一个
+
+   5. [^abc] : 除了abc之外的字符
+
+   6. [a-zA-z] : a到z A-Z
+
+   7. [0-9] : 0到9
+
+   8. [a-z_0-9] a到z 或者0到9
+
+   9. . ：任何字符
+
+   10. \d 数字 0-9
+
+   11. \w  ：[a-zA-z_0-9]
+
+   12. `*`   至少0位字符
+
+   13. ?  一次，或者1次也没有
+
+   14. `+` 至少1位
+
+   15. {n} 恰好n次
+
+   16. {n,}至少n次
+
+   17. {n,m}至少n次，但不超过m次
+
+   18. ?!非。 例如  [?!0-9]不是数字
+
+   19. 特殊字符的转意
+
+       ```java
+       "192,168.23.4".split("\\.")  //根据.分割字符
+       ```
+
+2. String.matches(regex);   Boole 是否满足该正则表达式
+
+3. String.split();根据规则拆分字符位数组
+
+   1. ```java
+      "123a".split("2")  //[1, 3a]
+      ```
+
+4. replaceAll(regex, replacement); 将regex匹配到的字符替换成replacement
+
+5. 
+
+​		
 
 #### 数组 Arrays
 
@@ -280,9 +340,10 @@
          3. 目标数组
          4. 目标数组起始位置
          5. 复制来源数组的元素个数
-      3.  currentTimeMillis():
+      3. currentTimeMillis():
          1. 返回以毫秒为单位的当前时间。
          2. 1秒=1000毫秒，即1s=1000ms
+      4. System.*getProperty*("user.dir") ;获取项目目录
 
 6. 超类
 
@@ -296,13 +357,30 @@
 
 7. String
 
-8. Date
+#### Date(时间处理)
 
-   1. https://www.cnblogs.com/jxtx92/p/8005620.html
+1. https://www.cnblogs.com/jxtx92/p/8005620.html
 
-9. BigInteger
+2. 初始化格式类： **new** SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-   1. 可以让超过Integer范围内的数据进行运算
+3. 获取格式化时间：simpleDateFormat.format(Date date);
+
+4. String 和毫秒转化
+
+   ```java
+   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");  //首先要定义这个格式时间的格式
+   		
+   Calendar calendar = Calendar.getInstance();
+   
+   calendar.setTime(simpleDateFormat.parse("2012-3-4"));  //设置日历类的时间
+   
+   calendar.getTimeInMillis()  //获取毫秒时间
+   ```
+
+
+#### BigInteger(大型数字处理)
+
+1. 可以让超过Integer范围内的数据进行运算
 
 
 ### Package和import机制
@@ -333,6 +411,8 @@
    2. **并且在调用this(),方法之前不能有其他任何代码**
    3. 如果在默认构造器中调用了其他构造器，那么在执行之前会调用父类的构造方法
    4. 不管子类是否调用父类的构造器，系统都是自动的去调用父类的构造器，父类的构造器只能在子类的构造器中的第一行去调用,
+   5. **在父类构造函数内部调用具有多态行为的函数将导致无法预测的结果**，因为此时子类对象还没初始化，此时调用子类方法不会得到我们想要的结果。因为此时子类对象还没有初始化，如果此时调用了子类的方法，此时调用子类方法不会得到我们想要的结果。
+   6. 编写构造器的准则：**用尽可能的方法使对象进入正常状态，如果可以的话避免调用其他方法**，否者**尽可能地将这些方法定义为 private或final**，因为他们不能被重写
 
 #### 接口：interface
 
@@ -361,7 +441,14 @@
 1. **<u>重写</u>**：
    1. @Override  @Override
    2. 子类和父类同名的方法，排除父类private修饰，重写只针对可以被继承的方法.
+   3. 在se5之前重写的方法返回值必须和父类的一样，**在se5中允许返回父方法返回类型的子类**
 2. **<u>重载</u>**：同名方法，不同类型的形参数
+
+#### 绑定（一个方法的调用和这个方法所在的类联系起来）
+
+1. 静态绑定（final,static,private）在程序执行前就会绑定，也就是说程序编译过程中就已经知道这个方法属于那个类
+2. 动态绑定：除了（final,static,private）的方法都是动态绑定，Java的编译器并不知道你调用的方法属于那个类，在调用数再去查找，查找的方式是：x的实际类型是d，他是c的子类，如果d定义了一个方法f(String),就直接调用它，否者就会去d的超类中寻找f(String)，以此类推
+3. 每次调用法法都会去进行搜索。时间开销很大，所以虚拟机预先给每个类创建了一个方法表，其中列出了所有方法的签名和实际调用的方法，在调用方法时，就去查找这个表
 
 #### 多态
 
@@ -512,17 +599,47 @@
  Collection<String> collection = **new** ArrayList<>();
 
 1. 添加元素 ：  boolean add()  
+
 2. 删除元素：   boolean remove()     //这里**接受的是要删除的值**，而不是下标
+
 3. 返回当前集合中的元素个数：int size()
+
 4. 判断集合中是否有元素：boolean isEmpty()    //如果此 collection 不包含元素，则返回 true
+
 5. 是否含有某个对象：bollean contains().  //如果此 collection 包含指定的元素，则返回true
+
 6. 获取迭代器：iterator()
+
 7. 查询此集合是否包含宁外一个集合的所有元素：bollean containsAll() 接受一个集合参数
+
 8. 将其他集合的元素全部添加到本元素：bollean addAll(). //接受一个集合参数
+
 9. 删除本集合中的所有元素：boolean clear();                
+
 10. 从集合中删除宁外一个集合包含的所有元素：bollean removeall();//接受一个集合参数
+
 11. 从集合中删除宁外一个集合包**不含的**所有元素：bollean retainall();//接受一个集合参数
+
 12. 返回一个object 数组：toArray();
+
+13. 静态成员方法
+
+    1. sort(Liset list);根据元素的自然排序顺序，对指定的集合进行排序
+
+    2. sort(Liset list,Comparator c);  更具比较器进行排序如图：
+
+       1. ```java
+          Collections.sort(new ArrayList<>(), new Comparator<Integer>() {
+          
+              @Override
+              public int compare(Integer o1, Integer o2) {
+                  // TODO Auto-generated method stub
+                  return 0;
+              }
+          });
+          ```
+
+    3. 
 
 #### set（接口，无序不可重复）
 
@@ -577,7 +694,7 @@
       ```
 
 
-#### list（接口，有序可重复）
+#### list（接口，有序可重复,删除元素后，下标会前移）
 
 1. add(index,value):在指定的位置添加元素。
 
@@ -759,7 +876,7 @@
 
    1. 异常类必须继承于Exception类
 
-## I/O文件
+## I/O文件（文件读取单位最佳为4k或4k的倍数）
 
 
 
@@ -768,26 +885,33 @@
 1. File('pash');  构造参数必须传入一个文件位置
    1. 为了系统的可移植行，系统路径符号 ‘ : ’ 使用静态常量：**pathSeparator**
    2. 为了系统的可移植行，系统路**径符号 ‘ / ’ 使用静态**常量：**separator**
-2. delete();  删除当前文件
+2. delete();  删除当前文件，如果是目录，该目录必须为空才能
 3. createNewFile();  创建一个新的文件，当目前文件不存在时
 4. exists();判断当前文件是否存在
 5. isDirectory();判断当前文件是否是一个目录
-6. length();返回当前文件的大小
-7. list();返回目录下的内容，**只有名称是一个string数组**
-8. listFiles();返回目录下的内容，所有内容**都有路径是一个file数组**
-9. mkdir();创建一个目录
-10. renameTo();重新命名此抽象路径名表示的文件。
+6. isFile();是否是一个文件
+7. length();返回当前文件的大小
+8. list();返回目录下的内容，**只有名称是一个string数组**
+9. listFiles();返回目录下的内容，所有内容**都有路径是一个file数组**
+10. mkdir();创建一个目录
+11. mkdirs();创建多个目录，多级目录的情况
+12. renameTo();重新命名此抽象路径名表示的文件。
+13. deleteOnExit(); 文件当时不会删除，但是程序退出时会自动删除，**用于创建临时文件**
+14. lastModified();最后一次修改时间
+15. setLastModified();设置最后修改时间
+16. file.getPath(); 获取文件路径
+17. getAbsolutePath(); 获取绝对路径
+18. isHidden();是否是隐藏文件
+19. getParentFile();获取上层路径
+20. 查看权限
+    1. canWrite();
+    2. canExecute();
+    3. canRead();
+21. 修改选项
+    1. setReadOnly();只读
+    2. 
 
-### BufferedReader(控制台读取数据)
 
-```java
-初始化输入流，从控制台输入文字
-BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-```
-
-1. read();读取单个字符
-2. readLine(); 读取一行字符
-3. close();关闭输入流
 
 ### FileInputStream(字节输入流)
 
@@ -807,7 +931,7 @@ BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.
       }
       ```
 
-#### InputStreamReader(字符输入流)
+#### InputStreamReader(字符输入流,读取指定的字符集)
 
 1. ready();判断是否能读取，如果其输入缓冲区不为空，或者可从底层字节流读取字节，则 InputStreamReader 已做好被读取准备。
 
@@ -830,14 +954,19 @@ BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.
    System.out.println(stringBuffer);
    ```
 
+##### BufferedReader(缓冲字符流输入)
 
-### FileOutputStream（字节输出流）
+#### BufferedInputStream(缓冲输入字节流)
+
+1. 该流争对字符输入流做了缓冲封装，性能跟高
+
+### FileOutputStream（字节输出流，追加模式）
 
 1. write(65); 将指定字节写入此文件输出流
 2. write(**new** **byte**[] {64,64,65});将数组逐个写入
 3. 如果文件不存在会创建一个文件
 
-#### OutputStreamWriter(字符输出流)
+#### OutputStreamWriter(字符输出流，写入指定的字符集)
 
 1. append("沙发上发呆的事");将字符添加到写入流
 
@@ -855,7 +984,62 @@ BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.
    outputStreamWriter.flush();
    ```
 
-### 文件复制
+##### BufferedWriter (缓冲字符输出)
+
+#### BufferedOutputStream(缓冲输出字节流)
+
+1. 该流争对字符输出流做了缓冲封装，性能跟高
+
+### 字符流（针对存文本文件的操作）
+
+#### FileReader （输入）
+
+1. read();可以直接读取字符（中文）
+
+##### BufferedReader(缓冲字符流输入)
+
+```java
+初始化输入流，从控制台输入文字
+BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+```
+
+1. read();读取单个字符
+2. readLine(); 读取一行字符
+3. close();关闭输入流
+
+##### LineNumberReader（行号装饰类）
+
+1. readLine();读取文本行
+2. getLineNumber();获取行号
+
+#### FileWriter （输出,追加模式）
+
+1. **new** FileWriter("res/zifu.txt",**true**); 构**造方法，第二个为true，为追加**数据
+2. write("asdasd");  写入缓冲区
+3. flush();写入文件
+4. close();关闭流
+
+##### BufferedWriter (缓冲字符输出)
+
+1. append(String);
+2. flush();将缓冲区写入文件
+3. write(str);直接将字符写入文件
+
+### 内存操作流
+
+### 数据操作流
+
+### 合并流（将2个文件内容合并）
+
+### 压缩流
+
+### 回退流（逆向读取）
+
+### 对象流（将对象写入到文件）
+
+### 新增i/o内存映射，快速，但是大文件耗内存
+
+### 文件复制原理
 
 ```java
 File file = new File("res/11541492177_.pic.jpg");
@@ -864,20 +1048,78 @@ FileInputStream fileInputStream = new FileInputStream(file);
 
 FileOutputStream fileOutputStream = new FileOutputStream("res/11pic.jpg");
 
-byte [] bs=new byte[1024];  //一次读取1024字节
+byte [] bs=new byte[1024];  //一次读取1024字节，最好一次读4k，硬盘最低每次读取4k，少于4k的也会消耗4k的资源
 
 while (fileInputStream.read(bs)!=-1) {
 	fileOutputStream.write(bs);
 }
 ```
 
+### 
 
+## 设计模式
 
-### RandomAccessFile(随机访问/速度较快)
+### 装饰设计模式
 
+1. 将已有对象传入，基于已有的方法对其增强
 
+### 代理设计模式
+
+1. 调用的方法其实由第三方的类的方法去执行，但是**客户端程序员不知道这个第三方的类的存在**，这是与装饰类的本质区别
+
+### 工厂模式
+
+1. 它是一个具体的类，非接口 抽象类。有一个重要的create()方法，利用if或者 switch创建产品并返回。
+2. create()方法通常是静态的，所以也称之为静态工厂。
+3. 扩展性差
+4. 不同的产品需要不同额外参数的时候 不支持。
+5. 作用场景
+   1. 消费者不关心它所要创建对象的类(产品类)的时候。
+   2. 消费者知道它所要创建对象的类(产品类)，但不关心如何创建的时候。
+   3. 对象的创建过程/实例化准备工作很复杂，需要初始化很多参数、查询数据库等。
+   4. 类本身有好多子类，这些类的创建过程在业务中容易发生改变，或者对类的调用容易发生改变。
 
 ## AWT
+
+### Frame
+
+1. setBounds();设置窗口大小位置
+
+2. setVisible();设置可见性
+
+3. setLayout();设置布局器。 //FlowLayout
+
+   ```java
+   setLayout(new BorderLayout());
+   add(new TextField("1"),BorderLayout.CENTER); c
+   add(new TextField("asdad"),BorderLayout.NORTH); n
+   add(new TextField("asdad"),BorderLayout.SOUTH); s
+   add(new TextField("asdad"),BorderLayout.WEST);w
+   add(new TextField("asdad"),BorderLayout.EAST);e
+   
+   ```
+
+
+#### Panel(容器)
+
+1. 相当于一个div块
+2. 可以使用add向里面添加组建
+
+#### ScrollPane(带滚动条的容器)
+
+1. 构造参数指定是否总是带滚动条
+
+#### FlowLayout(布局)
+
+1. 管理对齐方式
+
+#### BorderLayout(上下左右中)
+
+#### GridLayout(网格布局)
+
+#### 
+
+
 
 
 
