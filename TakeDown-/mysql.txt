@@ -1,4 +1,4 @@
-表结构操作：
+﻿表结构操作：
 1.修改表名：ALTER TABLE 旧表名 RENAME 新表名;
   实例：alter table userinfo rename userinfomation;
 2.修改字段数据类型：格式：ALTER TABLE 表名 MODIFY 属性名 数据类型;
@@ -32,7 +32,7 @@
 2.create trigger  触发器名 触发时间(before,agter)  触发事件(insert,delete,update) on 表名 for each row
   Begin
 
-//触发器执行的sql
+   //触发器执行的sql
     new //新插入数据
     Old //旧的数据
     Set new.id=xx//可以通过set修改新插入的数据
