@@ -23,8 +23,24 @@
 6.函数exists(子查询) 例如：select * from user where exists(select id from user where id=1);
 7.分组条件：having 例:select sum(number) from user group by name having sum(number) >200;
 8.备份文件：mysqldump -uroot -proot -p database user > D:xx\xx\x\user.sql. #也可以不加表名，直接倒出数据库
-9.倒入文件：use database
+9.导入文件：use database
 	  source D:/xx/xx/x/user.sql;
+10.复制一个表结构： create table t2 like t1 ;  建立t2表结构和t1相同
+
+触发器：
+1.作用于数据表，在对应事件发生时，触发对应的事件
+2.create trigger  触发器名 触发时间(before,agter)  触发事件(insert,delete,update) on 表名 for each row
+  Begin
+
+//触发器执行的sql
+    new //新插入数据
+    Old //旧的数据
+    Set new.id=xx//可以通过set修改新插入的数据
+  end
+3.查看触发器：show TRIGGERS
+4.删除触发器：DROP TRIGGER name
+5.
+
 
 
 函数：

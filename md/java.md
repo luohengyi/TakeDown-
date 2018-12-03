@@ -649,7 +649,7 @@
 
 1. **无法直接单一查询，修改**但是可以通过迭代器去实现或者转化为其他集合类型，再转回来
 
-##### TreeSet（有序不重复集合）
+##### TreeSet（有序不重复集合，comparable）
 
 1. **无法直接单一查询，修改**但是可以通过迭代器去实现或者转化为其他集合类型，再转回来
 
@@ -792,7 +792,7 @@
 
 
 
-#### TreeMap
+#### TreeMap（comparable）
 
 1. Comparator();返回比较器
 2. firstKey();返回此映射中当前第一个（最低）键。
@@ -1055,7 +1055,13 @@ while (fileInputStream.read(bs)!=-1) {
 }
 ```
 
-### 
+##JDBC
+
+
+
+
+
+
 
 ## 设计模式
 
@@ -1078,6 +1084,84 @@ while (fileInputStream.read(bs)!=-1) {
    2. 消费者知道它所要创建对象的类(产品类)，但不关心如何创建的时候。
    3. 对象的创建过程/实例化准备工作很复杂，需要初始化很多参数、查询数据库等。
    4. 类本身有好多子类，这些类的创建过程在业务中容易发生改变，或者对类的调用容易发生改变。
+
+### 策略模式
+
+1. **意图：**定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。
+
+2. **主要解决：**在有多种算法相似的情况下，使用 if...else 所带来的复杂和难以维护。
+
+3. **何时使用：**一个系统有许多许多类，而区分它们的只是他们直接的行为。
+
+4. **如何解决：**将这些算法封装成一个一个的类，任意地替换。
+
+5. **关键代码：**实现同一个接口。
+
+6. **<u>缺点</u>**：你需要知道所有的车略类
+
+7. 概括：将方法作用与类，这里接口的作用也是约束类被调用时的关系，<u>客户端程序员，只需要关注类的作用，而不再关注该类的方法</u>
+
+8. **应用实例：** 1、诸葛亮的锦囊妙计，每一个锦囊就是一个策略。 2、旅行的出游方式，选择骑自行车、坐汽车，每一种旅行方式都是一个策略。 
+
+9. ```java
+   public interface Strategy {
+      public int doOperation(int num1, int num2); //策略方法的定义
+   }
+   
+   //策略1
+   public class OperationAdd implements Strategy{
+      @Override
+      public int doOperation(int num1, int num2) {
+         return num1 + num2;
+      }
+   }
+   //策略2
+   public class OperationSubstract implements Strategy{
+      @Override
+      public int doOperation(int num1, int num2) {
+         return num1 - num2;
+      }
+   }
+   //策略3
+   public class OperationMultiply implements Strategy{
+      @Override
+      public int doOperation(int num1, int num2) {
+         return num1 * num2;
+      }
+   }
+   
+   //应用场景
+   public class Context {
+      private Strategy strategy;   //该场景使用哪一种策略算法
+    
+      public Context(Strategy strategy){
+         this.strategy = strategy;
+      }
+    
+      public int executeStrategy(int num1, int num2){
+         return strategy.doOperation(num1, num2);
+      }
+   }
+   
+    //根据不同的场景使用不同的车略
+   public class StrategyPatternDemo {
+      public static void main(String[] args) {
+         Context context = new Context(new OperationAdd());    
+         System.out.println("10 + 5 = " + context.executeStrategy(10, 5)); //场景1  new OperationAdd()
+    
+         context = new Context(new OperationSubstract());      
+         System.out.println("10 - 5 = " + context.executeStrategy(10, 5));  //场景2  new OperationAdd()
+    
+         context = new Context(new OperationMultiply());    
+         System.out.println("10 * 5 = " + context.executeStrategy(10, 5));  //场景3  new OperationAdd()
+      }
+   }
+   
+   
+   ```
+
+
+
 
 ## AWT
 

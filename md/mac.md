@@ -32,6 +32,8 @@
    1. ifconfig 看一下要启的网卡 一般以 en开头三位。
       sudo ifconfig en* down #停。
       sudo ifconfig en* up #启
+6. 解压：
+   1. 7z：7z x xxxx.7z
 
 #### php
 
