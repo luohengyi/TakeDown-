@@ -1055,9 +1055,32 @@ while (fileInputStream.read(bs)!=-1) {
 }
 ```
 
-##JDBC
+## JDBC
 
+1. 加载驱动：
 
+   1. 5.0的jar包：Class.forName("com.mysql.jdbc.Driver");
+   2. 8.0以后的jar包：Class.forName("com.mysql.cj.jdbc.Driver");或者不用加载jar驱动也可以，系统自动加载
+
+2. Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test?serverTimezone=GMT", "root", "root"); 
+
+   1.  //建立链接 url格式：JDBC:子协议:子名称//主机名:端口/数据库名？属性名=属性值&…
+
+3. PreparedStatement pStatement = connection.prepareStatement("select * from cs where id>?");
+
+   1.   //创建一个sql语句管理器
+
+4. ResultSet resultSet =pStatement.executeQuery();;//执行一个查询
+
+5. 结果集
+
+   ```
+   while (resultSet.next()) {
+   	System.out.println(resultSet.getInt("id"));
+    }
+   ```
+
+   ​			
 
 
 
