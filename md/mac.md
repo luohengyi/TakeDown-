@@ -34,6 +34,7 @@
       sudo ifconfig en* up #启
 6. 解压：
    1. 7z：7z x xxxx.7z
+   2. unrar. x xx.rar
 
 #### php
 

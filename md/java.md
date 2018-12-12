@@ -179,6 +179,7 @@
 9. 字符反转：reverse();
 10. indexOf(str);返回字符第一次出现的下标
 11. lastIndexOf(str)；最后一个出现的位置
+12. setLength(int);设置字符串长度，如果为0会清空字符串
 
 ##### StringBuilder类
 
@@ -381,6 +382,44 @@
 #### BigInteger(大型数字处理)
 
 1. 可以让超过Integer范围内的数据进行运算
+
+#### Properties（读取配置文件）
+
+1. load(inputStream);  从一个流中读取配置文件，从输入流中读取属性列表（键和元素对
+
+2. getProperty(string); 读取指定的键
+
+3. ```java
+   //读取database数据库配置，将res文件夹添加到编译列表中
+   static {
+   		
+   		InputStream inputStream =  Model.class.getClassLoader().getResourceAsStream("database.properties");
+   	
+   		//按简单的 XML 格式加载和存储属性
+   		Properties properties = new Properties();
+   		try {
+   			properties.load(inputStream);
+   			//获取参数
+   			driver = properties.getProperty("driver");
+   			url=properties.getProperty("url");
+   			userName=properties.getProperty("userName");
+   			password=properties.getProperty("password");
+   		} catch (IOException e) {
+   			// TODO Auto-generated catch block
+   			e.printStackTrace();
+   		}finally {
+   			try {
+   				inputStream.close();
+   			} catch (IOException e) {
+   				// TODO Auto-generated catch block
+   				e.printStackTrace();
+   			}
+   		}
+   		
+   	
+   	}
+   ```
+
 
 
 ### Package和import机制
@@ -645,7 +684,7 @@
 
 1. 一个不允许有相同元素的集合
 
-##### hashset（无序不可重复）
+##### hashset（无序,不可重复,无法保证写入顺序和读取顺序一致）
 
 1. **无法直接单一查询，修改**但是可以通过迭代器去实现或者转化为其他集合类型，再转回来
 
@@ -1069,23 +1108,76 @@ while (fileInputStream.read(bs)!=-1) {
 3. PreparedStatement pStatement = connection.prepareStatement("select * from cs where id>?");
 
    1.   //创建一个sql语句管理器
+   2.   **获取插入数据的主键值**：PreparedStatement pStatement = connection.prepareStatement("sql",Statement.**RETURN_GENERATED_KEYS**);
 
-4. ResultSet resultSet =pStatement.executeQuery();;//执行一个查询
+4. ResultSet resultSet =pStatement.executeQuery(); 
+
+   1. //执行一个查询
+
+   2. executeUpdate();执行一个数据操作
+
+   3. execute();执行一个sql;
+
+   4. **获取返回的主键值**：pStatement.getGeneratedKeys()
+
+   5. **批处理**
+
+      1. 增加链接参数：rewriteBatchedStatements=true
+
+      2. ```java
+         for (int i = 0; i < 10000; i++) {
+         				pStatement.setString(1, "23");
+         				pStatement.setString(2, "2321s3");
+         				pStatement.addBatch();
+         				if (i % 100 == 0) {//一班不要超过几万，一般几千合适
+         					pStatement.executeBatch(); //将sql存入
+         				}
+         			}
+         pStatement.executeBatch();//一次性执行所有的sql
+         ```
+
+   6. 事物的处理
+
+      1. 开启事物：connection.setAutoCommit(**false**);
+      2. 提交事物：connection.commit();
+      3. 回滚事物：connection.rollback();
 
 5. 结果集
 
-   ```
+   ```java
    while (resultSet.next()) {
-   	System.out.println(resultSet.getInt("id"));
+   	System.out.println(resultSet.getInt("id"));  //通过下表获取
+       System.out.println(resultSet.getInt(1));  //通过
+       
     }
    ```
 
-   ​			
+6. 关闭连接
 
-
-
-
-
+7. ```java
+    try {
+           rSet.close();
+       
+       } catch (SQLException e) {
+           // TODO Auto-generated catch block
+           e.printStackTrace();
+       }finally {
+           try {
+               pStatement.close();
+           } catch (SQLException e) {
+               // TODO Auto-generated catch block
+               e.printStackTrace();
+           }finally {
+               try {
+                   connection.close();
+               } catch (SQLException e) {
+                   // TODO Auto-generated catch block
+                   e.printStackTrace();
+               }
+           }
+       
+       }
+    ```
 ## 设计模式
 
 ### 装饰设计模式
@@ -1166,7 +1258,7 @@ while (fileInputStream.read(bs)!=-1) {
       }
    }
    
-    //根据不同的场景使用不同的车略
+    //根据不同的场景使用不同的策略
    public class StrategyPatternDemo {
       public static void main(String[] args) {
          Context context = new Context(new OperationAdd());    
@@ -1183,7 +1275,52 @@ while (fileInputStream.read(bs)!=-1) {
    
    ```
 
+### 适配器模式
 
+1. 类的适配器模式：当希望将一个类转换成满足另一个新接口的类时，可以使用类的适配器模式，创建一个新类，继承原有的类，实现新的接口即可。
+
+2. 对象的适配器模式：当希望将一个对象转换成满足另一个新接口的对象时，可以创建一个包装类，持有原类的一个实例，在包装类的方法中，调用实例的方法就行。
+
+3. **简单来说就是一个类有一个接口需要实现，恰好有一个类的功能与之相同，我们通过继承或者组合的方式获取到这个类中，然后在我们的接口方法中去调用这个类中的方法**
+
+4. 代码：
+
+   ```java
+   //苹果手机有一个充电功能
+   public class IPhoneCharger {
+   	public void applePhoneCharge() {
+   		System.out.println("The iPhone is charging ...");
+   	}
+   }
+   
+   //充电器接口
+   public interface ChargeAdapter {
+   	  public void phoneCharge();
+   }
+   //用户的手机实现一个充电接口
+   public class UniversalCharger  extends IPhoneCharger implements ChargeAdapter{
+   
+   	@Override
+   	public void phoneCharge() {
+   	    System.out.println("The phone is charging, but which kind of phone it is, who cares");
+   		//用苹果手机的充电方式来充电
+   	    super.applePhoneCharge();
+   		
+   	}
+   
+   }
+   
+   ```
+
+5. 应用：在为某学校开发教务管理系统时，开发人员发现需要对学生成绩进行排序和查找，该系统的设计人员已经开发了一个成绩操作接口ScoreOperation，在该接口中声明了排序方法Sort(int[]) 和查找方法Search(int[], int)，为了提高排序和查找的效率，开发人员决定重用现有算法库中的快速排序算法类QuickSortClass和二分查找算法类BinarySearchClass，其中QuickSortClass的QuickSort(int[])方法实现了快速排序，BinarySearchClass的BinarySearch (int[], int)方法实现了二分查找。
+
+    
+
+   由于某些原因，开发人员已经找不到该算法库的源代码，无法直接通过复制和粘贴操作来重用其中的代码；而且部分开发人员已经针对ScoreOperation接口编程，如果再要求对该接口进行修改或要求大家直接使用QuickSortClass类和BinarySearchClass类将导致大量代码需要修改。
+
+    
+
+   现使用适配器模式设计一个系统，在不修改已有代码的前提下将类QuickSortClass和类BinarySearchClass的相关方法适配到ScoreOperation接口中
 
 
 ## AWT
