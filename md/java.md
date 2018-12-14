@@ -459,13 +459,12 @@
 
    1. public interface  Movement {}   //不能用class了
    2. 如果要定义访问级别只能是public
-   3. **<u>只能定义静态常量，不能定义变量</u>**
-   4. 在接口个中定义的常量，实现类中，可以直接通过常量名访问 不需要加接口名
-   5. 接口里面的方法都是抽象或公共的所以和以省略 public和abstract
-   6. 接口的方法都必须在子类中实现
-   7. **<u>接口不能定义静态方法</u>**
-   8. 接口只能定义静态,常量属性
-   9. **接口没有构造器**
+   3. **接口中的域默认时静态的并且时final的**，所以可以省略final和static关键字。
+   4. 接口里面的方法都是抽象或公共的所以和以省略 public和abstract
+   5. 接口的方法都必须在子类中实现
+   6. **<u>接口不能定义静态方法</u>**
+   7. 接口只能定义静态,常量属性
+   8. **接口没有构造器**
 
 #### 抽象：abstract:
 
@@ -526,7 +525,9 @@
 
    2. 局部内部类： 在外部类的方法中定义一个类,**不能有访问级别修饰符**，**不能访问外部类的成员**，**但是可以访问改方法的局部变量**
 
-   3. 例：
+   3. 可**定义一个内部接口**！
+
+   4. 例：
 
       1. public class Users {
 
@@ -749,7 +750,9 @@
 
 7. set(index,value):元素value替换指定位置index上的元素，并且返回旧的元素
 
-8.  迭代器的实现：
+8. contains(Object o );判断该元素是否存在于该集合内，返回一个boolean值
+
+9. 迭代器的实现：
 
    ```java
     for (ListIterator iter = list.listIterator(1);iter.hasNext();) {
@@ -1178,6 +1181,35 @@ while (fileInputStream.read(bs)!=-1) {
        
        }
     ```
+## Tomecat
+
+### 请求转发	
+
+1. 请求转发会隐藏实际资源链接
+
+2. 请求转发只能在服务器内部
+
+3. 请求转发后，后续的代码也会执行，相当于函数的调用
+
+4. 请求转发不改变本身的属性，如请求方式
+
+5. ```java
+   //指定转发的地址，可以携带参数
+   RequestDispatcher rDispatcher = request.getRequestDispatcher("hello.html?name=x");
+   //设置传递属性，
+   request.setAttribute(name, o);
+   //以forward当时转发,当前页面的response响应操作无效
+   rDispatcher.forward(request, response);
+   //以include当时转发，当前的response和转发过去的response会合并
+   rDispatcher.include(request, response);
+   //获取转发过来的属性
+   request.getAttribute(name)
+   
+   ```
+
+
+
+
 ## 设计模式
 
 ### 装饰设计模式
