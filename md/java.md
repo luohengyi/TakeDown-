@@ -1,4 +1,4 @@
-# Java
+#  Java
 
 ##### 概念
 
@@ -142,29 +142,21 @@
 #### 字符串 String
 
 1. 初始化字符串：String aString = "asdfg";
-
 2. 索引：aString.charAt(3)  //获取第4个字符
-
 3. 追加字符串：aString = aString.concat("qqqq");  一般使用+=
-
 4. 比较字符：
    1.  aString.equals(bString)   区别大小写
    2.  aString.equalsIgnoreCase(bString)     不区别大小写
    3.  aString.compareTo();  比较2个字符串，返回长度差值,分解为char逐个比较cos码，**<u>可用于字符串排序！</u>**
-
 5. 返回字符最后一次出现的下标：aString.lastIndexOf('a') 
-
 6. 替换字符串： aString = aString.replace("a", "世界你好");   //将所有的a替换成世界你好
-
 7. 截取字符串：aString = aString.substring(0, 2);  //截取前2个字符
-
 8. 分割字符串：String cs[] = aString.split(".");  //以.分割字符，返回一个数组
-
-9. 大小写转化：
+9. endsWith(String name); //该字符是否以name结尾
+10. 大小写转化：
    1. 大写：aString = aString.toUpperCase();
    2. 小写：aString = aString.toLowerCase();
-
-10. 返回常量池的地址引用：intern()
+11. 返回常量池的地址引用：intern()
 
 ##### StringBuffer
 
@@ -662,7 +654,17 @@
 
 12. 返回一个object 数组：toArray();
 
-13. 静态成员方法
+13. 清除所有元素：clear();
+
+14. forEach便利：
+
+    1. ```java
+       forEach(obj -> { //依次将元素传入后面的代码块中，或者方法
+           System.out.println(obj.length());
+       });
+       ```
+
+15. 静态成员方法
 
     1. sort(Liset list);根据元素的自然排序顺序，对指定的集合进行排序
 
@@ -679,9 +681,18 @@
           });
           ```
 
-    3. 
+16. 迭代器(单向迭代器，只能下前移动)
 
-#### set（接口，无序不可重复）
+    1. ```java
+       for (Iterator iter = list.Iterator(1);iter.hasNext();) {
+       
+       		System.out.println(iter.next());
+       
+        }
+       ```
+
+
+#### set（接口，无序不可重复，善于比较和查询对象）
 
 1. 一个不允许有相同元素的集合
 
@@ -734,7 +745,7 @@
       ```
 
 
-#### list（接口，有序可重复,删除元素后，下标会前移）
+#### list（接口，有序可重复,删除元素后，下标会前移，善于随机访问）
 
 1. add(index,value):在指定的位置添加元素。
 
@@ -752,10 +763,14 @@
 
 8. contains(Object o );判断该元素是否存在于该集合内，返回一个boolean值
 
-9. 迭代器的实现：
+9. retainAll(Collection<?> c);保留2个集合重复的部分
+
+10. 迭代器的实现：
 
    ```java
-    for (ListIterator iter = list.listIterator(1);iter.hasNext();) {
+    
+   //listIterator(1)支持初始化位置
+   for (ListIterator iter = list.listIterator(1);iter.hasNext();) {
    
    		System.out.println(iter.next());
    
@@ -1097,6 +1112,66 @@ while (fileInputStream.read(bs)!=-1) {
 }
 ```
 
+## 文件上传/下载
+
+### 上传
+
+1. 
+
+### 下载
+
+## 反射
+
+### class（类对象）
+
+1. 类是一类对象的抽象，但是类也是一种事物，一种类，那么类也是一类对象。那么他也有自己的一个类就是java.lang.Class
+
+#### 获取一个类对象：
+
+1. Class.forname(string)
+
+2. Object.class;
+
+   1. 加载配置文件的方法：
+
+      1. ```java
+         Object.class.getClassLoader().getResourceAsStream("properties/mybatis.properties");
+         ```
+
+3. Object.getClass();
+
+#### 通过反射类查看信息：
+
+##### 构造器
+
+1. getConstructor(Class class);  获取带指定参数的public构造器
+2. getConstructors();获取所有的public构造器
+3. getDeclaredConstructor(Class class));获取带指定参数的构造器
+4. getDeclaredConstructors();获取所有的构造器
+
+##### 方法：
+
+1. getConstructor(**int**.**class**); 返回class类的带指定参数列表的public构造器
+2. getConstructors();  获取所有public构造器
+3. getDeclaredConstructor(**int**.**class**) ; 返回class类的带指定参数列表的构造器，与权限无关
+4. getDeclaredConstructors() ; 获取所有构造器
+5. getMethod("name",**int**.**class**);获取对应方法名的带制定参数的public方法名
+6. getMethods();返回所有public方法
+7. getDeclaredMethod(name, parameterTypes); 获取对应方法名的带制定参数的方法名
+8. getDeclaredMethods();返回所有的方法
+
+##### 属性：
+
+1. getField(String name) ; 获取指定名称的public属性
+2. getFields(); 获取所有public成员变量
+3. getDeclaredField("name");  后去指定名称的成员变量，与权限无关
+4. getDeclaredFields(). 获取所有的成员变量，与权限无关
+
+##### 创建类
+
+1. getConstructor().newInstance();  调用默认的构造器创建一个类
+2. 
+
 ## JDBC
 
 1. 加载驱动：
@@ -1145,11 +1220,23 @@ while (fileInputStream.read(bs)!=-1) {
       2. 提交事物：connection.commit();
       3. 回滚事物：connection.rollback();
 
+   7. 获取列名
+
+      1. ```java
+         metaData = resultSet.getMetaData();
+         for (int i = 0; i < metaData.getColumnCount(); i++) {
+             //获取列名
+             String columnName = metaData.getColumnName(i + 1);
+             //获取列属性名
+             int type = metaData.getColumnType(i + 1);
+         }
+         ```
+
 5. 结果集
 
    ```java
    while (resultSet.next()) {
-   	System.out.println(resultSet.getInt("id"));  //通过下表获取
+   	System.out.println(resultSet.getInt("id"));  //通过下标记获取
        System.out.println(resultSet.getInt(1));  //通过
        
     }
@@ -1183,6 +1270,128 @@ while (fileInputStream.read(bs)!=-1) {
     ```
 ## Tomecat
 
+### servlet
+
+1. 生命周期
+
+   1. init: servlet是一个单列，整个项目的servlet类只存在一个
+
+      1. ```java
+         public void init() throws ServletException {
+         		//该servlt在创建时被调用
+         		super.init();
+         }
+         ```
+
+   2. service :每次请求都会被调用
+
+      1. ```java
+         @Override
+         	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+         		//自动掉用doGet或者doPost方法
+         		super.service(req, resp);
+         	}
+         ```
+
+   3. destroy:对象在被销毁时调用：
+
+      1. ```java
+         @Override
+         	public void destroy() {
+         		// TODO Auto-generated method stub
+         		super.destroy();
+         	}
+         ```
+
+2. 初始化参数对象
+
+   1. 获取初始化参数 getServletConfig().getInitParameter(name)
+
+   2. 配置初始化参数
+
+   3. ```xml
+      <servlet>
+       <!--name可以是任意的，但一般是类名-->
+      <servlet-name>MyServlet</servlet>
+       <!--class用于指定你的servlet存放的路径-->
+      <servlet-class>com.web.MyServlet</servlet-class>
+      <!--设置各自servlet的初始化参数-->
+       <!--参数1-->
+      <init-param>
+      <param-name>driver</param-name>
+      <param-value>com.mysql.jdbc.Driver</param-value>
+      </init-param>
+       <!--参数2-->
+      <init-param>
+      <param-name>url</param-name>
+      <param-value>jdbc:mysql://localhost:3306/mysql</param-value>
+      </init-param>
+      </servlet>
+      ```
+
+3. 全局存储空间:    **生命周期作用于整个项目**
+
+   ```java
+   ServletContext context =  this.getServletContext(); //生命周期作用于整个项目
+   
+   context.setAttribute(name, object);  //设置:属性
+   
+   context.getAttribute(name);  //获取：属性
+   
+   context.getContextPath(); //获取上下文对象地址，在重定向时最好使用该路径，而不是写死，因为虚拟路径可能会被修改
+   //例如：如下方式跳转
+   response.sendRedirect(context.getContextPath()+url);
+   
+   context.getRealPath(Url) //获取当前url的真实地址，操作系统地址
+   ```
+
+4. HttpServletRequest对象：**生命周期当前请求**
+
+   1. ```java
+       request.getParameter("name")  //获取参数
+       ```
+      ```
+   
+      ```
+
+5. 例如：
+
+   1. ```java
+      public class Login extends HttpServlet {
+      	private static final long serialVersionUID = 1L;
+      
+      	/**
+      	 * @see HttpServlet#HttpServlet()
+      	 */
+      	public Login() {
+      		super();
+      		// TODO Auto-generated constructor stub
+      	}
+      
+      	/**
+      	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+      	 *      response)
+      	 */
+      	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+      			throws ServletException, IOException {
+      		
+      		
+      	}
+      
+      	/**
+      	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+      	 *      response)
+      	 */
+      	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+      			throws ServletException, IOException {
+      		
+              
+      	}
+      
+      }
+      
+      ```
+
 ### 请求转发	
 
 1. 请求转发会隐藏实际资源链接
@@ -1207,7 +1416,278 @@ while (fileInputStream.read(bs)!=-1) {
    
    ```
 
+### 重定向
 
+1. 
+
+2. ```java
+   //重定向
+   response.sendRedirect(String url);
+   ```
+
+## JSP
+
+### jsp表达式：
+
+1. 过程：.jsp. =>  .java. => .class     ( 最终编译为一个servlet)
+
+2. 注释：<%--  --%> 不会被编译
+
+3. 输出：<%= "输出一个字符" %>，可以在其中调用方法，本质是在给print方法传递参数，不能；号结束,**<u>带缓冲</u>**
+
+4. 申明：<%!    %>   内容为一段标准的java代码，可以定义方法，变量，最终这些方法，变量会编译为这个servlet的成员
+
+   1. ```jsp
+       <%!public String name() {
+          		return null;
+          	}%>
+       ```
+
+5. 指令：转译阶段提供jsp的配置信息例如编码格式等：
+
+   1. page
+
+      1. language=“java“   指定使用那个语言来编译，只支持java默认java
+
+      2. extends=*"Obkect"*   指定jsp编译后的servlet继承那个类
+
+      3. import=""  指定jsp页面需要用到的api类  例如：`import="java.util.Map"` 相当于导包
+
+      4. session="true". 指定当前页面是否可以使用session，默认可以
+
+      5. buffer="size".   指定页面是否开启缓冲区
+
+      6. isThreadSafe="true"   决定servlet是否是单例，默认是true，单例，单列模式全局变量如果是可以修改的那么可能存在线程安全的问题，所以不要使用全局变量
+
+      7. errorPage="url". 指定页面出错跳转的页面.  **优先级较高**
+
+         1. 也可以在web.xml中配置跳转。优先级较低
+
+         2. ```xml
+            监听错误码
+            <error-page>
+                <error-code>
+                    500
+                </error-code>
+                <location>url</location>
+            </error-page>
+            监听异常
+            <error-page>
+            		<exception-type>java.lang.Exceptin</exception-type>
+            		<location>url</location>
+            </error-page>
+            ```
+
+      8. isErrorPage="true".  是否开启错误处理对象可以在error页面去获取错误信息
+
+      9. pageEncoding="UTF-8". 当前文件在文件系统中的存储编码
+
+      10. contentType=*"text/html; charset=UTF-8"*   浏览器解析方式
+
+      11. ```java
+          <%@ page language="java" contentType="text/html; charset=UTF-8"
+          	pageEncoding="UTF-8"%>
+          ```
+
+   2. **include**
+
+      1. <%@ include file=*""* %>.引入一个html片段
+
+   3. taglib
+
+      1. 引入标签库：`<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>`
+
+### 内置对象
+
+1. servlet
+   1. Page对象，当前servlet对象
+   2. config 编译时的配置文件，通过指令配置 了一些编译时需要的配置
+2. 输入输出对象
+   1. request 输入对象，当中可以携带熟悉信息，利用servlet向jsp中传输数据
+   2. response 输出对象
+   3. out 输出对象 带缓冲区
+3. 作用域通讯对象
+   1. Session 当前回话有效
+   2. application  servletContext对象,当前项目有效
+   3. pageContext  可以访问页面作用域所有东西，页面作用域，当前页面有效，重新加载无效
+4. 错误对象
+   1. exception 可以获取错误信息，但是必须开启指令isErrorPage="true"
+
+### 动作
+
+1. `<jsp:forward page="url"><jsp:param value="k" name="k"/></jsp:forward>`。请求转发,可以传参，
+2. `<jsp:include page="url"></jsp:include>`
+
+### El表达式
+
+1. 获取属性：${name} 表达式中可以进行运算，逻辑运算
+   1. 优先级
+      1. pageScope
+      2. RequestScope
+      3. sessionScope
+      4. ApplicationScope
+2. 获取参数：`${param.name}` 或者 `${param['name']}` 
+3. 隐式对象：
+
+### jstl标签库
+
+#### 核心标签
+
+1. set
+
+   1. ```java
+      <c:set var="name" value="1312" scope="session"></c:set>
+      //参数名           //值,其中可以放el表达式  例如：value="${3+2}"			//作用域
+      ```
+
+2. out
+
+   1. ```java
+      <c:out value="${name }"></c:out>
+      //jsp表达式用于输出
+      ```
+
+3. remove
+
+   1. ```java
+      <c:remove var="name" scope="session">  </c:remove>
+      //销毁一个变量，默认作用域当前	
+      ```
+
+4. 分支
+
+   1. 单分支
+
+   2. ```jsp
+      //test内不能有空格
+      <c:if test="${name == '撒打算的' }" var="name">
+        ${name }
+      </c:if>
+      ```
+
+   3. 多分支
+
+      1. ```jsp
+         <c:choose  >
+             <c:when test="${name==1 }">
+         
+             </c:when>
+             <c:when test="${name==2 }">
+         
+             </c:when>
+             <c:otherwise>
+         
+             </c:otherwise>
+         
+         </c:choose>
+         ```
+
+5. 循环
+
+   1. for
+
+      1. 123
+
+   2. foreach
+
+      1. ```jsp
+         从1开始到101每次加10 
+         <c:forEach begin="1" end="101" step="10" var="p">
+             ${p }
+         </c:forEach>
+         
+         <c:forEach items="${books }" var="book" varStatus="k">
+             ${book.name }
+         </c:forEach>
+         ```
+
+      2. varStatus携带的熟悉
+
+         1. index 循环下标 0开始
+         2. count 循环下标 1开始
+         3. first是否是第一个
+         4. 。。。。。待完善
+
+#### 格式化标签
+
+1. 格式化数字
+
+   1. ```jsp
+      <fmt:formatNumber value="0.123" type="percent"></fmt:formatNumber>
+      //type="percent" 百分比
+      //CURRENCY 货币
+      //NUMBER 数字
+      
+      ```
+
+2. 解析数字：
+
+   1. ```jsp
+      <fmt:parseNumber type="PERCENT" value="${money }"></fmt:parseNumber>
+      ```
+
+3. 格式化时间
+
+   1. ```jsp
+      <fmt:formatDate type="both"  value="${time }" /></p>
+      //value 必须是一个Data类
+      ```
+
+## 会话
+
+### cookie
+
+1. 获取：
+
+   ```java
+   Cookie[] cookies = request.getCookies();
+   		
+   		if (null!=cookies) {
+   			for (Cookie cookie : cookies) {
+   					System.out.println(cookie.getName() + ":"+cookie.getValue());
+   			}
+   		}
+   ```
+
+2. 设置：
+
+   1. ```java
+      //cookie 不允许写入特殊字符
+      Cookie cookie = new Cookie("name", "狗狗1");
+      		
+      //路由下级建立的上级不能访问，因此设置路由作用域，在同一个tomecat中可以跨项目
+      cookie.setPath("/项目名/");
+      //有效时间。设置为0相当于销毁这个cookie
+      cookie.setMaxAge(1231);
+      //将cookie重新放入response
+      response.addCookie(cookie);
+      ```
+
+### session
+
+1. 创建:
+
+   1. ```java
+      // 创建session，session基于cokie实现的
+      HttpSession session = request.getSession();
+      //session id
+      session.getId();
+      //创建时间
+      session.getCreationTime();
+      //上次访问时间
+      session.getLastAccessedTime();
+      ```
+
+2. 使用
+
+   1. ```java
+      //设置
+      session.setAttribute("name", "罗恒一");
+      //获取
+      session.getAttribute("name");
+      //清空
+      session.invalidate();
+      ```
 
 
 ## 设计模式

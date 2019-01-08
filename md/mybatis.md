@@ -1,0 +1,268 @@
+# myBatis
+
+## 配置
+
+### 基础配置：mybatis-config.xml
+
+1. ```xml
+   <?xml version="1.0" encoding="UTF-8" ?>
+   <!DOCTYPE configuration
+           PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+           "http://mybatis.org/dtd/mybatis-3-config.dtd">
+   <configuration>
+        <settings>
+        <!--执行sql时将sql语句输出到控制台-->
+           <setting name="logImpl" value="STDOUT_LOGGING"/>
+            <!-- 启用二级缓存1 -->
+            <setting name="cacheEnabled" value="true"/>
+       </settings>
+       <!--指定bean目录-->
+       <typeAliases>
+           <package name="com.lhy.bean"></package>
+       </typeAliases>
+       <environments default="development">
+           <environment id="development">
+               <!--使用jdbc管理事物-->
+               <transactionManager type="JDBC"/>
+               <!--配置数据的链接信息 -->
+               <dataSource type="POOLED">  <!--POOLED 使用了链接池 -->
+                   <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                   <property name="url" value="jdbc:mysql://127.0.0.1/JavaLibrary"/>
+                   <property name="username" value="root"/>
+                   <property name="password" value="123123"/>
+               </dataSource>
+           </environment>
+       </environments>
+       <mappers>
+           <!--同过xml加载映射文件-->
+           <mapper resource="com/lhy/mapper/UserMapper.xml"/>
+           <!--如果是注解方式构建的sql，使用mapper类构建-->
+           <mapper class="com.lhy.mapper.UserMapper"></mapper>
+       </mappers>
+   </configuration>
+   ```
+
+### mapper.xml （映射器）
+
+1. ```xml
+   <?xml version="1.0" encoding="UTF-8" ?>
+   <!DOCTYPE mapper
+           PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+           "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   <mapper namespace="com.lhy.mapper.UserMapper">
+       <!-- 启用缓存 -->
+        <cache/>
+       <!--id对应dao接口名，接口方法不能重载-->
+       <!-- resultType 返回的类型 ,如果定义了字段映射那么将使用 resultMap="rm" 的方式来设置返回类型  此处如果不写User的报名需要在mybatis-config.xml中配置bean目录-->
+        <!--  #{id}来预编译，${} 将拼接里面的sql可能会被sql注入 -->
+       <select id="getUserByid" resultType="User">
+         select * from users where id = #{id}
+       </select>
+   
+   	<!-- 修改插入类型的sql返回值自动根据dao接口的返回类型自动匹配返回，必须使用sqlsession手动提交事物 -->
+       <insert id="saveUser" >
+           insert into users value (#{id},#{password},#{username},#{role_id})
+       </insert>
+   
+       <!--如果字段名和bean类名不同，通过映射解决，旧版本的mybatis需要将所有的字段全部映射-->
+       <!--<resultMap id="rm" type="User">-->
+           <!--<result property="beanName" column="sqlName"></result>-->
+       <!--</resultMap>-->
+   </mapper>
+   ```
+
+### Dao（接口层，mapper）：
+
+1. mapper层的处理（相当于dao层）
+
+   1. ```java
+        /**
+           * 通过注解方式构建sql，有利于简单的slq构建,否者通过xml的方式构建sql
+           * @return
+           */
+          @Results({  //配置字段映射解决数据库字段和bean对象字段名不同的问题
+                @Result(property = "beanName",column = "sqlName"),
+                @Result(property = "beanName",column = "sqlName")
+           })
+          @Select("select * from users")
+          List<User> getUserAll();
+        ```
+      ```
+   
+      ```
+
+2. 获取sqlSession
+
+3. ```java
+   //获取基础配置文件mybatis-config.xml的输入流
+   InputStream resourceAsStream = Resources.getResourceAsStream(filePath);
+   //通过SqlSessionFactoryBuilder获取SqlSessionFactory
+   SqlSessionFactory sqlSessionFactory = 
+      					 new SqlSessionFactoryBuilder().build(resourceAsStream);
+   /*
+   传入一个 properties 用来配置数据库链接，用户名等基础配置
+   SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream, properties);
+   */
+   //通过sqlsession工厂打开一个sqlSession
+   SqlSession sqlSession = sqlSessionFactory.openSession();	
+   ```
+
+
+### 调用mapper（相当于daoimpl）：
+
+1. 调用方式1
+
+   1. ```java
+      //使用sqlSession.getMapper通过反射传入接口地址来获取一个mapper实现类（dao实现类）
+      UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+      //调用具体的方法获取或者修改数据
+      User user1 = userMapper.getUserByid(1);
+      System.out.println(user1);
+      ```
+
+2. 调用方式2
+
+   1. ```java
+       //  通过手动传入mapper接口地址加参数的方式调用接口
+          User user = 
+          sqlSession.selectOne("com.lhy.mapper.UserMapper.getUserByid", 1);
+       ```
+
+
+## 映射文件
+
+#### 更新（update，delete，insert）：
+
+##### insert：
+
+1. 获取主键
+
+   ```xml
+   <!-- useGeneratedKeys="true" 开去获取主键，默认关闭 -->
+   <!-- keyProperty="id" 将主键封入传入的bean对象中 -->
+   <insert id="insertAuthor" useGeneratedKeys="true"
+       keyProperty="id">
+     insert into Author (username,password,email,bio)
+     values (#{username},#{password},#{email},#{bio})
+   </insert>
+   ```
+
+   ```java
+   bean.getId //mybatis 自动将封入传入的bean对象中，使用get方法获取id
+   ```
+
+2. 1
+
+##### update
+
+1. `<set></set`
+
+   1. ```xml
+      <update id="updateUser" parameterType="User">
+              update users
+          <!-- 在适当的时候自动去除逗号-->
+              <set>  
+                  <if test="username != null"> username=#{username},</if>
+                  <if test="password != null">  password=#{password},</if>
+              </set>
+              where id=#{id}
+      </update>
+      ```
+
+##### where
+
+1. ```xml
+   <select id="getUser" resultMap="rm">
+         select * from users
+       <!-- 适当的时候去除and -->
+         <where>
+             <if test="id >0">
+                 and id=#{id}
+             </if>
+             <if test="username != null">
+                 and username=#{username}
+             </if>
+         </where>
+   
+       </select>
+   ```
+
+
+
+
+#### `<sql>`标签
+
+1. 定义
+
+   1. ```xml
+      <!-- 在sql定义展位符，在使用时传入  -->
+      <sql id="userColumns"> ${alias}.id,${alias}.username,${alias}.password </sql>
+      
+      <!-- 直接使用bean对象的数据  -->
+      <sql id="whereId">where id=#{id} </sql>
+      ```
+
+2. 使用
+
+   1. ```xml
+      <!-- 调用标签并且传入参数  -->
+      <include refid="userColumns">
+                 <property name="alias" value="users"></property>
+      </include>
+       <!-- 直接调用 -->
+       <include refid="whereId"></include>
+      
+      ```
+
+
+#### Choose
+
+1. ```xml
+   <select id="getUser" resultMap="rm">
+         select * from users
+         <!-- 类似switch 进入一个后不会再进入其他分支-->
+         <where>
+           <choose>
+               <when test="id >0">
+                   and id=#{id}
+               </when>
+               <when test="username != null">
+                   and username=#{username}
+               </when>
+               <!-- 如果都不满足会进入默认分支 -->
+                <otherwise>
+                   
+               </otherwise>
+           </choose>
+         </where>
+   
+       </select>
+   ```
+
+#### foreach
+
+1. ```xml
+    <select id="getUser" resultMap="rm">
+         select * from users where id in 
+        <!-- 循环的变量 开始open（ 中间separator，分割 结束close）下标index 便利的值value  -->
+         <foreach collection="list" open="(" separator="," close=")"  index="index" item="value">
+             #{value}
+         </foreach>
+   
+       </select>
+   ```
+
+## 缓存
+
+##### 一级缓存 不同的mapper级别的缓存，自动开启
+
+##### 二级缓存 不同的sqlSession级别缓存，需要手动开启
+
+1. 在mybatis-config.xml中配置：<setting name="cacheEnabled" value="true"/>
+2. 在mapper.xml中启用：<cache/>
+3. 可以在方法中控制缓存的清空以及该方法是否启用缓存
+   1. flushCache	将其设置为 true，任何时候只要语句被调用，都会导致本地缓存和二级缓存都会被清空，默认值：false
+   2. useCache	将其设置为 true，将会导致本条语句的结果被二级缓存，默认值：对 select 元素为 true。
+
+## 复杂关系映射
+

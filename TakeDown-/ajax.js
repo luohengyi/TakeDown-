@@ -12,7 +12,7 @@ $.ajax = function (options) {
         //使用节点上 success 属性 去回掉此方法
         var _back = _node.attr('success');
         if (_back){
-            eval(_back + '()');
+            eval(_back + '(datas)');
         }
 
         return success(datas);
@@ -27,8 +27,8 @@ $('form').submit(function () {
     _node = $('form');
     var formData = new FormData($('from').get(0));
     $.ajax({
-        url: $('from').attr('action'),
-        type: $('from').attr('method'),
+        url: _node.attr('action'),
+        type: _node.attr('method'),
         data: formData,
         processData: false,
         contentType: false,
