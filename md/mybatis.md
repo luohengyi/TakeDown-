@@ -10,34 +10,39 @@
            PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
            "http://mybatis.org/dtd/mybatis-3-config.dtd">
    <configuration>
-        <settings>
-        <!--执行sql时将sql语句输出到控制台-->
+       <settings>
+           <!--执行sql时将sql语句输出到控制台-->
            <setting name="logImpl" value="STDOUT_LOGGING"/>
-            <!-- 启用二级缓存1 -->
-            <setting name="cacheEnabled" value="true"/>
+           <!-- 开启二级缓存 -->
+           <setting name="cacheEnabled" value="true"/>
+           <!-- 开启懒加载 -->
+           <setting name="lazyLoadingEnabled" value="true"></setting>
+           <setting name="aggressiveLazyLoading" value="false"></setting>
+           
        </settings>
        <!--指定bean目录-->
        <typeAliases>
            <package name="com.lhy.bean"></package>
        </typeAliases>
+   
        <environments default="development">
            <environment id="development">
                <!--使用jdbc管理事物-->
                <transactionManager type="JDBC"/>
                <!--配置数据的链接信息 -->
                <dataSource type="POOLED">  <!--POOLED 使用了链接池 -->
-                   <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                   <property name="url" value="jdbc:mysql://127.0.0.1/JavaLibrary"/>
-                   <property name="username" value="root"/>
-                   <property name="password" value="123123"/>
+                       <property name="driver" value="${driver}"/>
+                       <property name="url" value="${url}"/>
+                       <property name="username" value="${username}"/>
+                       <property name="password" value="${password}"/>
+   
                </dataSource>
+   
+   
            </environment>
        </environments>
        <mappers>
-           <!--同过xml加载映射文件-->
-           <mapper resource="com/lhy/mapper/UserMapper.xml"/>
-           <!--如果是注解方式构建的sql，使用mapper类构建-->
-           <mapper class="com.lhy.mapper.UserMapper"></mapper>
+           <package name="com.lhy.mapper"></package>
        </mappers>
    </configuration>
    ```
@@ -266,3 +271,99 @@
 
 ## 复杂关系映射
 
+### 一对一
+
+1. ben对象结构目录
+
+   ```java
+   	Class User{
+           private int id;
+           private String username;
+           private String password;
+           private int role_id;
+           private Role role;  //用户的权限对象
+       }
+   ```
+
+2. mapper.xml配置
+
+   1. ```xml
+      <!-- join联合查询方式的配置。无论是否使用到role对象的属性都会去查询到role的数据 -->
+      <resultMap id="user" type="User">
+              <id property="id" column="id"></id>
+              <result property="username" column="username"></result>
+              <result property="password" column="password"></result>
+              <result property="role_id" column="role_id"></result>
+          	<!-- 配置对应关系   Role的bean对象     user类用来装ruole类的属性名  -->
+              <association javaType="Role" property="role"  >  
+                  <id property="role_id" column="role_id"></id>
+                  <result property="name" column="name"></result>
+                  <result property="ruleconten" column="ruleconten"></result>
+              </association>
+          </resultMap>
+      
+      <!-- 懒加载方式 -->
+      <!--开启懒加载需要在 mybatis-config.xml 中申明2个配置-->
+      <setting name="lazyLoadingEnabled" value="true"></setting>
+      <setting name="aggressiveLazyLoading" value="false"></setting>
+      
+      <resultMap id="user" type="User">
+              <id property="id" column="id"></id>
+              <result property="username" column="username"></result>
+              <result property="password" column="password"></result>
+          <!--使用其他包里面查询  Role对应Role对象 对应关系 user类用来装ruole类的属性名 -->
+              <association  select="com.lhy.mapper.RoleMapper.getRoleByid" javaType="Role" column="role_id" property="role">
+                  <id property="role_id" column="role_id"></id>
+                  <result property="name" column="name"></result>
+                  <result property="ruleconten" column="ruleconten"></result>
+              </association>
+          </resultMap>
+      ```
+
+3. mapper.xm sql语句
+
+   1. ```xml
+       <!-- join联合查询方式的配置。无论是否使用到role对象的属性都会去查询到role的数据 -->
+       <select id="getUserByid" resultType="com.lhy.bean.User" resultMap="user">
+      
+            select * from users,role where users.role_id=role.role_id and users.id=#{id}
+      
+        </select>
+      <!-- 懒加载的方式去查询数据但是如果查询列表会导致多次查询 -->
+      
+      
+      ```
+
+### 一对多
+
+1. ben对象结构目录
+
+   1. ```java
+      Class Role{
+          private int role_id;
+          private String name;
+          private String ruleconten;
+          private List<User> users;
+      }
+      ```
+
+2. mapper.xml配置
+
+   1. ```xml
+      <resultMap id="role" type="Role">
+              <id property="role_id" column="role_id"></id>
+              <result property="name" column="name"></result>
+              <result property="ruleconten" column="ruleconten"></result>
+              <collection select="com.lhy.mapper.UserMapper.getUserByRoleId" property="users" column="role_id" javaType="List" ofType="User">
+                  <id property="id" column="id"></id>
+                  <result property="username" column="username"></result>
+                  <result property="password" column="password"></result>
+              </collection>
+          </resultMap>
+      
+      
+      
+       <select id="getRoleByid" resultMap="role" >
+              select * from role where role_id=#{id}
+          <select>
+      ```
