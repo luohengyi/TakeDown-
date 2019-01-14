@@ -35,6 +35,10 @@
 6. 解压：
    1. 7z：7z x xxxx.7z
    2. unrar. x xx.rar
+   3. unzip -n text.zip -d /tmp 
+      1. 将文件解压至指定文件。
+      2. -n 不要覆盖已存在的文件 
+      3. -d 在指定文件下解压
 
 #### php
 

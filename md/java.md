@@ -664,7 +664,9 @@
        });
        ```
 
-15. 静态成员方法
+15. predicate方式批量删除符合条件的成员 removeIf(obj->(obj.getId()<10))
+
+16. 静态成员方法
 
     1. sort(Liset list);根据元素的自然排序顺序，对指定的集合进行排序
 
@@ -681,7 +683,7 @@
           });
           ```
 
-16. 迭代器(单向迭代器，只能下前移动)
+17. 迭代器(单向迭代器，只能下前移动)
 
     1. ```java
        for (Iterator iter = list.Iterator(1);iter.hasNext();) {

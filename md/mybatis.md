@@ -2,6 +2,9 @@
 
 ## 配置
 
+1. **依赖包：mybatis-3.4.6.jar**
+2. sql包：mysql-connector-java-5.1.47.jar
+
 ### 基础配置：mybatis-config.xml
 
 1. ```xml
@@ -253,15 +256,15 @@
          <foreach collection="list" open="(" separator="," close=")"  index="index" item="value">
              #{value}
          </foreach>
-   
+       
        </select>
-   ```
+    ```
 
 ## 缓存
 
-##### 一级缓存 不同的mapper级别的缓存，自动开启
+### 一级缓存 不同的mapper级别的缓存，自动开启
 
-##### 二级缓存 不同的sqlSession级别缓存，需要手动开启
+### 二级缓存 不同的sqlSession级别缓存，需要手动开启
 
 1. 在mybatis-config.xml中配置：<setting name="cacheEnabled" value="true"/>
 2. 在mapper.xml中启用：<cache/>
@@ -325,13 +328,16 @@
    1. ```xml
        <!-- join联合查询方式的配置。无论是否使用到role对象的属性都会去查询到role的数据 -->
        <select id="getUserByid" resultType="com.lhy.bean.User" resultMap="user">
-      
+          
             select * from users,role where users.role_id=role.role_id and users.id=#{id}
-      
+          
         </select>
-      <!-- 懒加载的方式去查询数据但是如果查询列表会导致多次查询 -->
-      
-      
+          <!-- 懒加载的方式去查询数据但是如果查询列表会导致多次查询 -->
+       ```
+
+
+      ```
+   
       ```
 
 ### 一对多
@@ -366,4 +372,124 @@
        <select id="getRoleByid" resultMap="role" >
               select * from role where role_id=#{id}
           <select>
+      ```
+
+## 逆向工程 
+
+1. **依赖包：mybatis-generator-core-1.3.7.jar**
+
+### mybatis-generator-config.xml 配置：
+
+1. ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <!DOCTYPE generatorConfiguration
+           PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+           "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+   
+   <generatorConfiguration>
+       <classPathEntry location="/Users/luohengyi/IdeaProjects/DemoMybatis/lib/mysql-connector-java-5.1.47.jar" />
+   
+       <context id="DB2Tables"  targetRuntime="MyBatis3">
+           <!--bean生成toString方法-->
+           <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
+   
+           <commentGenerator>
+               <property name="suppressDate" value="true"/>
+               <property name="suppressAllComments" value="true" />
+           </commentGenerator>
+           <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                           connectionURL="jdbc:mysql://127.0.0.1/JavaLibrary"
+                           userId="root"
+                           password="123123">
+               <!-- 禁止查询复杂信息 -->
+               <property name="nullCatalogMeansCurrent" value="true" />
+           </jdbcConnection>
+   
+           <!-- 不要将数据转化为BigDecimals -->
+           <javaTypeResolver >
+               <property name="forceBigDecimals" value="false" />
+           </javaTypeResolver>
+   
+           <!--bean对象地址配置-->
+           <javaModelGenerator targetPackage="com.lhy.bean" targetProject="src">
+               <!--同意添加包前缀-->
+               <property name="enableSubPackages" value="false" />
+               <!--去除空格-->
+               <property name="trimStrings" value="true" />
+           </javaModelGenerator>
+   
+           <!--关系映射文件-->
+           <sqlMapGenerator targetPackage="com.lhy.mapper"  targetProject="src">
+               <property name="enableSubPackages" value="false" />
+           </sqlMapGenerator>
+   
+           <!--map接口-->
+           <javaClientGenerator type="XMLMAPPER" targetPackage="com.lhy.mapper"  targetProject="src">
+               <property name="enableSubPackages" value="false" />
+           </javaClientGenerator>
+   
+           <!--具体生成哪张表-->
+           <table schema="DB2ADMIN" tableName="users" domainObjectName="Users"   />
+           <!--<table schema="DB2ADMIN" tableName="role" domainObjectName="Role"  />-->
+           <!--<table schema="DB2ADMIN" tableName="role" domainObjectName="Role" >-->
+               <!--&lt;!&ndash;&lt;!&ndash;是否生成主键&ndash;&gt;&ndash;&gt;-->
+               <!--<property name="useActualColumnNames" value="true"/>-->
+               <!--&lt;!&ndash;主键字段名&ndash;&gt;-->
+               <!--<generatedKey column="ID" sqlStatement="DB2" identity="true" />-->
+               <!--<columnOverride column="DATE_FIELD" property="startDate" />-->
+               <!--&lt;!&ndash;忽略的列&ndash;&gt;-->
+               <!--<ignoreColumn column="FRED" />-->
+               <!--&lt;!&ndash;字段的重写 制定数据类型&ndash;&gt;-->
+               <!--<columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />-->
+   
+       </context>
+   </generatorConfiguration>
+   ```
+
+
+### 执行生成：
+
+1. ```java
+    InputStream inputStream = Demo.class.getClassLoader().getResourceAsStream("mybatis-generator-config.xml");
+           List<String> warnings = new ArrayList<String>();
+   
+           ShellCallback callback = new DefaultShellCallback(true);
+           Configuration config = new ConfigurationParser(warnings).parseConfiguration(inputStream);
+           MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
+           myBatisGenerator.generate(null);
+   
+           for (String warning : warnings) {
+               System.out.println(warning);
+           }
+   ```
+
+## 分页插件
+
+1. 依赖包 注**意版本否者出现找不到类**
+
+   1. jsqlparser-1.3.jar
+   2. pagehelper-5.1.8.jar
+
+2. mybatis-config.xml插件拦截配置
+
+   1. ```xml
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+                  <!--链接类型-->
+                  <property name="helperDialect" value="mysql"></property>
+                  <!--合理化分页-->
+                  <property name="reasonable" value="true"></property>
+              </plugin>
+      ```
+
+3. 调用分页
+
+   1. ```java
+      PageHelper.startPage(1,4);
+      //必须紧挨着查询，如果这次没有使用，那么可能会照成下次查询其他内容时使用分页
+      UsersMapper mapper = sqlSession.getMapper(UsersMapper.class);
+      //如果要使用 Page 类 那么需要强转，否者正常返回一个list，但是Page类中携带了分页信息
+      Page<Users> users = (Page<Users>)mapper.selectByExample(null);
+      for (Users user : users.getResult()) {
+      	System.out.println(user);
+      }
       ```
