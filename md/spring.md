@@ -198,8 +198,7 @@
 ### 依赖包：
 
 1. ```xml
-   
-           <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+    <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
            <dependency>
                <groupId>org.springframework</groupId>
                <artifactId>spring-webmvc</artifactId>
@@ -246,6 +245,46 @@
                <groupId>com.alibaba</groupId>
                <artifactId>fastjson</artifactId>
                <version>1.2.54</version>
+           </dependency>
+   
+           <!-- https://mvnrepository.com/artifact/org.mybatis.generator/mybatis-generator-core -->
+           <dependency>
+               <groupId>org.mybatis.generator</groupId>
+               <artifactId>mybatis-generator-core</artifactId>
+               <version>1.3.7</version>
+           </dependency>
+   
+           <!-- 表达式 https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/jstl -->
+           <dependency>
+               <groupId>javax.servlet.jsp.jstl</groupId>
+               <artifactId>jstl</artifactId>
+               <version>1.2</version>
+           </dependency>
+   
+           <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+           <dependency>
+               <groupId>javax.servlet</groupId>
+               <artifactId>javax.servlet-api</artifactId>
+               <version>4.0.1</version>
+               <scope>provided</scope>
+           </dependency>
+           <!-- jsp 的三个包 jstl -->
+           <dependency>
+               <groupId>javax.servlet.jsp.jstl</groupId>
+               <artifactId>jstl</artifactId>
+               <version>1.2</version>
+           </dependency>
+           <!-- jstl-api -->
+           <dependency>
+               <groupId>javax.servlet.jsp.jstl</groupId>
+               <artifactId>jstl-api</artifactId>
+               <version>1.2</version>
+           </dependency>
+           <!-- jstl-impl -->
+           <dependency>
+               <groupId>org.glassfish.web</groupId>
+               <artifactId>jstl-impl</artifactId>
+               <version>1.2</version>
            </dependency>
    ```
 
@@ -310,7 +349,7 @@
            <!-- 后缀 -->
            <property name="suffix" value=".jsp"/>
        </bean>
-       <!-- 放行静态资源 -->
+       <!-- 放行静态资源 新版本中 mapping="/static/**" location="/static/"location中不需要带*  -->
        <mvc:resources mapping="/static/**" location="/static/*"/>
        <!-- 控制器的包名，services的包名，如果要 @Autowired 注解注入必须配置包的地址 -->
        <context:component-scan base-package="com.lhy.controller,com.lhy.services"/>
@@ -425,5 +464,49 @@
    }
    ```
 
+## spring 组建
 
+### 文件上传
 
+#### 配置 spring-mvc.xml:
+
+1. ```xml
+   <!-- 文件解析器 -->
+   <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+       <!-- 最大文件上传大小 -->
+       <property name="maxUploadSize" value="10240000"/>
+       <!-- 编码 -->
+       <property name="defaultEncoding" value="UTF-8"/>
+   </bean>
+   ```
+
+#### 使用文件解析器
+
+1. ```java
+   @RequestMapping("/upload")
+   //声明文件表单的名字
+   public String upload(@RequestParam("fileName") CommonsMultipartFile file)  {
+       try {
+           file.transferTo(new File("d://"+file.getOriginalFilename()));
+           //文件上传成功
+       } catch (IOException e) {
+           e.printStackTrace();
+           //文件上传
+       }
+       return "";
+   }
+   ```
+
+### 文件下载
+
+1. ```java
+   @RequestMapping("/download")
+   public ResponseEntity<byte[]> download(String fileName) throws IOException {
+       HttpHeaders httpHeaders=new HttpHeaders();
+       //告诉浏览器 以什么格式打开该文件
+       httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+       //设置文件下载名称
+       httpHeaders.setContentDispositionFormData("attachment",fileName);
+       return new ResponseEntity<>(FileUtils.readFileToByteArray(new File("d://111.xls")),httpHeaders, HttpStatus.CREATED);
+   }
+   ```
