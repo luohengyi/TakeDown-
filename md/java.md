@@ -277,10 +277,10 @@
        List<Integer> list = **new** ArrayList<>();
        ```
 
-      	for (Integer integer : list) {
+         	for (Integer integer : list) {
 
               System.out.println(integer);
-          
+       
           }	
       ```
    
@@ -1428,6 +1428,29 @@ while (fileInputStream.read(bs)!=-1) {
    ```
 
 ## JSP
+
+### 依赖包：
+
+```xml
+<!-- jsp 的三个包 jstl -->
+<dependency>
+    <groupId>javax.servlet.jsp.jstl</groupId>
+    <artifactId>jstl</artifactId>
+    <version>1.2</version>
+</dependency>
+<!-- jstl-api -->
+<dependency>
+    <groupId>javax.servlet.jsp.jstl</groupId>
+    <artifactId>jstl-api</artifactId>
+    <version>1.2</version>
+</dependency>
+<!-- jstl-impl -->
+<dependency>
+    <groupId>org.glassfish.web</groupId>
+    <artifactId>jstl-impl</artifactId>
+    <version>1.2</version>
+</dependency>
+```
 
 ### jsp表达式：
 
