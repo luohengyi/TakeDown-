@@ -130,6 +130,13 @@
    <bean id="u5" class="com.lhy.bean.User" factory-bean="factory" factory-method="getUser"></bean>
    ```
 
+### IOC容器特性
+
+1. 加载bean的加载方式：
+   1. spring中默认所有的bean会在初始化spring时急切的加载
+   2. 通过在bean标签上修改 lazy-init属性来确认是否延迟加载
+   3. 通过注解的方式（注解默认true）：@Lazy
+
 ## jdbc
 
 1. 使用ioc容器管理从service层到db层的依赖关系
@@ -210,57 +217,55 @@
                <artifactId>mybatis-spring</artifactId>
                <version>1.3.2</version>
            </dependency>
-   
+       
            <!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
            <dependency>
                <groupId>org.mybatis</groupId>
                <artifactId>mybatis</artifactId>
                <version>3.4.6</version>
            </dependency>
-   
-   
            <!-- https://mvnrepository.com/artifact/com.alibaba/druid 数据库链接 -->
            <dependency>
                <groupId>com.alibaba</groupId>
                <artifactId>druid</artifactId>
                <version>1.1.12</version>
            </dependency>
-   
+       
            <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java 数据库驱动s -->
            <dependency>
                <groupId>mysql</groupId>
                <artifactId>mysql-connector-java</artifactId>
                <version>5.1.47</version>
            </dependency>
-   
+       
            <!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
            <dependency>
                <groupId>org.springframework</groupId>
                <artifactId>spring-jdbc</artifactId>
                <version>5.1.3.RELEASE</version>
            </dependency>
-   
+       
            <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
            <dependency>
                <groupId>com.alibaba</groupId>
                <artifactId>fastjson</artifactId>
                <version>1.2.54</version>
            </dependency>
-   
+       
            <!-- https://mvnrepository.com/artifact/org.mybatis.generator/mybatis-generator-core -->
            <dependency>
                <groupId>org.mybatis.generator</groupId>
                <artifactId>mybatis-generator-core</artifactId>
                <version>1.3.7</version>
            </dependency>
-   
+       
            <!-- 表达式 https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/jstl -->
            <dependency>
                <groupId>javax.servlet.jsp.jstl</groupId>
                <artifactId>jstl</artifactId>
                <version>1.2</version>
            </dependency>
-   
+       
            <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
            <dependency>
                <groupId>javax.servlet</groupId>
@@ -286,7 +291,8 @@
                <artifactId>jstl-impl</artifactId>
                <version>1.2</version>
            </dependency>
-   ```
+    ```
+
 
 ### 配置：
 
@@ -349,7 +355,8 @@
            <!-- 后缀 -->
            <property name="suffix" value=".jsp"/>
        </bean>
-       <!-- 放行静态资源 新版本中 mapping="/static/**" location="/static/"location中不需要带*  -->
+        <!--  -->
+       <!-- spring核心分发servlet拦截的静态资源放行 新版本中 mapping="/static/**" location="/static/"location中不需要带*  -->
        <mvc:resources mapping="/static/**" location="/static/*"/>
        <!-- 控制器的包名，services的包名，如果要 @Autowired 注解注入必须配置包的地址 -->
        <context:component-scan base-package="com.lhy.controller,com.lhy.services"/>
@@ -466,7 +473,54 @@
 
 ## spring 组建
 
-### 文件上传
+### 模版引擎：thymeleaf
+
+#### 依赖
+
+1. ```xml
+   <!-- 模板引擎 -->
+   <dependency>
+     <groupId>org.thymeleaf</groupId>
+     <artifactId>thymeleaf</artifactId>
+       <version>3.0.11.RELEASE</version>
+   </dependency>
+   <!-- thymeleaf-spring的版本需要对应spring的版本信息 -->
+   <dependency>
+     <groupId>org.thymeleaf</groupId>
+     <artifactId>thymeleaf-spring5</artifactId>
+     <version>3.0.11.RELEASE</version>
+   </dependency>
+   ```
+
+#### 配置 spring-mvc.xml:
+
+1. ```xml
+   <bean id="templateResolver" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+       <!-- 前缀 -->
+       <property name="prefix" value="/WEB-INF/page/"/>
+       <!-- 后缀 以html结尾 -->
+       <property name="suffix" value=".html"/>
+       <!-- 模板类型 -->
+       <property name="templateMode" value="HTML"/>
+       <!-- 关闭缓存 -->
+       <property name="cacheable" value="false"/>
+       <property name="characterEncoding" value="UTF-8"/>
+   </bean>
+   
+   <!-- 引擎 -->
+   <bean id="templateEngine" class="org.thymeleaf.spring5.SpringTemplateEngine">
+       <!-- 制定模板解析器 -->
+       <property name="templateResolver" ref="templateResolver"/>
+   </bean>
+   <!-- thymeleaf视图解析器 -->
+   <bean class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+       <!-- 制定使用的引擎 -->
+       <property name="templateEngine" ref="templateEngine"/>
+       <property name="characterEncoding" value="UTF-8"/>
+   </bean>
+   ```
+
+### 文件解析器
 
 #### 配置 spring-mvc.xml:
 
@@ -497,7 +551,7 @@
    }
    ```
 
-### 文件下载
+#### 文件下载
 
 1. ```java
    @RequestMapping("/download")
@@ -510,3 +564,67 @@
        return new ResponseEntity<>(FileUtils.readFileToByteArray(new File("d://111.xls")),httpHeaders, HttpStatus.CREATED);
    }
    ```
+
+### 拦截器：HandlerInterceptor
+
+#### 配置 spring-mvc.xml	：
+
+1. ```xml
+   <!-- 拦截器 -->
+   <mvc:interceptors>
+       <mvc:interceptor>
+           <!-- 拦截范围 -->
+           <mvc:mapping path="/**"/>
+           <!-- 放行登陆页面-->
+           <mvc:exclude-mapping path="/login.html"/>
+           <mvc:exclude-mapping path="/static/**"/>
+           <mvc:exclude-mapping path="/code.jpg"/>
+           <mvc:exclude-mapping path="/login"/>
+           <!-- 制定拦截器类 将bean放在外层通过ref标签引入，获取直接将bean放在此处 -->
+           <!--<ref bean="loginInter"/>-->
+           <bean class="com.rimi.interceptor.LoginInterCeptor"/>
+       </mvc:interceptor>
+   
+   </mvc:interceptors>
+   ```
+
+#### 实现一个拦截器
+
+1. ```java
+   package com.lhy.interceptor;
+   
+   import org.springframework.web.servlet.HandlerInterceptor;
+   import org.springframework.web.servlet.ModelAndView;
+   
+   import javax.servlet.http.HttpServletRequest;
+   import javax.servlet.http.HttpServletResponse;
+   
+   public class SessionInterceptor implements HandlerInterceptor {
+   
+       //进入控制器之前调用
+       @Override
+       public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        
+          Object user = request.getSession().getAttribute("user");
+   //        if (null == user) { 
+   //            response.sendRedirect("/login/login");
+   //            return false;
+   //        }
+           //返回值决定了servlet分发器是否分发
+           return false;
+       }
+   
+       //控制器之后调用
+       @Override
+       public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+   
+       }
+   
+       //页面之后调用
+       @Override
+       public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+   
+       }
+   }
+   ```
+
