@@ -84,6 +84,11 @@
               <constructor-arg value="sfsf"></constructor-arg>
       </bean>
       
+      <!-- 静态代码块的依赖 -->
+      <bean id="beanOne" class="ExampleBean" depends-on="manager,accountDao">
+        <property name="manager" ref="manager" />
+      </bean>
+      
       ```
 
 2. 使用注入方式创建对象
