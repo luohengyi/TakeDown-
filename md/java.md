@@ -1174,7 +1174,206 @@ while (fileInputStream.read(bs)!=-1) {
 ##### 创建类
 
 1. getConstructor().newInstance();  调用默认的构造器创建一个类
-2. 
+
+## 多线程
+
+### 生命周期：
+
+1. 新建。 使用 new关键字创建一个线程 后的状态
+2. 就绪。 当线程对象调用start方法后，线程处于就绪状态，但是并没有运行，何时运行取决于jvm的调度
+3. 运行     如果处于就绪状态的线程获取到了cpu那么开始执行run方法的执行体那么，则该线程处于运行状态,调用线程的**<u>yield();方法可以让线程从运行状态转入到就绪状态</u>**
+4. 阻塞。  如线程发生了如下情况那么线程就会处于阻塞状态
+   1. 线程调用了sleep方法
+   2. 线程在调用了一个阻塞式的io方法，在该方法返回之前，线程会被阻塞
+   3. 线程获取一个同步监视器
+   4. 线程在等待某个通知（**notify,线程通讯**）
+   5. 程序调用了线程的suspend方法，但是该方法容易造成死锁
+5. 死亡。 线程会以如下3种方式结束
+   1. run()或call()方法执行完
+   2. 线程抛出一个为捕获的异常
+   3. 直接调用线程的stop()方法结束该线程，但是该方法容易造成死锁
+6. 判断线程是否死亡
+   1. isAlive()   当线程处于就绪，运行，阻塞返回true
+
+### Thread类
+
+1. 通过继承thread来创建一个线程
+
+2. run(); 该方法内是线程执行的任务 ( 通过重写该方法来实行自己的业务)
+
+3. start(); 调用该方法来启动这个线程
+
+   1. ```java
+      public class Main extends Thread {
+      
+          private int i;
+      
+          //该线程要执行的实体
+          @Override
+          public void run() {
+      
+              for (int j = 0; j < 300; j++) {
+                  System.out.println(getName() +"   "+ j);
+                  try {
+                      sleep(700);
+                  } catch (InterruptedException e) {
+                      e.printStackTrace();
+                  }
+              }
+      
+          }
+      
+          public static void main(String[] args) {
+      
+              for (int i = 0; i < 100; i++) {
+                  System.out.println(Thread.currentThread().getName()+"  "+i);
+                  if (i == 20) {
+                      //通过调用start()方法来启动这个线程
+                      new Main().start();
+                      new Main().start();
+                  }
+              }
+      
+          }
+      }
+      ```
+
+### Runnable接口
+
+1. 通过实现Runnabale接口来创建一个线程
+
+2. **通过Runnabale创建的多线程，在构建Thread时，如果传入同一个Runnabale那么这2个线程共享这个Runnabale的成员变量**
+
+3. 将Runnabale接口传入 Thread (Runnabale runnabale,String name); //Runnabale,线程名
+
+   1. ```java
+      //实现自己Runnable类
+      public class Runnabale implements Runnable {
+          //多个线程之间的i是共享的
+          private int i;
+          @Override
+          public void run() {
+              for (; i < 300; i++) {
+                  System.out.println(Thread.currentThread().getName()+"  "+i);
+              }
+          }
+      }
+      
+      
+      //将 Runnabale类传入Thread中，调用start开启线程
+      public class Main extends Thread {
+      
+          public static void main(String[] args) {
+              new Thread(new Runnabale(),"我自己的线程1").start();
+              new Thread(new Runnabale(),"我自己的线程2").start();
+          }
+      }
+      
+      ```
+
+### FutrueTask
+
+1. ```java
+   //. FutureTask 类实现了 Runnabale类 ，接受一个Callable接口，这里使用的是Lambda表达式
+   FutureTask<Integer> futureTask = new FutureTask<Integer>((Callable<Integer>) () -> {
+       int i = 0;
+       for (; i < 100; i++) {
+           System.out.println(Thread.currentThread().getName() + "  i的值是" + i);
+       }
+       return i;
+   });
+   // 正常方式
+   FutureTask<Integer> futureTask = new FutureTask<Integer>(new Callable<Integer>() {
+       @Override
+       public Integer call() throws Exception {
+           int i = 0;
+           for (; i < 100; i++) {
+               System.out.println(Thread.currentThread().getName() + "  i的值是" + i);
+           }
+           return i;
+       }
+   });
+   
+   
+   
+   Thread thread = new Thread(futureTask);
+   thread.start();
+   int back=0 ;
+   try {
+       //通过get方式获取返回值 ，返回值类型由Callable泛型定义
+       back = futureTask.get();
+   } catch (InterruptedException | ExecutionException e) {
+       e.printStackTrace();
+   }
+   System.out.println(back);
+   ```
+
+### 控制线程
+
+1. join()，在某个线程流流中调用其他线程的join方法，调用线程将被阻塞，直到被join方法加入的线程执行完毕
+   1. join(long time); 等待被join线程最长时间
+
+#### 后台线程
+
+1. 有一种线程专门为其他线程提供服务，他们就是后台线程，所有前台线程死亡后，后台线程会自动死亡，调用Thread的setDaemon(true) 方法可以将一个线程设置为后台线程
+2. isDaemon(); 判断线程是否子线程
+3. 前台线程创建的子线程是前台线程，后台线程创建的子线程是后台线程
+
+#### 线程睡眠
+
+1. sleep(long time); 当前线程暂停多少毫米，并且进入阻塞状态
+2. yield();让线程暂停，该线程不会被阻塞，该线程重新进入就绪状态，等待线程调度去的重新调度，可以能会出现当某个线程调用yield()暂停后，线程调度器又重新将其调度出来执行，yield方法暂停之后调度器只会调用优先级相同或者更高的线程执行
+
+#### 改变程序的优先级
+
+1. 每个线程执行时都具有一定的优先级，优先级高的线程执行的机会更多，**每个线程的优先级与创建他的父线程优先级相同**
+2. setPriority(int type);  设置优先级
+   1. Thread.MAX_PRIORITY.  10
+   2. MIN_PRIORITY. 1
+   3. NORM_PRIORITY. 5
+3. getPriority();获取优先级
+
+#### 线程同步
+
+##### 同步代码块
+
+1. 同步监视器：
+
+   1. 为了避免多线程同时修改一个对象的属性
+
+   2. ```java
+      //线程开始执行代码块之前，必须获得对同步监视器的锁定，任何时刻只有1个线程能获取该同步监视器的锁定
+      synchronized (Object object){
+          //业务逻辑
+      }
+      ```
+
+   3. java允许使用任何对象作为同步监视器，但推荐使用可能被并发访问的资源充当同步监视器
+
+2. synchronized方法，使用synchronized修饰方法，**同步监视器就是当前对象本身**
+
+###### 释放同步监视器的锁定
+
+1. 代码执行完毕，break，retun,抛出异常，都会释放代码监视器
+2. 线程执行同步代码块时，调用sleep,yield方法来暂停当前线程，**不会释放**
+3. 其他线程调用了该线程的 suspend方法来暂停该线程，**不会释放**
+
+  同步锁
+
+1. 通过显示的定义一个同步锁对象来实现同步
+
+   1. ```java
+      private final ReentrantLock reentrantLock = new ReentrantLock();
+      public void run(){
+          reentrantLock.lock();
+          //业务逻辑
+          reentrantLock.unlock();
+      }
+      ```
+
+#### 线程同步
+
+1. 
 
 ## JDBC
 

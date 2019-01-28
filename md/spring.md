@@ -22,6 +22,8 @@
 
 ### 使用ioc容器
 
+
+
 #### 控制反转
 
 1. ioc的历史
@@ -476,6 +478,48 @@
    }
    ```
 
+## 常用注解
+
+1. @Controller 当前类是一个控制器
+
+2. @ResponseBody 当前方法返回的是一个json数据格式而不是一个页面
+
+3. @RestController  // 同时开启 @Controller 和@ResponseBody
+
+4. 将类教给spring管理（标记为bean对象）
+   1. @Component	最普通的组件，可以被注入到spring容器进行管理
+      @Repository	        作用于持久层
+      @Service	        作用于业务逻辑层
+      @Controller	        作用于表现层（spring-mvc的注解）
+
+5. @Autowired   一个类，俩个实现类，Autowired就不知道注入哪一个实现类
+
+6. @Resource  而Resource有name属性，可以区分。
+
+7. @bean
+
+   1. 下面是@Configuration里的一个例子
+
+      ```java
+      @Configuration
+      public class AppConfig {
+      
+          @Bean
+          public TransferService transferService() {
+              return new TransferServiceImpl();
+          }
+      
+      }
+      ```
+
+      这个配置就等同于之前在xml里的配置
+
+      ```java
+      <beans>
+          <bean id="transferService" class="com.acme.TransferServiceImpl"/>
+      </beans>
+      ```
+
 ## spring 组建
 
 ### 模版引擎：thymeleaf
@@ -633,3 +677,273 @@
    }
    ```
 
+### 切面编程
+
+#### 依赖
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+<dependency>
+<groupId>org.aspectj</groupId>
+<artifactId>aspectjweaver</artifactId>
+<version>1.9.2</version>
+</dependency>
+```
+
+#### 配置切入
+
+1. ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+   	
+       <!-- 将切面类放入ioc容器 -->
+       <bean id="log" class="com.lhy.aop.Log"/>
+       <bean class="com.lhy.Service" id="service"/>
+       <aop:config>
+           <aop:aspect ref="log">
+               <!--切入点 表达式  com.lhy.aop下所有的方法,方法参数任意 -->
+               <aop:pointcut id="poin" expression="execution(* com.lhy.Service.*(..))"/>
+               <!--  前置通知 method方法定义通知切面类的那个方法 -->
+               <!--<aop:before method="logs" pointcut-ref="poin"/>-->
+               <!-- 后置通知 -->
+               <!--<aop:after method="querylog" pointcut-ref="poin"/>-->
+               <!-- 环绕通知  只有环绕通知可以接受参数-->
+               <aop:around method="round" pointcut-ref="poin"/>
+               <!-- 异常通知 -->
+               <!-- return 通知 -->
+               <!--<aop:after-returning method="returning" pointcut-ref="poin"/>-->
+           </aop:aspect>
+       </aop:config>
+   </beans>
+   ```
+
+```java
+package com.lhy.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+
+public class Log {
+    public void logs(){
+        System.out.println("我是记录--我的参数是");
+    }
+    public void querylog(){
+        System.out.println("查询完成");
+    }
+	// 环绕通知 通过注入 ProceedingJoinPoint 类获取参数列表以及执行代理方法
+    public void round(ProceedingJoinPoint proceedingJoinPoint ){
+        System.out.println("查询之前");
+
+        //获取参数列表
+        Object[] args = proceedingJoinPoint.getArgs();
+        for (Object arg : args) {
+            System.out.println(arg);
+        }
+        try {
+            //相当于此处调用环绕中的方法
+            proceedingJoinPoint.proceed();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+        System.out.println("查询之后");
+    }
+
+    public void returning(){
+        System.out.println("方法return调用");
+    }
+
+
+}
+```
+
+### 事物管理
+
+# SpringBoot
+
+## shiro整合
+
+#### 配置
+
+##### 核心配置
+
+1. ```java
+   package com.lhy.shiro;
+   
+   import org.apache.shiro.cache.MemoryConstrainedCacheManager;
+   import org.apache.shiro.mgt.DefaultSecurityManager;
+   import org.apache.shiro.mgt.SecurityManager;
+   import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
+   import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+   import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+   import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+   import org.springframework.beans.factory.annotation.Qualifier;
+   import org.springframework.context.annotation.Bean;
+   import org.springframework.context.annotation.Configuration;
+   
+   import java.util.LinkedHashMap;
+   
+   //启动自定配置
+   @Configuration
+   public class ShiroConfiguration {
+   
+       //路由过滤器，验证是否符合权限，注入安全管理器
+       @Bean("shiroFilter")
+       public ShiroFilterFactoryBean filterFactoryBean(@Qualifier("securityManager") SecurityManager securityManager){
+           ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
+           bean.setSecurityManager(securityManager);
+           //设置登陆页面
+           bean.setLoginUrl("/login");
+           //登陆成功页面
+           bean.setSuccessUrl("/index");
+           //没有权限跳转
+           bean.setUnauthorizedUrl("/unauthorized");
+           //拦截定义     请求   拦截器
+           LinkedHashMap<String,String>  filterchain = new LinkedHashMap<>();
+           //  authc需要验证 anon放行
+           filterchain.put("/index","authc");
+           filterchain.put("/login","anon");
+           filterchain.put("/loginUser","anon");
+           filterchain.put("/admin","roles[admin]");
+           //具有edit权限（permission）的人才拥有访问权
+           filterchain.put("/edit","perms[edit]");
+           filterchain.put("/**","user");
+   
+   
+           bean.setFilterChainDefinitionMap(filterchain);
+   
+           return bean;
+       }
+   
+       //安全管理器
+       @Bean("securityManager")
+       public SecurityManager securityManager(@Qualifier("authRealm") AuthRealm authRealm){
+           DefaultSecurityManager manager = new DefaultWebSecurityManager();
+           manager.setRealm(authRealm);
+           return manager;
+       }
+   
+       //  验证用户，验证权限，注入自己的密码校验器
+       @Bean("authRealm")
+       public AuthRealm authRealm(@Qualifier("credentialMatcher") CredentialMatcher credentialMatcher){
+               AuthRealm authRealm = new AuthRealm();
+               authRealm.setCredentialsMatcher(credentialMatcher);
+               //开启缓存
+               authRealm.setCacheManager(new MemoryConstrainedCacheManager());
+               return authRealm;
+       }
+   
+       // 密码校验器，定制自己的密码校验规则
+       @Bean("credentialMatcher")
+       public CredentialMatcher credentialMatcher(){
+           return  new CredentialMatcher();
+       }
+   
+       //spring - shiro 关联配置
+       public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Qualifier("securityManager") SecurityManager securityManager){
+           AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+           authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+           return authorizationAttributeSourceAdvisor;
+       }
+   
+       public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator(){
+           DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+           defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+           return  defaultAdvisorAutoProxyCreator;
+       }
+   
+   }
+   ```
+
+##### 密码验证器
+
+1. ```java
+   package com.lhy.shiro;
+   
+   import org.apache.shiro.authc.AuthenticationInfo;
+   import org.apache.shiro.authc.AuthenticationToken;
+   import org.apache.shiro.authc.UsernamePasswordToken;
+   import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
+   
+   /**
+    * 重写密码比较规则
+    */
+   public class CredentialMatcher extends SimpleCredentialsMatcher {
+       @Override
+       public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
+           UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
+           String password = new String(usernamePasswordToken.getPassword());
+           String dbPassword = (String) info.getCredentials();
+           return this.equals(password, dbPassword);
+       }
+   }
+   ```
+
+##### 验证授权
+
+1. ```java
+   package com.lhy.shiro;
+   
+   import com.lhy.shiro.model.Permission;
+   import com.lhy.shiro.model.Role;
+   import com.lhy.shiro.model.User;
+   import com.lhy.shiro.service.UserService;
+   import org.apache.commons.collections.CollectionUtils;
+   import org.apache.shiro.authc.*;
+   import org.apache.shiro.authz.AuthorizationInfo;
+   import org.apache.shiro.authz.SimpleAuthorizationInfo;
+   import org.apache.shiro.realm.AuthorizingRealm;
+   import org.apache.shiro.subject.PrincipalCollection;
+   import org.springframework.beans.factory.annotation.Autowired;
+   
+   import java.util.ArrayList;
+   import java.util.Collection;
+   import java.util.List;
+   import java.util.Set;
+   
+   public class AuthRealm extends AuthorizingRealm {
+   
+       @Autowired
+       private UserService userService;
+   
+       //授权
+       @Override
+       protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+           //类似从session中获取用户，然后通过用户获取角色，通过角色获取权限列表，应为权限是第不可重复的故此使用 set！！
+           User user = (User) principalCollection.fromRealm(this.getClass().getName()).iterator().next();
+           //权限列表
+           List<String> permissionList = new ArrayList<>();
+           //角色列表
+           List<String> roleNameList=new ArrayList<>();
+           Set<Role> roleSet = user.getRoles();
+           if (CollectionUtils.isNotEmpty(roleSet)) {
+               for (Role role : roleSet) {
+                   roleNameList.add(role.getRname());
+                   Set<Permission> permissions = role.getPermissions();
+                   if (CollectionUtils.isNotEmpty(permissions)){
+                       for (Permission permission : permissions) {
+                           permissionList.add(permission.getName());
+                       }
+                   }
+               }
+           }
+   
+           SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+           //将权限名放入  SimpleAuthorizationInfo 的  StringPermissions
+           simpleAuthorizationInfo.addStringPermissions(permissionList);
+           //将角色放入
+           simpleAuthorizationInfo.addRoles(roleNameList);
+           return simpleAuthorizationInfo;
+       }
+   
+       //认证登陆
+       @Override
+       protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+           UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) authenticationToken;
+           String username = usernamePasswordToken.getUsername();
+           User user = userService.findByUsername(username);
+           return new SimpleAuthenticationInfo(user, user.getPassword(), this.getClass().getName());
+       }
+   }
+   ```
