@@ -1371,9 +1371,94 @@ while (fileInputStream.read(bs)!=-1) {
       }
       ```
 
-#### 线程同步
+#### 线程通信
 
-1. 
+1. wait();   导致当前线程的阻塞，知道其他线程调用该同步监视器的notifiable或notifiableAll方法，唤醒之后wait之后的代码会执行
+2. notifiable(); 唤醒此同步监视器之上的某个线程
+3. notifiableAll();  唤醒此同步监视器之上的所有线程
+
+## Socket
+
+### 协议
+
+#### udp
+
+1. 适合做直播，不需要链接就可以通讯
+2. 一次性可以携带65507字节
+
+##### Api
+
+1. 接受数据包
+
+   1. ```java
+      //构建一个udp，绑定需要监听的端口
+      DatagramSocket datagramSocket = new DatagramSocket(2000);
+      
+      //构建一个数据包用户接受数据
+      byte[] data = new byte[512];
+      DatagramPacket datagramPacket = new DatagramPacket(data, data.length);
+      
+      //开始监听需要绑定的端口，在收到消息之前回阻塞该线程,
+      datagramSocket.receive(datagramPacket);
+      
+      String responseData = new String(datagramPacket.getData(),0,datagramPacket.getLength());
+      
+      /**
+       * datagramPacket.getData() 获取接受数据
+       * datagramPacket.getLength() 获取数据长度
+       */
+      String rs = new String(datagramPacket.getData(),0,datagramPacket.getLength());
+      System.out.println("收到 ip"+datagramPacket.getSocketAddress().toString()+": "+rs);
+      ```
+
+2. 发送数据
+
+   1. ```java
+       //发送数据包，系统自动分配端口，所以不用指定端口
+      DatagramSocket datagramSocket = new DatagramSocket();
+      
+      //构建数据发送包
+      String data = "13qwe";
+      byte[] bytes = data.getBytes();
+      DatagramPacket datagramPacket = new DatagramPacket(bytes,bytes.length);
+      //使用ip的方式发送数据，单播模式:想像指定ip的指定端口发送数据
+      //        datagramPacket.setAddress(InetAddress.getLocalHost());
+      //        datagramPacket.setPort(2000);
+      //多播模式
+      datagramPacket.setAddress(InetAddress.getByName("255.255.255.255"));
+      datagramPacket.setPort(2000);
+      
+      //发送数据
+      datagramSocket.send(datagramPacket);
+      ```
+
+
+
+#### tcp
+
+1. 链接的可靠性，
+   1. 三次握手，确保可以正常链接
+   2. 四次挥手，确保数据可以完整的传输
+2. 传输的可靠性：
+   1. 将大的数据包拆分成小的数据发送，如果发送失败，只用重新发送一小部分数据
+   2. 如果服务器在一定的时间内没有接收到客户端发送的验证信息，那么没有验证到的那部分数据将重新发送
+3. 常用配置
+   1. setSoTimeout(); 谁知超时时间
+   2. setTcpNoDelay(true); 减少回送包的发送
+   3. setKeepAlive(true).    当长时间为收到数据后自动发送心跳包，时间为2小时
+   4. setSoLinger(true,20).  对于close关闭操作行为作怎么样的操作
+      1. False,0  默认情况下关闭时立即返回，底层系统接管输出流，将缓冲区内的数据发送完成
+      2. true,0 关闭时立即返回，缓冲区内的数据抛弃，直接发送rst结束命令到对方，并且无须对方确认等待
+      3. True,200 关闭时阻塞200毫秒，随后按照第二情况处理
+   5. setOOBInline(false);  **让紧急数据内敛，业务层不会收到紧急消息，紧急消息通过 socket.sendUrgentData(int i); 发送 ，可以利用这个来做心跳包**
+   6. setSendBufferSize(). 设置发送数据缓冲大小，如果超过这个大小，数据将会被拆分发送
+   7. setReceiveBufferSize();  **设置接受数据缓冲区，如果发送的数据大于这个数据那么，多余的数据会被抛弃**
+   8. setPerformancePreferences(1,1,1);  设置性能比例
+      1. 参数1 链接时间
+      2. 参数2 延迟率
+      3. 参数3 带宽
+      4. 如果发送一个文件应该是：212
+      5. 如果发送一个及时消息：110
 
 ## JDBC
 
