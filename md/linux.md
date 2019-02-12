@@ -226,9 +226,10 @@
 ##### php源码安装
 
 1.  检查依赖：yum -y install curl curl-devel libjpeg libjpeg-devellibpng libpng-devel libjpeg-devel freetype freetype-devel libxml2   libxml2-devel MySQLpcre-devel gcc libxml2 libxml2-devel 
-2. 下载源码包：wget http://php.net/get/php-7.0.2.tar.gz/from/a/mirror
-3. 进入解压目录，检查配置,并配置安装目录：./configure --prefix=/usr/local/php720 --with-mysqli --with-pdo-mysql --with-iconv-dir --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir --enable-simplexml --enable-xml --disable-rpath --enable-bcmath --enable-soap --enable-zip --with-curl --enable-fpm --with-fpm-user=nobody --with-fpm-group=nobody --enable-mbstring --enable-sockets --with-gd --with-openssl --with-mhash --enable-opcache --disable-fileinfo
-4. 编译且安装：make &&  make install
+    1.  yum install openssl openssl-devel 
+2.  下载源码包：wget http://php.net/get/php-7.0.2.tar.gz/from/a/mirror
+3.  进入解压目录，检查配置,并配置安装目录：./configure --prefix=/usr/local/php720 --with-mysqli --with-pdo-mysql --with-iconv-dir --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir --enable-simplexml --enable-xml --disable-rpath --enable-bcmath --enable-soap --enable-zip --with-curl --enable-fpm --with-fpm-user=nobody --with-fpm-group=nobody --enable-mbstring --enable-sockets --with-gd --with-openssl --with-mhash --enable-opcache --disable-fileinfo
+4.  编译且安装：make &&  make install
 
 ##### 升级安装
 
