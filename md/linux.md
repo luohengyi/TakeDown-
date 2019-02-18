@@ -42,6 +42,19 @@
 7. 软件包信息 yum info
 8. 
 
+#### 端口类
+
+开启端口。 centos 6.8测试可用
+
+1. 开启端口
+   1. iptables -I INPUT -p tcp --dport 80 -j ACCEPT  
+2. 保存配置
+   1. service iptables save
+3. 重启防火墙
+   1. service iptables restart
+4. 查看端口
+   1.  /etc/init.d/iptables status
+
 #### 进程类
 
 1. 查看进程：ps -ef|grep +程序名称   
@@ -256,7 +269,15 @@
 1. 检查依赖：yum -y install gcc zlib zlib-devel pcre-devel openssl openssl-devel
 2. 下载源码：wget http://nginx.org/download/nginx-1.13.7.tar.gz
 3. 解压文件夹下：./configure --prefix=/usr/local/bin/ningx 编译配置安装目录
-4.  安装：make && make install
+4. 安装：make && make install
+5. 启动：/usr/local/bin/ningx/sbin/nginx
+6. 开启端口
+   1. 开启端口
+      1. iptables -I INPUT -p tcp --dport 80 -j ACCEPT  
+   2. 保存配置
+      1. service iptables save
+   3. 重启防火墙
+      1. service iptables restart
 
 ###### //php nginx 通用配置
 
