@@ -760,6 +760,43 @@ public class Log {
 
 ### 事物管理
 
+1. ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+   
+       <!-- 初始化数据管理器 -->
+       <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+           <!--指定数据源-->
+           <property name="dataSource" ref="dataSource"/>
+       </bean>
+   
+       <tx:advice id="advice" transaction-manager="transactionManager">
+       <!-- 配置需要加入事物的方法 -->
+           <tx:attributes>
+               <!-- 事物的传播机制 ：当执行sql语句时 发现已经开启了事物，那么就将自己加入到该事物中。如果未开启事物， 那么就新开启事物，并将自己加入进去 -->
+               <tx:method name="add*" propagation="REQUIRED"/>
+               <tx:method name="update*"  propagation="REQUIRED"/>
+               <!-- 查询 行级锁 -->
+               <tx:method name="select*" read-only="true"/>
+               <!-- 等等  -->
+           </tx:attributes>
+       </tx:advice>
+   
+       <!--使用aop方式 配置切入点-->
+       <aop:config>
+           <!-- 包下的所有类的所有的方法 切入进去 -->
+           <aop:pointcut id="point" expression="execution(* com.lhy.services.*.*(..))"/>
+   
+           <aop:advisor advice-ref="advice" pointcut-ref="point"/>
+   
+       </aop:config>
+   
+   </beans>
+   ```
+
 # SpringBoot
 
 ## shiro整合
