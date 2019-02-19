@@ -799,6 +799,22 @@ public class Log {
 
 # SpringBoot
 
+## 三大特性
+
+### 组件自动配装
+
+1. 激活自动装配：@EnableAutoConfiguration
+2. 配置：/META-INF/spring.factories
+3. 实现：XXXAutoConfiguration
+
+### 嵌入式web容器
+
+### 生产准备特性
+
+
+
+
+
 ## shiro整合
 
 #### 配置

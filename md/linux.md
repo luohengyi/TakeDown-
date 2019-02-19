@@ -268,9 +268,10 @@
 
 1. 检查依赖：yum -y install gcc zlib zlib-devel pcre-devel openssl openssl-devel
 2. 下载源码：wget http://nginx.org/download/nginx-1.13.7.tar.gz
-3. 解压文件夹下：./configure --prefix=/usr/local/bin/ningx 编译配置安装目录
+3. 解压文件夹下：./configure --prefix=/usr/local/bin/nginx 编译配置安装目录
 4. 安装：make && make install
 5. 启动：/usr/local/bin/ningx/sbin/nginx
+   1. 重启：nginx -s reload
 6. 开启端口
    1. 开启端口
       1. iptables -I INPUT -p tcp --dport 80 -j ACCEPT  
