@@ -811,6 +811,40 @@ public class Log {
 
 ### 生产准备特性
 
+### 切换容器
+
+1. jetty
+
+1. ```xml
+   <dependency>  
+               <groupId>org.springframework.boot</groupId>  
+               <artifactId>spring-boot-starter-web</artifactId>  
+               <exclusions>  
+                   <!--  排除 tomcat 默认使用的是tomcat-->
+                   <exclusion>  
+                       <groupId>org.springframework.boot</groupId>  
+                       <artifactId>spring-boot-starter-tomcat</artifactId>  
+                   </exclusion>  
+               </exclusions>  
+           </dependency>  
+     
+           <!-- Jetty适合长连接应用，就是聊天类的长连接 -->  
+           <!-- 使用Jetty，需要在spring-boot-starter-web排除spring-boot-starter-tomcat，因为SpringBoot默认使用tomcat -->  
+           <dependency>  
+               <groupId>org.springframework.boot</groupId>  
+               <artifactId>spring-boot-starter-jetty</artifactId>  
+           </dependency> 
+   ```
+
+2. webflux：如果要使用webflux容器那么需要注视所有传统容器的依赖，并且servelet相关的内容无法使用了
+
+   1. ```xml
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-webflux</artifactId>
+      </dependency>
+      ```
+
 
 
 
