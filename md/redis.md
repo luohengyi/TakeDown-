@@ -44,10 +44,34 @@
 
 ### List
 
-1. 添加：lpush key  下标 value  /   lpush key  v1 v2 v3 vv4
+1. 添加：  lpush key  v1 v2 v3 vv4
    1. 例如：lpush user a b c d e
 2. 修改：lset key 下标 值
    1. 例如修改user下第一个数据为ppp：lset user 0 ppp
 3. 查询:lrange user 0 3  //从下标0到3
-   1. lrange user -1 查看所有
+   1. lrange user 0 -1 查看所有
 4. 删除：del key 下标
+5. 队列：
+   1. BLPOP key1 [key2 ] timeout  从列表的左侧移除一个元素，**如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。** 
+   2. BRPOP key1 [key2 ] timeout  从列表的右侧移除一个元素，**如果列表没有元素会阻塞列表直到等待超时或发现可弹出元素为止。**
+
+### set
+
+1. 添加：sadd key v1 v2 v3 
+   1. 例如  sadd user zhangsan lisi wangwu
+2. 查询 SRANDMEMBER key  count（要查看几个值）
+   1. 例如查看1个值：SRANDMEMBER user 1
+   2. 查看所有的值 ：SMEMBERS key
+
+### zset
+
+1. 添加元素（zset 要指定一个分数来用于排序）
+   1. zadd key numbner|value  numbner|value
+   2. 例如： zadd user 1 zhangshan 2 lisi
+2. 查询数据: zrange user 0 3  //从下标0到3
+   1. zrange user 0 -1 查看所有
+
+## Clients-java-jedis
+
+
+
