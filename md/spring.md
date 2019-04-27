@@ -62,6 +62,8 @@
    <!-- 使用该类生成对象 ,默认是单例对象，这里的u是配置中bean标签的id -->
    <!-- 无参方法构建 -->
     User user = (User) context.getBean("u");
+   <!-- 在获取对象时，指定对象类型，从而不再强转对象类型 -->
+    User user = context.getBean("u",User.class);
    
    ```
 
@@ -488,7 +490,7 @@
 
 4. 将类教给spring管理（标记为bean对象）
    1. @Component	最普通的组件，可以被注入到spring容器进行管理
-      @Repository	        作用于持久层
+      @Repository	        作用于持久层，接口类
       @Service	        作用于业务逻辑层
       @Controller	        作用于表现层（spring-mvc的注解）
 
@@ -845,9 +847,215 @@ public class Log {
       </dependency>
       ```
 
+### 获取IOC中的Bean
+
+```java
+//实现ApplicationContextAware接口，通过setApplicationContext实现ApplicationContext的注入，通过ApplicationContextAware获取ioc中的bean
+@Component
+public class Application implements ApplicationContextAware {
+
+    private static ApplicationContext applicationContext;
+    //通过setApplicationContext方法注入 ApplicationContext类
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        if(Application.applicationContext == null) {
+            Application.applicationContext = applicationContext;
+        }
+    }
+
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public static Object getBean(String name){
+        return getApplicationContext().getBean(name);
+    }
+
+    public static <T> T getBean(Class<T> clazz){
+        return getApplicationContext().getBean(clazz);
+    }
+
+    public static <T> T getBean(String name,Class<T> clazz){
+        return getApplicationContext().getBean(name, clazz);
+    }
+
+
+}
+```
+
+### 走向自动化装配
+
+#### @Enable 模块化装配
+
+##### 基于注解驱动方式
+
+```java
+//注解
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Repository
+@Import(Config.class)
+public @interface FirstLevelRepository {
+
+    String value() default "";
+}
+
+//配置类
+public class Config {
+
+    @Bean
+    public String Name(){
+        return "cs";
+    }
+}
+
+//使用@FirstLevelRepository时Config下的配置bean会被自动加载进来，这也是
+@Configuration
+@FirstLevelRepository
+public class AuthConfiguration {
+
+}
+
+
+```
+
+##### 基于接口方式实现
+
+```java
+//注解
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Repository
+@Import(ConfigSelector.class)
+public @interface FirstLevelRepository {
+
+    String value() default "";
+}
+
+//配置类，这里不在需要@Configuration了
+public class Config {
+
+    @Bean
+    public String Name(){
+        return "cs";
+    }
+}
+
+//接口实现方式
+import org.springframework.context.annotation.ImportSelector;
+public class ConfigSelector implements ImportSelector {
+    @Override
+    public String[] selectImports(AnnotationMetadata annotationMetadata) {
+        return new String[]{HelloBean.class.getName()};
+    }
+}
+
+```
 
 
 
+#### 条件装配
+
+```java
+@Service
+@Profile("java8")
+public class IndexService {
+}
+
+@Service
+@Profile("8")
+public class IndexService {
+}
+//通过配置 spring.profiles.active属性决定自动注入那个一类型
+spring.profiles.active=java8
+```
+
+#### 基于编程方式实现条件装配
+
+1. 申明自定义注解
+
+   ```java
+   @Retention(RetentionPolicy.RUNTIME)
+   @Target({ElementType.TYPE,ElementType.METHOD})
+   @Documented
+   //MyCondition实现验证
+   @Conditional(MyCondition.class)
+   public @interface ConditionSystem {
+       String name();
+       String value();
+   }
+   ```
+
+2. 编程方式实现条件判断
+
+3. ```java
+   import org.springframework.context.annotation.Condition;
+   public class MyCondition implements Condition {
+       @Override
+       public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
+           Map<String, Object> annotationAttributes = annotatedTypeMetadata.getAnnotationAttributes(ConditionSystem.class.getName());
+           String name = (String)annotationAttributes.get("name");
+           Object value = annotationAttributes.get("value");
+           return name.equals("我");
+       }
+   }
+   ```
+
+   
+
+#### 自动装配（没太明白）
+
+1. 定义实现类
+
+   ```java
+   @Configuration
+   @EnableAutoConfiguration  //自动装配
+   @FirstLevelRepository  //通过模块化（接口方式）装配bean
+   @ConditionSystem(name = "我",value = "asdad") //条件话装配这个类
+   public class AuthConfiguration {
+   
+   }
+   ```
+
+2. 配置文件
+
+   1. META-INFO/spring.factories
+
+   2. ```properties
+      org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+      com.imooc.diveinspringboot.config.AuthConfiguration
+      ```
+
+3. 理解使用@EnableAutoConfiguration注解后，spring会去META-INFO/spring.factories查找配置文件中`org.springframework.boot.autoconfigure.EnableAutoConfiguration`对应的配置项加载进来
+
+### SpringBootApplication的基本使用
+
+#### 推断 web应用类型和主引导类
+
+##### 自定义SpringBootApplication
+
+1. ```java
+    SpringApplication springApplication = new SpringApplication(DiveInSpringBootApplication.class);
+           //关闭在启动时控制台显示的spring字符
+           springApplication.setBannerMode(Banner.Mode.OFF);
+           //设置条件装配类型
+           springApplication.setAdditionalProfiles("prod");
+           //设置是否是web类型
+           springApplication.setWebApplicationType(WebApplicationType.NONE);
+   
+           springApplication.run();
+   ```
+
+   
+
+#### 配置 spring Bean 来源
+
+1. 通过注解类加载
+2. 通过xml配置文件
+
+#### 加载 应用上下文初时器 和 应用实践监听器
 
 ## shiro整合
 

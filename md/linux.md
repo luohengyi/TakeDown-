@@ -44,7 +44,9 @@
 
 #### 端口类
 
-开启端口。 centos 6.8测试可用
+#####  开启端口
+
+###### centos 6.8测试可用
 
 1. 开启端口
    1. iptables -I INPUT -p tcp --dport 80 -j ACCEPT  
@@ -54,6 +56,21 @@
    1. service iptables restart
 4. 查看端口
    1.  /etc/init.d/iptables status
+
+###### centos7
+
+1. 查看已开启的端口
+
+   1. 查看所有已开放的端口：netstat -anp  
+   2. 查看某个端口是否开放：firewall-cmd --query-port=666/tcp
+
+2. 添加指定需要开放的端口：
+
+   1. firewall-cmd --add-port=123/tcp --permanent
+   2. 重载入添加的端口：firewall-cmd --reload
+   3. 查询指定端口是否开启成功：firewall-cmd --query-port=123/tcp
+
+   
 
 #### 进程类
 
@@ -282,53 +299,121 @@
 
 ###### //php nginx 通用配置
 
- server {
+ 
 
-​        listen       80;
+```nginx
+server {
 
-​        server_name  www.jinlaravel.com;
+        listen       80;
 
-​        root    "D:\phpstudy\PHPTutorial\www\jinlaravel\public";
+        server_name  www.jinlaravel.com;
 
-​        location / {
+        root    "D:\phpstudy\PHPTutorial\www\jinlaravel\public";
 
-​            index  index.html index.htm index.php l.php;
+        location / {
 
-​           autoindex  off;
+            index  index.html index.htm index.php l.php;
 
-​           try_files $uri $uri/ /index.php?$query_string;
+          autoindex  off;
 
-​        }
+         try_files $uri $uri/ /index.php?$query_string;
 
-​        error_page   500 502 503 504  /50x.html;
+       }
 
-​        location = /50x.html {
+      error_page   500 502 503 504  /50x.html;
 
-​            root   html;
+      location = /50x.html {
 
-​        }
+          root   html;
 
-​        location ~ \.php(.*)$  {
+      }
 
-​            fastcgi_pass   127.0.0.1:9000;
+      location ~ \.php(.*)$  {
 
-​            fastcgi_index  index.php;
+          fastcgi_pass   127.0.0.1:9000;
 
-​            fastcgi_split_path_info  ^((?U).+\.php)(/?.+)$;
+           fastcgi_index  index.php;
 
-​            fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+           fastcgi_split_path_info  ^((?U).+\.php)(/?.+)$;
 
-​            fastcgi_param  PATH_INFO  $fastcgi_path_info;
+           fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
 
-​            fastcgi_param  PATH_TRANSLATED  $document_root$fastcgi_path_info;
+          fastcgi_param  PATH_INFO  $fastcgi_path_info;
 
-​            include        fastcgi_params;
+           fastcgi_param  PATH_TRANSLATED  $document_root$fastcgi_path_info;
 
-​        }
+           include        fastcgi_params;
 
-​    }
+       }
+
+  }
+```
 
 
+
+###### 宝塔配置
+
+```nginx
+server {
+        listen       8067;
+        server_name  localhost;
+        root /Users/luohengyi/web/0418/0418/public;
+        index index.php index.html index.htm default.php default.htm default.html;
+
+    #禁止访问的文件或目录
+    location ~ ^/(\.user.ini|\.htaccess|\.git|\.svn|\.project|LICENSE|README.md)
+    {
+        return 404;
+    }
+
+    #一键申请SSL证书验证目录相关设置
+    location ~ \.well-known{
+        allow all;
+    }
+
+    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+    {
+        expires      30d;
+        error_log off;
+        access_log off;
+    }
+
+    location ~ .*\.(js|css)?$
+    {
+        expires      12h;
+        error_log off;
+        access_log off;
+    }
+
+
+    location / {
+
+         if (!-e $request_filename) {
+
+                rewrite ^(.*)$ /index.php?s=$1 last;  break;
+
+         }
+
+    }
+      location ~ \.php$ {
+
+              fastcgi_pass   127.0.0.1:9000;
+
+              fastcgi_index  index.php;
+
+   #            fastcgi_param  SCRIPT_FILENAME  /Users/luohengyi/cs;   #如/var/www$fastcgi_script_name
+
+              fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+
+              include        fastcgi_params;
+
+               fastcgi_intercept_errors on;
+
+         }
+
+
+ }
+```
 
 
 
