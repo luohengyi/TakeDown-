@@ -372,6 +372,26 @@
    </beans>
    ```
 
+##### spring-mvc.java
+
+//以bean的方式配置试图解析器，但是component-scan的xml配置也需要
+
+```java
+@Configuration
+@EnableWebMvc
+public class Cs {
+    @Bean
+    public ViewResolver getViewResolver(){
+        ViewResolver viewResolver = new InternalResourceViewResolver();
+        ((InternalResourceViewResolver) viewResolver).setPrefix("/WEB-INF/");
+        ((InternalResourceViewResolver) viewResolver).setSuffix(".jsp");
+        return viewResolver;
+    }
+}
+```
+
+
+
 #### spring-mybatis.xml 配置
 
 1. ```xml
@@ -809,45 +829,7 @@ public class Log {
 2. 配置：/META-INF/spring.factories
 3. 实现：XXXAutoConfiguration
 
-### 嵌入式web容器
-
-### 生产准备特性
-
-### 切换容器
-
-1. jetty
-
-1. ```xml
-   <dependency>  
-               <groupId>org.springframework.boot</groupId>  
-               <artifactId>spring-boot-starter-web</artifactId>  
-               <exclusions>  
-                   <!--  排除 tomcat 默认使用的是tomcat-->
-                   <exclusion>  
-                       <groupId>org.springframework.boot</groupId>  
-                       <artifactId>spring-boot-starter-tomcat</artifactId>  
-                   </exclusion>  
-               </exclusions>  
-           </dependency>  
-     
-           <!-- Jetty适合长连接应用，就是聊天类的长连接 -->  
-           <!-- 使用Jetty，需要在spring-boot-starter-web排除spring-boot-starter-tomcat，因为SpringBoot默认使用tomcat -->  
-           <dependency>  
-               <groupId>org.springframework.boot</groupId>  
-               <artifactId>spring-boot-starter-jetty</artifactId>  
-           </dependency> 
-   ```
-
-2. webflux：如果要使用webflux容器那么需要注视所有传统容器的依赖，并且servelet相关的内容无法使用了
-
-   1. ```xml
-      <dependency>
-         <groupId>org.springframework.boot</groupId>
-         <artifactId>spring-boot-starter-webflux</artifactId>
-      </dependency>
-      ```
-
-### 获取IOC中的Bean
+#### 获取IOC中的Bean
 
 ```java
 //实现ApplicationContextAware接口，通过setApplicationContext实现ApplicationContext的注入，通过ApplicationContextAware获取ioc中的bean
@@ -883,9 +865,9 @@ public class Application implements ApplicationContextAware {
 }
 ```
 
-### 走向自动化装配
+#### 走向自动化装配
 
-#### @Enable 模块化装配
+##### @Enable 模块化装配
 
 ##### 基于注解驱动方式
 
@@ -956,7 +938,7 @@ public class ConfigSelector implements ImportSelector {
 
 
 
-#### 条件装配
+##### 条件装配
 
 ```java
 @Service
@@ -972,7 +954,7 @@ public class IndexService {
 spring.profiles.active=java8
 ```
 
-#### 基于编程方式实现条件装配
+##### 基于编程方式实现条件装配
 
 1. 申明自定义注解
 
@@ -1005,7 +987,7 @@ spring.profiles.active=java8
 
    
 
-#### 自动装配（没太明白）
+##### 自动装配（没太明白）
 
 1. 定义实现类
 
@@ -1030,11 +1012,53 @@ spring.profiles.active=java8
 
 3. 理解使用@EnableAutoConfiguration注解后，spring会去META-INFO/spring.factories查找配置文件中`org.springframework.boot.autoconfigure.EnableAutoConfiguration`对应的配置项加载进来
 
-### SpringBootApplication的基本使用
+### 嵌入式web容器
+
+#### 切换容器
+
+1. jetty
+
+2. ```xml
+   <dependency>  
+               <groupId>org.springframework.boot</groupId>  
+               <artifactId>spring-boot-starter-web</artifactId>  
+               <exclusions>  
+                   <!--  排除 tomcat 默认使用的是tomcat-->
+                   <exclusion>  
+                       <groupId>org.springframework.boot</groupId>  
+                       <artifactId>spring-boot-starter-tomcat</artifactId>  
+                   </exclusion>  
+               </exclusions>  
+           </dependency>  
+     
+           <!-- Jetty适合长连接应用，就是聊天类的长连接 -->  
+           <!-- 使用Jetty，需要在spring-boot-starter-web排除spring-boot-starter-tomcat，因为SpringBoot默认使用tomcat -->  
+           <dependency>  
+               <groupId>org.springframework.boot</groupId>  
+               <artifactId>spring-boot-starter-jetty</artifactId>  
+           </dependency> 
+   ```
+
+3. webflux：如果要使用webflux容器那么需要注视所有传统容器的依赖，并且servelet相关的内容无法使用了
+
+   1. ```xml
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-webflux</artifactId>
+      </dependency>
+      ```
+
+### 生产准备特性（指标，健康检查，外部化配置）
+
+### 
+
+## Spring生命周期
+
+### 启动阶段
 
 #### 推断 web应用类型和主引导类
 
-##### 自定义SpringBootApplication
+#### 自定义SpringBootApplication
 
 1. ```java
     SpringApplication springApplication = new SpringApplication(DiveInSpringBootApplication.class);
@@ -1055,7 +1079,31 @@ spring.profiles.active=java8
 1. 通过注解类加载
 2. 通过xml配置文件
 
-#### 加载 应用上下文初时器 和 应用实践监听器
+#### 加载 应用上下文初时器 和 应用事件监听器
+
+### 运行阶段
+
+#### DispatcherServlet
+
+##### handlemapping
+
+1. 根据配置以及请求参数查找对应的handle并返回
+
+##### handleAdapter
+
+1. 执行查找到的handle并且返回ModelAndview
+
+##### viewResolver
+
+1. 解析之心handle并且返回ModelAndview返回的view，最后放入响应中
+
+##### handleExceptionResolver
+
+1. 解析异常
+
+### 
+
+
 
 ## shiro整合
 
