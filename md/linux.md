@@ -260,20 +260,6 @@ export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
 6. 开启 mysql 服务 /usr/local/mysql/support-files/mysql.server start
 
-7. 命令mysql 的配置
-
-   将 /usr/local/mysql/bin/mysql
-
-   cp mysql /usr/bin/
-
-8. 命令mysql 的配置
-
-   将 /usr/local/mysql/bin/mysql
-
-   cp mysql /usr/bin/
-
-   或者将他配置到全局
-
 9. 初始化账户密码，远程登陆
 
    cd /tar.gz源码里面
