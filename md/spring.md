@@ -1044,7 +1044,7 @@ spring.profiles.active=java8
            springApplication.setAdditionalProfiles("prod");
            //设置是否是web类型
            springApplication.setWebApplicationType(WebApplicationType.NONE);
-   
+      
            springApplication.run();
    ```
 

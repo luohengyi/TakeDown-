@@ -20,6 +20,8 @@
 10. 清屏：clear
 11. pwd 显示路径
 12. 建立软连接：ln -s 地址。 //当前地址生成一个镜像地址
+13. 查找安装包
+    1. yum -y list java*
 
 #### 服务器信息查询
 
@@ -56,13 +58,17 @@
    1. service iptables restart
 4. 查看端口
    1.  /etc/init.d/iptables status
+5. 关闭防火墙
+   1. 停止 systemctl stop firewalld.service
+   2. 关闭开启自启 systemctl disable firewalld.service 
+   3. 查看状态 firewall-cmd --state
 
 ###### centos7
 
 1. 查看已开启的端口
 
-   1. 查看所有已开放的端口：netstat -anp  
-   2. 查看某个端口是否开放：firewall-cmd --query-port=666/tcp
+   1. 查看所有端口使用情况：netstat -anp  
+   2. 查看某个端口的使用情况：firewall-cmd --query-port=666/tcp
 
 2. 添加指定需要开放的端口：
 
@@ -189,11 +195,31 @@
 
 ### 环境搭建
 
+#### Java
+
+1. 下载jdk
+
+2. 配置环境
+
+   1. vim /etc/profile
+   
+   ```properties
+   export JAVA_HOME=/usr/share/jdk1.6.0_14 
+   export PATH=$JAVA_HOME/bin:$PATH 
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar 
+   ```
+
+#### Tomcat
+
+1. 启动 sudo sh startup.sh
+
 #### mysql
 
-1. 依赖：yum -y install ncurses-devel
+1. 依赖：yum -y install ncurses-devel gcc gcc-c++
 
 2. .tar下载下载地址https://dev.mysql.com/downloads/file/?id=467701
+
+   1. https://dev.mysql.com/get/archives/mysql-5.5/mysql-5.5.54.tar.gz
 
 3. cd 解压目录下
 
@@ -225,7 +251,12 @@
 
 5. 初始化数据库：cd scripts/
 
-   1. ./mysql_install_db --datadir=/usr/local/mysql/data/ --basedir=/usr/local/mysql/ --user=mysq\
+   1. ./mysql_install_db --datadir=/usr/local/mysql/data/ --basedir=/usr/local/mysql/ --user=mysql
+   2. cp support-files/my-medium.cnf /etc/my.cnf   #复制配置文件 
+   3. cp support-files/mysql.server /etc/init.d/mysql    #复制启动脚本
+   4. chmod 755 /etc/init.d/mysql
+   5. chkconfig --add mysql                              #添加系统服务 
+   6. export PATH=$PATH:/usr/local/mysql/bin    #添加环境变量 
 
 6. 开启 mysql 服务 /usr/local/mysql/support-files/mysql.server start
 

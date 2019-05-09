@@ -1,3 +1,23 @@
+### 用户操作
+
+1. **MySQL5.7 mysql.user表没有password字段改 authentication_string；**
+2. 创建用户`CREATE USER 'username'@'host' IDENTIFIED BY 'password';`
+3. 修改用户密码：`SET PASSWORD FOR 'username'@'host' = PASSWORD('newpassword');`
+4. 删除用户：`DROP USER 'username'@'host';`
+5. 刷新数据库：`flush privileges;`
+
+#### 权限
+
+1. ```mysql
+   grant all privileges on *.* to 'chai'@'127.0.0.1';
+   # 赋予新用户，从本地操作所有数据库.所有数据表的所有权限
+    
+   grant all privileges on *.* to 'chai'@'%';
+   # 赋予新用户，从外部操作所有数据库.所有数据表的所有权限（没有外部客户端的IP限制，但本地有限制）
+   ```
+
+   
+
 ### 表结构操作：
 
 1. 修改表名：ALTER TABLE 旧表名 RENAME 新表名;
@@ -55,7 +75,7 @@ new ：新插入的这一行，或者修改后的这一行，可以通过 . 获�
 
 old: 修改或者删除之前的那一行数据可以通过 . 获取这一行的某个字段，old
 
-### 存储过程(一个方法有返回值的叫函数，没有返回值的是过程)
+### 存储过程(返回值的是过程)
 
 1. 查看系统变量的值：select  @@变量名;  (select  @@autocommit;）
 
@@ -204,3 +224,72 @@ old: 修改或者删除之前的那一行数据可以通过 . 获取这一行的
    
    
    ```
+
+### 环境搭建
+
+1. 依赖：yum -y install ncurses-devel gcc gcc-c++
+
+2. .tar下载下载地址https://dev.mysql.com/downloads/file/?id=467701
+
+   1. https://dev.mysql.com/get/archives/mysql-5.5/mysql-5.5.54.tar.gz
+
+3. cd 解压目录下
+
+   1. 编译：
+
+   2. cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+
+      -DMYSQL_UNIX_ADDR=/tmp/mysql.sock  \
+
+      -DMYSQL_USER=mysql  \
+
+      -DDEFAULT_CHARSET=utf8  \
+
+      -DDEFAULT_COLLATION=utf8_general_ci  \
+
+      -DWITH_MYISAM_STORAGE_ENGINE=1  \
+
+      -DWITH_INNOBASE_STORAGE_ENGINE=1 \
+
+      -DWITH_DEBUG=0 \
+
+      -DWITH_READLINE=1 \
+
+      -DWITH_EMBEDDED_SERVER=1 \
+
+      -DENABLED_LOCAL_INFILE=1
+
+4. 安装：make && make install
+
+5. 初始化数据库：cd scripts/
+
+   1. ./mysql_install_db --datadir=/usr/local/mysql/data/ --basedir=/usr/local/mysql/ --user=mysql
+   2. cp support-files/my-medium.cnf /etc/my.cnf   #复制配置文件 
+   3. cp support-files/mysql.server /etc/init.d/mysql    #复制启动脚本
+   4. chmod 755 /etc/init.d/mysql
+   5. chkconfig --add mysql                              #添加系统服务 
+   6. export PATH=$PATH:/usr/local/mysql/bin    #添加环境变量 
+
+6. 开启 mysql 服务 /usr/local/mysql/support-files/mysql.server start
+
+7. 命令mysql 的配置
+
+   将 /usr/local/mysql/bin/mysql
+
+   cp mysql /usr/bin/
+
+8. 命令mysql 的配置
+
+   将 /usr/local/mysql/bin/mysql
+
+   cp mysql /usr/bin/
+
+   或者将他配置到全局
+
+9. 初始化账户密码，远程登陆
+
+   cd /tar.gz源码里面
+
+   cd /scripts
+
+   ./mysql_secure_installation 定义初始化密码
