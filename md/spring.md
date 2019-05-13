@@ -1054,7 +1054,7 @@ spring.profiles.active=java8
 
 ## Spring生命周期
 
-### 启动阶段
+### Spring Boot 启动阶段
 
 #### 推断 web应用类型和主引导类
 
@@ -1081,7 +1081,7 @@ spring.profiles.active=java8
 
 #### 加载 应用上下文初时器 和 应用事件监听器
 
-### 运行阶段
+### Spring Mvc运行阶段
 
 #### DispatcherServlet
 
@@ -1121,7 +1121,7 @@ spring.profiles.active=java8
               PojoTest pojo=new PojoTest(null, "小明", "男");
               mode.addAttribute("pojo", pojo);
           }
-      ```
+     ```
 
 2. `@RequestHeader` 获取请求头信息
 
@@ -1227,7 +1227,21 @@ spring.profiles.active=java8
 
       
 
-   ​	
+## Spring mvc 自动装配
+
+1. 是现实原理：servlet中的servletContainerInitializer 接口中的startUp方法会被回调，其中有一个参数为ServletContext 改接口可以实现动态的添加web组件：例如servlet ， filter，listenter	
+
+2. spring 实现Spring mvc 自动装配
+
+   1. 配置 dispatcherServlet
+
+   ![image-20190513221434563](/Users/luohengyi/web/TakeDown-/md/image-20190513221434563.png)
+
+3. 配置扫描地址
+
+   ![image-20190513221747639](/Users/luohengyi/web/TakeDown-/md/image-20190513221747639.png)
+
+
 
 ## shiro整合
 
