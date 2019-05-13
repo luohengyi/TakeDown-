@@ -1101,9 +1101,133 @@ spring.profiles.active=java8
 
 1. 解析异常
 
-### 
+##spring mvc 常用注解
 
+1. `@ModelAttribute` 会在请求方法之前调用，应用：提前绑定数据到 Model 域中，如果后续方法使用同样的参数名，将会覆盖@ModelAttribute注解方法中添加到Model域中的数据
 
+   1. ```java
+          //在视图中直接访问pojo  方式1
+      		@ModelAttribute
+          public void initpojo(Model mode)
+          {
+              PojoTest pojo=new PojoTest(null, "小明", "男");
+              mode.addAttribute("pojo", pojo);
+          }
+      
+      		//在视图中直接访问pojo  方式2
+      		@ModelAttribute("pojo")
+          public void initpojo()
+          {
+              PojoTest pojo=new PojoTest(null, "小明", "男");
+              mode.addAttribute("pojo", pojo);
+          }
+      ```
+
+2. `@RequestHeader` 获取请求头信息
+
+   1. ```java
+      public String hello(@RequestHeader(value="User-Agent") String userAgent)
+      
+      	//..
+      }
+      ```
+
+3. `@CookieValue` 获取Cookie信息
+
+   1. ```java
+      public String hello(@CookieValue(value="User-Agent") String userAgent)
+      
+      	//..
+      }
+      ```
+
+4. `@ExceptionHandler` 捕获Handler中的异常
+
+   ```java
+   
+   @ExceptionHandler(Exception.class) //需要捕获的异常类型
+   @ResponseBody //直接输出
+   public String exceptionHandler(Exception e){
+     return e.getMessage();
+   }
+   //方式2
+   @ExceptionHandler(Exception.class)
+   public ResponseEntity exceptionHandler(Exception e){
+     return ResponseEntity.ok(e.getMessage());
+   }
+   ```
+
+   
+
+5. @ControllerAdvice` 控制器增强器，可以用于定义@ExceptionHandler、@InitBinder、@ModelAttribute，并应用到所有@RequestMapping中
+
+   1. ```java
+      package com.sam.demo.controller;
+      
+      import org.springframework.ui.Model;
+      import org.springframework.web.bind.WebDataBinder;
+      import org.springframework.web.bind.annotation.*;
+      import java.util.HashMap;
+      import java.util.Map;
+      
+      /**
+       * controller 增强器
+       * @author sam
+       * @since 2017/7/17
+       * ControllerAdvice有作用域范围的定义例如：
+       * @ControllerAdvice(basePackages = "com.websocket.controller") 该包中的所有控制器，
+       		注解中包含多个设置方式：
+          @AliasFor("basePackages")
+          String[] value() default {};
+      
+          @AliasFor("value")
+          String[] basePackages() default {};
+      
+          Class<?>[] basePackageClasses() default {};
+      
+          Class<?>[] assignableTypes() default {};
+      
+          Class<? extends Annotation>[] annotations() default {};
+       */
+      @ControllerAdvice
+      public class MyControllerAdvice {
+      
+          /**
+           * 应用到所有@RequestMapping注解方法，在其执行之前初始化数据绑定器
+           * @param binder
+           */
+          @InitBinder
+          public void initBinder(WebDataBinder binder) {}
+      
+          /**
+           * 把值绑定到Model中，使全局@RequestMapping可以获取到该值
+           * @param model
+           */
+          @ModelAttribute
+          public void addAttributes(Model model) {
+              model.addAttribute("author", "Magical Sam");
+          }
+      
+          /**
+           * 全局异常捕捉处理
+           * @param ex
+           * @return
+           */
+          @ResponseBody
+          @ExceptionHandler(value = Exception.class)
+          public Map errorHandler(Exception ex) {
+              Map map = new HashMap();
+              map.put("code", 100);
+              map.put("msg", ex.getMessage());
+              return map;
+          }
+      
+      }
+      ```
+
+      
+
+   ​	
 
 ## shiro整合
 
