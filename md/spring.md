@@ -1225,7 +1225,7 @@ spring.profiles.active=java8
       }
       ```
 
-      
+6. `@RestController = @Controller + @ResponseBody `
 
 ## Spring mvc 自动装配
 
@@ -1240,6 +1240,133 @@ spring.profiles.active=java8
 3. 配置扫描地址
 
    ![image-20190513221747639](/Users/luohengyi/web/TakeDown-/md/image-20190513221747639.png)
+
+## Spring MVC REST 流程
+
+1. 
+
+## servlet
+
+### servlet 简介
+
+#### servlet核心API
+
+| 核心组件API                               | 说明                         | 起始版本 | Spring Framework 代表实现         |
+| ----------------------------------------- | ---------------------------- | -------- | --------------------------------- |
+| Javax.servlet.Servlet                     | 动态内容组件                 | 1.0      | DispatcherServlet                 |
+| Javax.servlet.Filter                      | 过滤器                       | 2.3      | CharacterEncodingFilter           |
+| Javax.servlet.ServletContext              | Servlet 应用上下文           |          |                                   |
+| Javax.servlet.AsyncContext                | 异步上下文                   | 3.0      | 无                                |
+| Javax.servlet.ServletContextListener      | ServletContext生命周期监听器 | 2.3      | ContextLoaderListener             |
+| Javax.servlet.ServletRequestListener      | ServletRequest生命周期监听器 | 2.3      | RequestContextListener            |
+| Javax.servlet.http.HttpSessionListener    | HttpSession 生命周期监听     | 2.3      | HttpSessionMutextListener         |
+| Javax.servlet.AsyncListener               | 异步上下文监听器             | 3.0      | StandarServletAsyncWebRequest     |
+| Javax.servlet.ServletContainerInitializer | Servlet 容器初始化器         | 3.0      | SpringServletContainerInitializer |
+
+#### spring对servlet 异步支持
+
+1. 应用场景
+
+   1. 对于有的请求业务处理流程可能比较耗时，比如长查询，远程调用等，主线程会被一直占用，而tomcat线程池线程有限，处理量就会下降
+   2. servlet3.0以后提供了对异步处理的支持，springmvc封装了异步处理，满足用户请求后，主线程很快结束，并开启其它线程处理任务，并将处理结果响应用户，而主线程就可以接收更多请求。
+
+2. 配置
+
+   ```xml
+   <!--mvc配置-->
+   <servlet>
+   <servlet-name>springMVC</servlet-name>
+   <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+   <init-param>
+   <param-name>contextConfigLocation</param-name>
+   <param-value>classpath:spring/spring-mvc.xml</param-value>
+   </init-param>
+   <load-on-startup>1</load-on-startup>
+   <!--在此处增加异步支持 spring boot 默认开启-->
+   <async-supported>true</async-supported>
+   </servlet>
+   ```
+
+3. BlockingQueue 队列方式
+
+       @EnableScheduling
+       public class IndexController {
+       private final BlockingQueue<DeferredResult<String>>  queue = new ArrayBlockingQueue<>(5);
+       	//异步处理
+       @Scheduled(fixedRate = 5000)
+       public void process() throws InterruptedException {
+           DeferredResult<String> deferredResult = null;
+           do {
+               deferredResult = queue.take();
+               long timeOut = new Random().nextInt(100);
+               //模拟调用相关接口的等待时间
+               Thread.sleep(timeOut);
+       
+               deferredResult.setResult("hello.word");
+               printIn("异步调用消耗："+timeOut);
+           }while (null != deferredResult);
+       
+       }
+       
+       @GetMapping("/async")
+       public DeferredResult<String> async(){
+           //谁知超时时间
+           DeferredResult<String> deferredResult = new DeferredResult<>(50L);
+           queue.offer(deferredResult);
+           printIn("普通业务");
+           deferredResult.onCompletion(()->{
+               printIn("执行结束");
+           });
+       
+           deferredResult.onTimeout(()->{
+               printIn("执行超时了");
+           });
+           return deferredResult;
+       }
+       
+       static void printIn(Object object){
+           String name = Thread.currentThread().getName();
+           System.out.println("Controller["+name+"]:"+object);
+       }
+
+4. completableFuture 方式
+
+   1. ```java
+      @GetMapping("/completableFuture")
+      public CompletionStage<String> completableFuture(){
+          printIn("请求业务");
+          return CompletableFuture.supplyAsync(()->{
+              printIn( "hello word");
+              return "hello word";
+          });
+      }
+      ```
+
+5. Callable方式
+
+```java
+ @GetMapping("/callable")
+public Callable<String> callable() throws InterruptedException {
+  printIn("请求业务");
+  return ()->{
+    //此处的业务将交给副线程去处理，Callable返回结果，SpringMVC将请求front/test重新派发给容器(再重新请求一次front/test)，恢复之前的处理；DispatcherServlet重新被调用，将结果返回给用户
+    printIn( "hello word");
+    return "hello word";
+  };
+}
+```
+
+
+
+
+
+
+
+### Spring servlet web
+
+### Spring Boot servlet web
+
+
 
 
 

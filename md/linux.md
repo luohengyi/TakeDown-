@@ -42,7 +42,49 @@
 5. 列出已安装软件 yum list
 6. 查找安装的软件 yum search +原件名
 7. 软件包信息 yum info
-8. 
+
+##### 离线安装
+
+1. ​	`yum -y install php   --downloadonly   --downloaddir=/data/down/`
+   2. 更新安装所有rpm： rpm -Uvh  *.rpm
+
+###### Yumdownloader 
+
+1. 是一款简单，但是却十分有用的命令行工具，它可以一次性下载任何 RPM 软件包及其所有依赖包。
+
+2. 以 root 身份运行如下命令安装 “Yumdownloader” 工具。
+
+   yum install yum-utils
+
+3. 一旦安装完成，运行如下命令去下载一个软件包，例如 httpd:
+
+   ```shell
+   `yumdownloader httpd`
+   ```
+
+4. 为了根据所有依赖性下载软件包，我们使用 --resolve 参数：
+
+   ```shell
+   yumdownloader --resolve httpd
+   ```
+
+5. 默认情况下，Yumdownloader 将会下载软件包到当前工作目录下。
+
+   为了将软件下载到一个特定的目录下，我们使用 --destdir 参数：
+
+   ```shell
+   yumdownloader --resolve --destdir=/root/mypackages/ httpd
+   ```
+
+   或者：
+
+   ```shell
+   yumdownloader --resolve --destdir /root/mypackages/ httpd
+   ```
+
+6. rpm -ivh *.rpm --nodeps —force 强制安装
+
+   1. --nodeps就是安装时不检查依赖关系，比如你这个rpm需要A，但是你没装A，这样你的包就装不上，用了--nodeps你就能装上了。--force就是强制安装，比如你装过这个rpm的版本1，如果你想装这个rpm的版本2，就需要用--force强制安装
 
 #### 端口类
 
@@ -59,9 +101,10 @@
 4. 查看端口
    1.  /etc/init.d/iptables status
 5. 关闭防火墙
-   1. 停止 systemctl stop firewalld.service
-   2. 关闭开启自启 systemctl disable firewalld.service 
-   3. 查看状态 firewall-cmd --state
+   1. service iptables stop
+   2. 停止 systemctl stop firewalld.service
+   3. 关闭开启自启 systemctl disable firewalld.service 
+   4. 查看状态 firewall-cmd --state
 
 ###### centos7
 
@@ -215,7 +258,7 @@ export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
 #### mysql
 
-1. 依赖：yum -y install ncurses-devel gcc gcc-c++
+1. 依赖：yum -y install ncurses-devel gcc gcc-c++ cmake
 
 2. .tar下载下载地址https://dev.mysql.com/downloads/file/?id=467701
 
@@ -272,11 +315,34 @@ export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
 ##### php源码安装
 
-1.  检查依赖：yum -y install curl curl-devel libjpeg libjpeg-devellibpng libpng-devel libjpeg-devel freetype freetype-devel libxml2   libxml2-devel MySQLpcre-devel gcc libxml2 libxml2-devel 
-    1.  yum install openssl openssl-devel 
-2.  下载源码包：wget http://php.net/get/php-7.0.2.tar.gz/from/a/mirror
-3.  进入解压目录，检查配置,并配置安装目录：./configure --prefix=/usr/local/php720 --with-mysqli --with-pdo-mysql --with-iconv-dir --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir --enable-simplexml --enable-xml --disable-rpath --enable-bcmath --enable-soap --enable-zip --with-curl --enable-fpm --with-fpm-user=nobody --with-fpm-group=nobody --enable-mbstring --enable-sockets --with-gd --with-openssl --with-mhash --enable-opcache --disable-fileinfo
-4.  编译且安装：make &&  make install
+1.  检查依赖：yum -y install curl curl-devel libjpeg libjpeg-devel libpng libpng-devel libjpeg-devel freetype freetype-devel libxml2   libxml2-devel MySQLpcre-devel gcc libxml2 libxml2-devel  openssl-devel 
+  
+2. 下载源码包：wget http://php.net/get/php-7.0.2.tar.gz/from/a/mirror
+
+3. 进入解压目录，检查配置,并配置安装目录：./configure --prefix=/usr/local/php720 --with-mysqli --with-pdo-mysql --with-iconv-dir --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir --enable-simplexml --enable-xml --disable-rpath --enable-bcmath --enable-soap --enable-zip --with-curl --enable-fpm --with-fpm-user=nobody --with-fpm-group=nobody --enable-mbstring --enable-sockets --with-gd --with-openssl --with-mhash --with-gettext --with-ldap --enable-opcache --disable-fileinfo
+
+4. 编译且安装：make &&  make install
+
+5. 配置环境变量
+
+6. vim /etc/profile
+
+    //加上
+
+    export PATH=$PATH:/usr/local/php/bin
+
+    source /etc/profile
+
+    php -v
+
+    注：该配置对所有用户生
+
+7. 设置配置文件（进入PHP安装目录/etc/）
+
+    1.  cp php-fpm.conf.default php-fpm.conf
+    2.  进入PHP安装目录/etc/php-fpm.d
+        1.  cp www.conf.default www.conf
+
 
 ##### 升级安装
 
@@ -302,11 +368,12 @@ export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
 1. 检查依赖：yum -y install gcc zlib zlib-devel pcre-devel openssl openssl-devel
 2. 下载源码：wget http://nginx.org/download/nginx-1.13.7.tar.gz
-3. 解压文件夹下：./configure --prefix=/usr/local/bin/nginx 编译配置安装目录
-4. 安装：make && make install
-5. 启动：/usr/local/bin/ningx/sbin/nginx
+3. 解压文件夹下：./configure --prefix=/usr/local/bin/nginx
+4. cd  编译配置安装目录
+5. 安装：make && make install
+6. 启动：/usr/local/bin/ningx/sbin/nginx
    1. 重启：nginx -s reload
-6. 开启端口
+7. 开启端口
    1. 开启端口
       1. iptables -I INPUT -p tcp --dport 80 -j ACCEPT  
    2. 保存配置
@@ -432,7 +499,11 @@ server {
  }
 ```
 
+###### 常见问题
 
+1. 403
+   1. `fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;`
+   2. 父级也要有访问权限，nginx 启动用户不一致
 
  
 

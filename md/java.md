@@ -626,7 +626,7 @@
 3. Map：有映射关系的集合
 4. Queue：jdk1.5后增加的一种集合体系
 
-### Collection（接口） ：
+### Collection（接口）
 
  Collection<String> collection = **new** ArrayList<>();
 
@@ -802,7 +802,7 @@
 5. removeFirst():删除第一个
 6. removeLast():删除最后一个
 
-### Map
+#### Map
 
 1. put(k,v):添加元素 //如果后面的键名和前面的键名相同会覆盖之前的值
 
@@ -847,13 +847,13 @@
     ```
 
 
-#### HashMap（无序唯一）
+##### HashMap（无序唯一）
 
-#### Hashtable (线程安全)
+##### Hashtable (线程安全)
 
 
 
-#### TreeMap（comparable）
+##### TreeMap（comparable）
 
 1. Comparator();返回比较器
 2. firstKey();返回此映射中当前第一个（最低）键。
@@ -861,6 +861,8 @@
 4. subMap(fromKey, toKey);返回此映射的部分视图，其键值的范围从 fromKey（包括）到 toKey（不包括）
 5. headMap(toKey);返回一个视图其键值严格小于 toKey
 6. tailMap(fromKey);返回一个视图其键值严格大于 toKey
+
+#### BlockingQueue（队列契合完善）
 
 ## 泛型
 
