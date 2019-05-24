@@ -1048,6 +1048,16 @@ spring.profiles.active=java8
       </dependency>
       ```
 
+#### 嵌入式容器限制
+
+| Servlet特性                 | 兼容性   | 解决方案                  |
+| --------------------------- | -------- | ------------------------- |
+| web.xml                     | 不支持   | RegistrationBean或@bean   |
+| servletContainerInitializer | 不支持   | servletContextInitializer |
+| @webServlet等               | 有限支持 | 依赖@servletComponentScan |
+
+
+
 ### 生产准备特性（指标，健康检查，外部化配置）
 
 ### 
@@ -1262,6 +1272,63 @@ spring.profiles.active=java8
 | Javax.servlet.http.HttpSessionListener    | HttpSession 生命周期监听     | 2.3      | HttpSessionMutextListener         |
 | Javax.servlet.AsyncListener               | 异步上下文监听器             | 3.0      | StandarServletAsyncWebRequest     |
 | Javax.servlet.ServletContainerInitializer | Servlet 容器初始化器         | 3.0      | SpringServletContainerInitializer |
+
+#### 异步servlet
+
+```java
+@WebServlet(
+        asyncSupported = true, //开启异步支持
+        name = "asyncServlet",
+        urlPatterns = "/asyncServlet"
+)
+public class AsyncServlet extends HttpServlet {
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (req.isAsyncStarted()){ //判断是否支持异步
+            //创建异步上下文
+            AsyncContext asyncContext = req.startAsync();
+            //动态添加监听器
+            asyncContext.addListener(new AsyncListener() {
+                @Override
+                public void onComplete(AsyncEvent asyncEvent) throws IOException {
+                    printIn("执行完成");
+                }
+
+                @Override
+                public void onTimeout(AsyncEvent asyncEvent) throws IOException {
+                    printIn("执行超时");
+                }
+
+                @Override
+                public void onError(AsyncEvent asyncEvent) throws IOException {
+                    printIn("执行错误！ ");
+                }
+
+                @Override
+                public void onStartAsync(AsyncEvent asyncEvent) throws IOException {
+                    printIn("开始执行 ");
+                }
+            });
+            ServletResponse response = asyncContext.getResponse();
+            response.setContentType("text/plain;charset-UTF-8");
+            PrintWriter writer = response.getWriter();
+            writer.println("hello word");
+            writer.flush();
+
+        }else {
+            System.out.println("不支持异步");
+        }
+    }
+
+    static void printIn(Object object){
+        String name = Thread.currentThread().getName();
+        System.out.println("AsyncServlet  ["+name+"]:"+object);
+    }
+}
+```
+
+
 
 #### spring对servlet 异步支持
 
