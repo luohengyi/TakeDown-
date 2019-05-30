@@ -45,7 +45,7 @@
 
 ##### 离线安装
 
-1. ​	`yum -y install php   --downloadonly   --downloaddir=/data/down/`
+1. ​	`yum -y install --downloadonly   --downloaddir=/data/down/  php `
    2. 更新安装所有rpm： rpm -Uvh  *.rpm
 
 ###### Yumdownloader 

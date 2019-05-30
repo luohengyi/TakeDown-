@@ -1056,7 +1056,21 @@ spring.profiles.active=java8
 | servletContainerInitializer | 不支持   | servletContextInitializer |
 | @webServlet等               | 有限支持 | 依赖@servletComponentScan |
 
+1. servletContextInitializer:
 
+   1. ```java
+      @Bean
+          public ServletContextInitializer servletContextInitializer(){
+      
+              return servletContext -> {
+                  CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+                  FilterRegistration.Dynamic filter = servletContext.addFilter("filter", characterEncodingFilter);
+      //            filter.addMappingForUrlPatterns(); //此处去动态的添加servlet组件
+              };
+          }
+      ```
+
+      
 
 ### 生产准备特性（指标，健康检查，外部化配置）
 
