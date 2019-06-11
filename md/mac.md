@@ -90,39 +90,43 @@
 
 3. Ngingx server配置：
 
-   server {
-
-   ​        listen       8020  default_server;
-
-   ​        server_name  localhost;    #域名，自定义
-
-   ​        root   /Users/luohengyi/cs;    #自定义，如/var/www
-
-   ​        index  index.html index.htm index.php;
-
-
-
-   ​        \# pass the PHP scripts to FastCGI slinerver listening on 127.0.0.1:9000
-
-   ​        \#
-
-   ​        location ~ \.php$ {
-
-   ​            fastcgi_pass   127.0.0.1:9000;
-
-   ​            fastcgi_index  index.php;
-
-   \#            fastcgi_param  SCRIPT_FILENAME  /Users/luohengyi/cs;   #如/var/www$fastcgi_script_name
-
-   ​           fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-
-   ​           include        fastcgi_params;
-
-   ​            fastcgi_intercept_errors on;
-
-   ​        }
-
-   ​    }
+   ```
+ server {
+   
+          listen       8020  default_server;
+   
+          server_name  localhost;    #域名，自定义
+   
+          root   /Users/luohengyi/cs;    #自定义，如/var/www
+   
+             index  index.html index.htm index.php;
+   
+   
+   
+             \# pass the PHP scripts to FastCGI slinerver listening on 127.0.0.1:9000
+   
+             \#
+   
+             location ~ \.php$ {
+   
+                 fastcgi_pass   127.0.0.1:9000;
+   
+                 fastcgi_index  index.php;
+   
+      \#            fastcgi_param  SCRIPT_FILENAME  /Users/luohengyi/cs;   #如/var/www$fastcgi_script_name
+   
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+   
+                include        fastcgi_params;
+   
+                 fastcgi_intercept_errors on;
+   
+             }
+   
+        }
+   ```
+   
+   
 
 4. 
 
