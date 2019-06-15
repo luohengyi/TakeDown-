@@ -1449,7 +1449,18 @@ public Callable<String> callable() throws InterruptedException {
 
 ## WebFlux
 
+### Reactive
 
+1. 异步非阻塞
+2. 提升程序性能
+3. 解决传统模式遇到的问题
+4. **Reactive编程是一种事件驱动 异步化 弹性扩展的新型编程方式**
+
+#### RxJava
+
+#### Reactor
+
+#### Flow Api (java 9)
 
 ## shiro整合
 
