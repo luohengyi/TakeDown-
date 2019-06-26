@@ -1833,14 +1833,15 @@ while (fileInputStream.read(bs)!=-1) {
 
 ### El表达式
 
-1. 获取属性：${name} 表达式中可以进行运算，逻辑运算
+1. 页面加入``<%@ page isELIgnored="false" %>``开启el表达式
+2. 获取属性：${name} 表达式中可以进行运算，逻辑运算
    1. 优先级
       1. pageScope
       2. RequestScope
       3. sessionScope
       4. ApplicationScope
-2. 获取参数：`${param.name}` 或者 `${param['name']}` 
-3. 隐式对象：
+3. 获取参数：`${param.name}` 或者 `${param['name']}` 
+4. 隐式对象：
 
 ### jstl标签库
 

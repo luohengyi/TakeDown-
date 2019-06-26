@@ -110,7 +110,7 @@
 
 1. 查看已开启的端口
 
-   1. 查看所有端口使用情况：netstat -anp  
+   1. 查看所有端口使用情况：netstat -ant  
    2. 查看某个端口的使用情况：firewall-cmd --query-port=666/tcp
 
 2. 添加指定需要开放的端口：
