@@ -22,17 +22,18 @@
 
 ### 系统命令：
 
-1. 修改文件权限： sudo chmod -R 777
-2. 查看端口是否占用：netstat -ant | grep 9000
-3. 结束进程： sudo kill -USR2 进程号
-4. 解压文件：
+1. sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+2. 修改文件权限： sudo chmod -R 777
+3. 查看端口是否占用：netstat -ant | grep 9000
+4. 结束进程： sudo kill -USR2 进程号
+5. 解压文件：
    1. tar： tar zxvf manpages-zh-1.5.1.tar.gz
    2. zip:  zip manpages-zh-1.5.1.tar.gz
-5. 网卡：
+6. 网卡：
    1. ifconfig 看一下要启的网卡 一般以 en开头三位。
       sudo ifconfig en* down #停。
       sudo ifconfig en* up #启
-6. 解压：
+7. 解压：
    1. 7z：7z x xxxx.7z
    2. unrar. x xx.rar
    3. unzip -n text.zip -d /tmp 
@@ -42,7 +43,10 @@
 
 #### php
 
-1. 安装：brew install php@7.0  //brw安装会自动管理依赖，所以不用你一个个先安装依赖。
+1. 安装：
+
+   1. brew tap exolnet/homebrew-deprecated 安装源
+   2. brew install php@7.0  //brw安装会自动管理依赖，所以不用你一个个先安装依赖。
 
 2. 重启：
 

@@ -1126,6 +1126,81 @@ while (fileInputStream.read(bs)!=-1) {
 
 ### 下载
 
+## Xml解析
+
+### 配置xml到bean对象的应设
+
+当bean对象为单独节点的配置
+
+```java
+@XmlRootElement(name = "d")  //该对象对应的节点
+@XmlAccessorType(XmlAccessType.FIELD)
+public class City {
+	  
+    @XmlAttribute(name = "d1") //该属性对应xml节点的属性名
+    private String cityId;
+    @XmlAttribute(name = "d2")
+    private String cityName;
+    @XmlAttribute(name = "d3")
+    private String cityCode;
+    @XmlAttribute(name = "d4")
+    private String province;
+
+}
+```
+
+当bean对象为list的配置
+
+```java
+@XmlRootElement(name = "c") //该对象对应的节点
+@XmlAccessorType(XmlAccessType.FIELD)
+public class CityList {
+
+    @XmlElement(name = "d")  //City的bean对象对应的xml节点
+    private List<City> cityList;
+}
+
+```
+
+xml文件
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<c c1="0">
+    <d d1="101280101" d2="广州" d3="guangzhou" d4="广东"/>
+    <d d1="101280102" d2="番禺" d3="panyu" d4="广东"/>
+    <d d1="101280103" d2="从化" d3="conghua" d4="广东"/>
+</c>
+ 
+```
+
+### xml解析成bean对象
+
+```java
+    //将xml字符解析为java对象,该方法的缺点需要自己解析xml文件将其读取为string再传入
+     public static Object xmlStrObject(Class<?> clazz,String xmlStr) throws Exception{
+
+        Object xmlObject =null;
+        JAXBContext context = JAXBContext.newInstance(clazz);
+
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+
+        Reader reader = new StringReader(xmlStr);
+
+        xmlObject = unmarshaller.unmarshal(reader);
+
+
+        if (null!=reader){
+            reader.close();
+        }
+
+        return xmlObject;
+
+    }
+```
+
+
+
 ## 反射
 
 ### class（类对象）
