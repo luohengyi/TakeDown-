@@ -18,8 +18,6 @@
 
 3. 
 
-- 
-
 ### 系统命令：
 
 1. sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
