@@ -361,7 +361,7 @@
 4. String 和毫秒转化
 
    ```java
-   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");  //首先要定义这个格式时间的格式
+   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  //首先要定义这个格式时间的格式
    		
    Calendar calendar = Calendar.getInstance();
    
