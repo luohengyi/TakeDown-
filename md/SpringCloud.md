@@ -114,7 +114,7 @@ public class DemoApplication {
 配置service层
 
 ```java
-@FeignClient("city") //指定服务名称
+@FeignClient("city") //指定服务名称  多层次路由 @FeignClient(name="服务名",path="路径名")
 public interface CityClient {
 
   	//指定服务中接口名
@@ -139,6 +139,11 @@ public String index(){
 
 ### 统一入口(API网关)
 
+#### 意义
+
+1. 聚合多个API
+2. 统一api入口
+
 #### 利弊
 
 1. 避免将内部的信息暴露给外部，将内部的微服务api和外部的访问api区分开来
@@ -158,9 +163,26 @@ public String index(){
 
 ##### zuul
 
-maven依赖
+**maven依赖**
 
-功能列表：
+```xml
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-zuul -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+    <version>2.1.2.RELEASE</version>
+</dependency>
+```
+
+**配置（简单使用）**
+
+```properties
+# 设置请求转发 将hi路径下的请求转发到名为city的微服务下
+zuul.routes.hi.path= /hi/**
+zuul.routes.hi.service-id=city
+```
+
+**功能列表：**
 
 1. 认证
 2. 压力测试
@@ -173,7 +195,97 @@ maven依赖
 
 ### 配置管理
 
-### 熔断机制（当某一个服务无法支撑时，防止服务崩溃）
+#### 集中化配置的意义
+
+1. 微服务数量多，配置多
+2. 手工管理配置繁琐
+
+#### 配置分类
+
+1. 配置来源划分：开发环境，测试环境，预发环境，生产环境
+2. 配置的集成阶段划分：编译时，打包时，运行时
+3. 配置的加载方式：启动加载，动态加载
+
+#### 服务端实现
+
+**依赖**
+
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-config-server</artifactId>
+    <version>2.1.3.RELEASE</version>
+</dependency>
+```
+
+**启用config-server**
+
+通过注解启用spring-cloud-config-server: ``@EnableConfigServer``
+
+**配置**
+
+```properties
+spring.application.name=config
+server.port=8888
+#服务中心地址
+eureka.client.service-url.defaultZone= http://localhost:8761/eureka/
+
+#仓库地址
+spring.cloud.config.server.git.uri=https://github.com/luohengyi/springCloudConfig.git
+#指定仓库中的文件夹
+spring.cloud.config.server.git.search-paths=config-repo
+```
+
+**访问**
+
+通过路径auther/dev（<u>该url框架自带！</u>） 来访问初始化页面``http://localhost:8888/auther/dev`` 
+
+#### 客户端实现
+
+**依赖**
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-config-server -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-config-server</artifactId>
+    <version>2.1.3.RELEASE</version>
+</dependency>
+```
+
+**配置**
+
+```properties
+spring.application.name=config-client
+eureka.client.service-url.defaultZone= http://localhost:8761/eureka/
+
+server.port=8889
+
+#当前服务职会读取该服务名称+profile的配置文件
+spring.cloud.config.profile=dev
+#配置服务器的地址
+spring.cloud.config.uri=http://localhost:8888
+```
+
+**启用**
+
+无需单独使用注解启动，配置服务器后自动调用配置
+
+### 熔断机制
+
+**概述**
+
+防止由于某一个服务的死亡导致整个系统的死亡，对该服务的调用执行熔断。对于后学请求，不在继续调用，该目标服务，而是直接返回。从而可以快速的释放资源，实现原理类似电路的断路器，调用超过负载的服务会通过断路器直接返回一个默认信息，断路器的状态分为：<u>1.打开、2.关闭(当服务正常时关闭，但是会做一些失败次数的统计，当失败次数达到阀值时，断路器会打开，将异常信息直接返回给调用者)、3.半打开（关闭一段时间后，断路器会放开一些请求，当这些请求都能正常执行时，断路器会认为，服务已经恢复正常，这时断路器会关闭），</u>
+
+#### 功能
+
+1. 异常处理
+2. 日志记录
+3. 测试失败的操作
+4. 手动复位
+5. 并发
+6. 加速短路
+7. 重试失败请求
 
 ### 制动扩展
 
