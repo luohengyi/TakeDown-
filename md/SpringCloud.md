@@ -287,6 +287,38 @@ spring.cloud.config.uri=http://localhost:8888
 6. 加速短路
 7. 重试失败请求
 
+#### 熔断框架hystrix
+
+**依赖**
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-hystrix -->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+    <version>2.1.0.RELEASE</version>
+</dependency>
+```
+
+**启动**
+
+1. 使用注解 ``@EnableCircuitBreaker``
+
+2. ```java
+   @GetMapping
+   //配置默认方法，当该服务接口无法使用时候，调用defaults返回给调用者
+   @HystrixCommand(fallbackMethod = "defaults")
+   public List<City> cityList() throws Exception{
+       return cityDateService.listCity();
+   }
+   
+   public List<City> defaults(){
+       return  null;
+   }
+   ```
+
+
+
 ### 制动扩展
 
 ## Cloud子项目

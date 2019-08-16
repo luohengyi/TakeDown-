@@ -8,19 +8,52 @@
    3. shutdown -h 8:00 8点关机
    4. shutdown -r now 立即重启
    5.   shutdown -r 8:00 8点重启
+   
 2. 重启：reboot
+
 3. 查看时间：date
+
 4. 设置日期 :   date -s 09/10/2018
+   
    - 设置时间 date -s 10:46:30
+   
 5. ip配置目录： vi  /etc/sysconfig/network-scripts/ifcfg-eth0
+
+   1. 配置静态ip
+
+      ```shell
+      DEVICE=eth0
+      TYPE=Ethernet
+      UUID=98f5e039-4115-44dd-9e75-3b480e0eb5f2
+      ONBOOT=yes
+      NM_CONTROLLED=yes
+      BOOTPROTO=none
+      HWADDR=00:0C:29:CF:D1:C6
+      IPADDR=192.168.1.205
+      PREFIX=24
+      GATEWAY=192.168.1.1
+      DEFROUTE=yes
+      IPV4_FAILURE_FATAL=yes
+      IPV6INIT=no
+      NAME="System eth0"
+      ```
+
 6. 重启网卡：service network restart
+
 7. 执行上一次命令： cd -
+
 8. 查看当前目录：pwd
+
 9. 查看ip：ifconfig
+
 10. 清屏：clear
+
 11. pwd 显示路径
+
 12. 建立软连接：ln -s 地址。 //当前地址生成一个镜像地址
+
 13. 查找安装包
+
     1. yum -y list java*
 
 #### 服务器信息查询
@@ -82,7 +115,7 @@
    yumdownloader --resolve --destdir /root/mypackages/ httpd
    ```
 
-6. rpm -ivh *.rpm --nodeps —force 强制安装
+6. rpm -ivh *.rpm --nodeps --force 强制安装
 
    1. --nodeps就是安装时不检查依赖关系，比如你这个rpm需要A，但是你没装A，这样你的包就装不上，用了--nodeps你就能装上了。--force就是强制安装，比如你装过这个rpm的版本1，如果你想装这个rpm的版本2，就需要用--force强制安装
 
@@ -303,7 +336,7 @@ export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
 6. 开启 mysql 服务 /usr/local/mysql/support-files/mysql.server start
 
-9. 初始化账户密码，远程登陆
+7. 初始化账户密码， /usr/local/mysql//bin/mysqladmin -u root password 'new-password'
 
    cd /tar.gz源码里面
 
@@ -315,11 +348,11 @@ export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
 ##### php源码安装
 
-1.  检查依赖：yum -y install curl curl-devel libjpeg libjpeg-devel libpng libpng-devel libjpeg-devel freetype freetype-devel libxml2   libxml2-devel MySQLpcre-devel gcc libxml2 libxml2-devel  openssl-devel 
+1.  检查依赖：yum -y  install curl curl-devel libjpeg libjpeg-devel libpng libpng-devel libjpeg-devel freetype freetype-devel libxml2   libxml2-devel MySQLpcre-devel gcc libxml2 libxml2-devel  openssl-devel libjpeg.x86_64 libpng.x86_64 freetype.x86_64 libjpeg-devel.x86_64 libpng-devel.x86_64 freetype-devel.x86_64 gd
   
 2. 下载源码包：wget http://php.net/get/php-7.0.2.tar.gz/from/a/mirror
 
-3. 进入解压目录，检查配置,并配置安装目录：./configure --prefix=/usr/local/php720 --with-mysqli --with-pdo-mysql --with-iconv-dir --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir --enable-simplexml --enable-xml --disable-rpath --enable-bcmath --enable-soap --enable-zip --with-curl --enable-fpm --with-fpm-user=nobody --with-fpm-group=nobody --enable-mbstring --enable-sockets --with-gd --with-openssl --with-mhash --with-gettext --with-ldap --enable-opcache --disable-fileinfo
+3. 进入解压目录，检查配置,并配置安装目录：./configure **--prefix=/usr/local/php564** --with-mysqli --with-pdo-mysql --with-iconv-dir --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-libxml-dir --enable-simplexml --enable-xml --disable-rpath --enable-bcmath --enable-soap --enable-zip --with-curl --enable-fpm --with-fpm-user=nobody --with-fpm-group=nobody --enable-mbstring --enable-sockets --with-gd --with-openssl --with-mhash --with-gettext --with-ldap --enable-opcache --disable-fileinfo **--with-config-file-path=/usr/local/php564/lib/**
 
 4. 编译且安装：make &&  make install
 
