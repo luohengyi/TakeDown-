@@ -358,7 +358,17 @@
 
 3. 获取格式化时间：simpleDateFormat.format(Date date);
 
-4. String 和毫秒转化
+4. 毫秒时间转日期格式
+
+   ```java
+   SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  //首先要定义这个格式时间的格式
+   //转化为时间日期格式
+   simpleDateFormat.format(new Date(System.currentTimeMillis()));
+   ```
+   
+   
+   
+5. String 和毫秒转化
 
    ```java
    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  //首先要定义这个格式时间的格式
@@ -369,6 +379,7 @@
    
    calendar.getTimeInMillis()  //获取毫秒时间
    ```
+
 
 
 #### BigInteger(大型数字处理)

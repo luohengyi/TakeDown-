@@ -316,8 +316,8 @@ spring.cloud.config.uri=http://localhost:8888
        return  null;
    }
    ```
-
-
+   
+   在FeignClient客户端中使用断路器
 
 ### 制动扩展
 
