@@ -337,7 +337,7 @@
 
 
       ```
-   
+       
       ```
 
 ### 一对多
@@ -452,12 +452,12 @@
 1. ```java
     InputStream inputStream = Demo.class.getClassLoader().getResourceAsStream("mybatis-generator-config.xml");
            List<String> warnings = new ArrayList<String>();
-   
+      
            ShellCallback callback = new DefaultShellCallback(true);
            Configuration config = new ConfigurationParser(warnings).parseConfiguration(inputStream);
            MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
            myBatisGenerator.generate(null);
-   
+      
            for (String warning : warnings) {
                System.out.println(warning);
            }
