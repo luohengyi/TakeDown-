@@ -1,4 +1,4 @@
-# Spring 
+# /Spring 
 
 ## ioc容器
 
@@ -333,7 +333,9 @@
    </web-app>
    ```
 
-#### spring-mvc.xml配置
+#### spring-mvc web配置
+
+##### spring-mvc.xml配置
 
 1. ```xml
    <?xml version="1.0" encoding="UTF-8"?>
@@ -373,7 +375,7 @@
    </beans>
    ```
 
-##### spring-mvc.java
+##### spring-mvc.java配置
 
 //以bean的方式配置试图解析器，但是component-scan的xml配置也需要
 
@@ -393,7 +395,9 @@ public class Cs {
 
 
 
-#### spring-mybatis.xml 配置
+#### mybatis配置
+
+##### spring-mybatis.xml 配置
 
 1. ```xml
    <?xml version="1.0" encoding="UTF-8"?>
@@ -417,6 +421,8 @@ public class Cs {
            <property name="dataSource" ref="dataSource"/>
            <!-- mapper.xml地址 -->
            <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+          <!--mybatis全局配置文件 -->
+           <property name="configLocation" value="classpath:spring/mybatis-config.xml" />
        </bean>
        <!-- 加载mapper接口 -->
        <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
@@ -425,6 +431,103 @@ public class Cs {
        </bean>
    
    </beans>
+   ```
+
+##### mybatis-config.xml 配置
+
+1. ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+           "http://mybatis.org/dtd/mybatis-3-config.dtd">
+   <!-- 头部可以在官网寻找 -->
+   <configuration>
+       <settings>
+           <!-- 打印查询语句 -->
+           <setting name="logImpl" value="STDOUT_LOGGING" />
+       </settings>
+   
+       <!-- mapper已经在spring-mybatis.xml中的sqlSessionFactory配置，这里不再需要配置 -->
+       <!--     <mappers> -->
+       <!--         <mapper resource="com/a/b/c/dao/BusinessInfoDaoMapper.xml" /> -->
+       <!--     </mappers> -->
+   </configuration>
+   ```
+
+#### Mapper/Dao
+
+##### Dao
+
+1. ```java
+   void insertServicEcenter(ServicEcenter servicEcenter);
+   
+   List<ServicEcenter> findDataByIndicatorsIn(List<String> indicatorsin);
+   
+   List<ServicEcenter> findAll();
+   
+   /**
+    * 按指标 分组查询 最新的 一行值
+    * 返回一个map key 为 指标
+    * @return
+    */
+   @MapKey("indicators")
+   Map<String,ServicEcenter> findDataGroupByIndicators();
+   ```
+
+##### Mappper
+
+1. ```xml
+   <?xml version="1.0" encoding="UTF-8" ?>
+   <!DOCTYPE mapper
+           PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+           "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   <mapper namespace="com.cshr.mapper.TestMapper">
+       <!-- 启用缓存 -->
+       <cache/>
+       <!--id对应dao接口名，接口方法不能重载-->
+       <!-- resultType 返回的类型 ,如果定义了字段映射那么将使用 resultMap="rm" 的方式来设置返回类型  此处如果不写User的报名需要在mybatis-config.xml中配置bean目录-->
+       <!--  #{id}来预编译，${} 将拼接里面的sql可能会被sql注入 -->
+       <select id="selectAll" resultType="com.cshr.bean.Entrys">
+         select * from entry
+       </select>
+   
+       <!-- 修改插入类型的sql返回值自动根据dao接口的返回类型自动匹配返回，必须使用sqlsession手动提交事物 -->
+       <insert id="saveUser" >
+           insert into users value (#{id},#{password},#{username},#{role_id})
+       </insert>
+   
+       <!--如果字段名和bean类名不同，通过映射解决，旧版本的mybatis需要将所有的字段全部映射-->
+       <!--<resultMap id="rm" type="User">-->
+       <!--<result property="beanName" column="sqlName"></result>-->
+       <!--</resultMap>-->
+   </mapper>
+   ```
+
+#### Services(业务层)
+
+1. ```java
+   package com.lhy.services;
+   
+   import com.lhy.bean.User;
+   import com.lhy.mapper.UserMapper;
+   import org.springframework.beans.factory.annotation.Autowired;
+   import org.springframework.stereotype.Service;
+   
+   import java.util.List;
+   
+   /**
+    * @author luohengyi
+    */
+   @Service
+   public class UserService {
+   	
+       //通过注解 依赖注入，这个因为底层是mybatis,交给mybatis-spring去处理的，所有不需要@Services实现类了
+       @Autowired
+       private UserMapper userMapper;
+   
+       public List<User> getUserAll(){
+           return userMapper.getAllUser();
+       }
+   }
    ```
 
 #### 控制器
@@ -470,36 +573,11 @@ public class Cs {
            return userAll;
        }
    }
-   
    ```
 
-#### Services(业务层)
+   
 
-1. ```java
-   package com.lhy.services;
-   
-   import com.lhy.bean.User;
-   import com.lhy.mapper.UserMapper;
-   import org.springframework.beans.factory.annotation.Autowired;
-   import org.springframework.stereotype.Service;
-   
-   import java.util.List;
-   
-   /**
-    * @author luohengyi
-    */
-   @Service
-   public class UserService {
-   	
-       //通过注解 依赖注入，这个因为底层是mybatis,交给mybatis-spring去处理的，所有不需要@Services实现类了
-       @Autowired
-       private UserMapper userMapper;
-   
-       public List<User> getUserAll(){
-           return userMapper.getAllUser();
-       }
-   }
-   ```
+
 
 ## 常用注解
 
@@ -509,7 +587,7 @@ public class Cs {
 
 3. @RestController  // 同时开启 @Controller 和@ResponseBody
 
-4. 将类教给spring管理（标记为bean对象）
+4. 将类交给spring管理（标记为bean对象）
    1. @Component	最普通的组件，可以被注入到spring容器进行管理
       @Repository	        作用于持久层，接口类
       @Service	        作用于业务逻辑层
