@@ -46,7 +46,7 @@
 1. exists(子查询) 例如：select * from user where exists(select id from user where id=1);
 2. 分组条件：having 例:select sum(number) from user group by name having sum(number) >200;
 3. 备份文件：mysqldump -uroot -proot  database user > D:xx\xx\x\user.sql. #也可以不加表名，直接倒出数据库
-4. 导入文件：use database
+4. **导入文件**：use database
    ​	  source D:/xx/xx/x/user.sql;
 5. 复制一个表结构： create table t2 like t1 ;  建立t2表结构和t1相同
 

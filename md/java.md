@@ -1429,6 +1429,22 @@ xml文件
 
 1. getConstructor().newInstance();  调用默认的构造器创建一个类
 
+##### 调用方法
+
+```java
+Foo foo = new Foo("这个一个Foo对象！");
+Class clazz = foo.getClass();
+Method m1 = clazz.getDeclaredMethod("outInfo");
+Method m2 = clazz.getDeclaredMethod("setMsg", String.class);
+Method m3 = clazz.getDeclaredMethod("getMsg");
+m1.invoke(foo);
+m2.invoke(foo, "重新设置msg信息！");
+String msg = (String) m3.invoke(foo);
+System.out.println(msg);
+```
+
+
+
 ## 多线程
 
 ### 生命周期：
