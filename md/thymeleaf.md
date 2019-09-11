@@ -11,3 +11,7 @@
 ### js中赋值
 
 1. [[${page.totNuml}]]
+
+### 内置对象
+
+1. 获取请求路径：``${#ctx.#httpServletRequest.getRequestURI()``
