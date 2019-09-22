@@ -11,3 +11,24 @@
    1. this.$route.params.id 
    2. this.$route.query.id
 
+### axios
+
+- 文件发送
+
+  ```js
+  //使用 create方法创建一个 axios 实例 绕过拦截器，否者无法发送 formData格式的数据
+  let url = this.$store.state.apiUrl;
+  let token = this.$store.getters.getToken;
+  var instance = this.$http.create({
+      baseURL: url,
+      timeout: 1000,
+      headers: {
+                  'Content-Type': 'multipart/form-data',
+                   token:token
+              },
+  });
+  instance.post("Message_board/upload",formData).then(res=>{
+  
+  })
+  ```
+
