@@ -412,21 +412,92 @@ public interface View {
 
 #### 核心架构
 
+##### 基础架构	
+
+> Servlet 
+
+##### 核型架构
+
+> 前端控制器 font Controller
+
+![image-20191002183537197](/Users/luohengyi/Library/Application Support/typora-user-images/image-20191002183537197.png)
+
 #### 处理流程
+
+![image-20191002183819523](/Users/luohengyi/Library/Application Support/typora-user-images/image-20191002183819523.png)
 
 #### 核心组件
 
-- DispatcherServlet
+##### 处理器管理
 
-- handlemapping
-  - ​	根据配置以及请求参数查找对应的handle并返回
+- 映射:	HandlerMaping
 
-- handleAdapter
-  - 执行查找到的handle并且返回ModelAndview
-- viewResolver
-  - 解析之心handle并且返回ModelAndview返回的view，最后放入响应中
-- handleExceptionResolver
-  - 解析异常
+  - HandlerMapping会把请求映射为HandlerExecutionChain对象（包含Handler）
+
+- 适配:    HandlerAdapter
+
+  - 调用 HandlerExecutionChain中的Handler
+
+  - ```java
+    // Actually invoke the handler.
+    mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+    ```
+
+- 执行:    HandlerExecutionChain
+
+  - 执行 HandlerExecutionChain 中的 Handler处理器，返回ModelAndView
+
+  - ModelAndView 包含视图名称 view，数据 model
+
+    ```java
+    @Nullable
+    private Object view;
+    
+    /** Model Map */
+    @Nullable
+    private ModelMap model;
+    ```
+
+    
+
+##### 页面渲染
+
+- 视图解析：ViewResolver
+
+  - 通过 initViewResolvers 初始化 ,ViewResolver的具体实现就是jsp等
+
+  - ```java
+    @Nullable
+    private List<ViewResolver> viewResolvers;
+    ```
+
+  - 解析 ModelAndView返回View
+
+- 国际支持：LocaleResolver、LocaleContextResolver
+
+- 个性化：ThemeResolver
+
+##### 异常处理
+
+- 异常解析：HandlerExceptionResolver
+
+#### 注解驱动
+
+```java
+@Configuration
+@EnableWebMvc
+public class WebConfig {
+
+    @Bean
+    ViewResolver viewResolver(){
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setViewClass(JstlView.class);
+        viewResolver.setPrefix("/WEB-INF/jsp");
+        viewResolver.setSuffix(".jsp");
+        return viewResolver;
+    }
+}
+```
 
 ## Spring WebFlux 应用
 
@@ -716,6 +787,29 @@ class HibernateJpaConfiguration extends JpaBaseConfiguration {
     | started(ConfigurableApplicationContext)          | ConfigurableApplicationContext 已启动，此时 Spring Bean 已初始化完成 | 2.0                  |
     | running(ConfigurableApplicationContext)          | Spring 应用正在运行                                          | 2.0                  |
     | failed(ConfigurableApplicationContext,Throwable) | Spring 应用运行失败                                          | 2.0                  |
+    
+  - 自定义运行监听器：
+
+    - ```java
+    public class HelloWordRunListener implements SpringApplicationRunListener {
+        //构造器必须要有2个参数，系统创建时，传入了2个参数
+      public HelloWordRunListener(SpringApplication springApplication,String[] args) 		{}
+      
+          @Override
+          public void starting() {
+              System.out.println("HelloWordRunListener.starting()...");
+      
+          }
+        ....其他方法实现
+      }
+      ```
+    
+      在spring.factories文件中添加
+    
+      ```properties
+      org.springframework.boot.SpringApplicationRunListener=\
+      diveinspringboot.run.HelloWordRunListener
+      ```
 
 - 监听：Spring Boot事件，Spring事件
 
@@ -726,12 +820,31 @@ class HibernateJpaConfiguration extends JpaBaseConfiguration {
   - Spring 应用事件
     - 普通应用事件:  ``ApplicationEvent``
     - 应用上下文事件: ``ApplicationContextEvent``
+    
   - Spring 应用监听器
     - 接口编程模型：``ApplicationListener``
     - 注解编程模型：``@EnevenListener``
+    
   - Spring 应用广播器
     - 接口：``ApplicationEventMultiCaster``
     - 实现类：``SimpleApplicationEventMultiCaster``
+    
+  - ```java
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    
+    context.addApplicationListener(event ->{
+        System.out.println("监听到"+event);
+    } );
+    
+    context.refresh();
+    
+    //发送事件
+    context.publishEvent("HelloWord");
+    context.publishEvent(new ApplicationEvent("11111") {
+    });
+    
+    context.close();
+    ```
 
 EventPublishingRunListener 监听方法与 Spring Boot 事件对应关系 
 
@@ -745,7 +858,16 @@ EventPublishingRunListener 监听方法与 Spring Boot 事件对应关系
 | running(ConfigurableApplicationContext)          | ApplicationReadyEvent               | 2.0      |
 | failed(ConfigurableApplicationContext,Throwable) | ApplicationFailedEvent              | 1.0      |
 
-- 创建：应用上下文、EnvironMent（**抽象环境对象***）、其他（不重要）
+- 创建：
+  - 应用上下文
+    - Web Reactive: AnnotationConfigReactiveWebServerApplicationContext
+    - Web Servlet: AnnotationConfigServletWebServerApplicationContext
+    - 非 Web: AnnotationConfigApplicationContext
+  - EnvironMent（**抽象环境对象***）
+    - Web Reactive: StandardEnvironment
+    - Web Servlet: StandardServletEnvironment
+    - 非 Web: StandardEnvironment
+  - 其他（不重要）
 - 失败：故障分析报告
 - 回调：CommandLinRunner、ApplicationRun
 
