@@ -1209,6 +1209,24 @@ public static void main(String[] args) {
 
 - Environment 读取
 
+  - 通过以Environment接口（Environment实际是扩展了PropertyResolver来的，内置了很多获取配置的方法）的方式获取配置
+
+    - ```java
+      @Bean(name = "user2")
+      @Autowired
+      public User user2(Environment environment){
+          Long id = environment.getProperty("user.id", Long.class);
+          String name = environment.getProperty("user.name", String.class);
+          Integer age = environment.getProperty("user.age", Integer.class,
+                  environment.getProperty("myuser.age",Integer.class,32));
+          User user = new User();
+          user.setId(id);
+          user.setName(name);
+          user.setAge(age);
+          return  user;
+      }
+      ```
+
 - ConfigurationProperty Bean 绑定
 
 - @ConditionalOnProperty 判断
