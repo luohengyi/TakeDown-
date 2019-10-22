@@ -1,4 +1,4 @@
-# /Spring 
+# Spring 
 
 ## ioc容器
 
@@ -367,7 +367,7 @@
            <property name="suffix" value=".jsp"/>
        </bean>
         <!--  -->
-       <!-- spring核心分发servlet拦截的静态资源放行 新版本中 mapping="/static/**" location="/static/"location中不需要带*  -->
+       <!-- spring核心分发servlet拦截的静态资源放行 新版本中 mapping="/static/**" location="/static/" 或者 WEB-INF/static/ 在location中不需要带*  -->
      <!-- 3.0的版本配置 mapping="/static/**" location="/static/"  -->
        <mvc:resources mapping="/static/**" location="/static/*"/>
        <!-- 控制器的包名，services的包名，如果要 @Autowired 注解注入必须配置包的地址 -->

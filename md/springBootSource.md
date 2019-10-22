@@ -217,7 +217,7 @@ public String helloWord(){
 }
 ```
 
-### 组件自动装配
+### 1组件自动装配
 
 > 依赖注入是靠自动装配来实现的
 
@@ -269,12 +269,18 @@ public class DemoApplication {
 - 模式注解 ``@Configuration``
 - 模块化装配 ``@HelloWordEnable``->``EnableInportSelector``->``HelloWordConfiguration``->``HelloWord``
 
-### 嵌入式web容器
+#### 完全自动装配
+
+- DispatcherServlet：DispatcherServletAutoConfiguration
+- 替换@EnableWebMvc：WebMvcAutoConfiguration
+- Servlet容器：ServletWebServerFactoryAutoConfigutation
+
+### 2嵌入式web容器
 
 - Web Servlet：Tomcat、Jetty、 UnderTow
 - Web Reactivate：Netty Web Server
 
-### 生产准备特性
+### 3生产准备特性
 
 - 指标：/actuator/metrice (cup,内存等信息)
 - 将康检查
@@ -372,11 +378,28 @@ public interface View {
 
 ### 模版引擎
 
+![image-20191012143815110](/Users/luohengyi/Library/Application Support/typora-user-images/image-20191012143815110.png)
+
 > 当项目中存在多个模版引擎时由内容协商 **ContentNegotiatingViewResolver** 来处理，使用最合适的
 
 - thymeleaf
+
 - thymeleaf
+
 - jsp
+
+  ```java
+  //多个模版引擎时自定义ViewResolver设置他的Order优先级来使用
+  @Bean
+  public ViewResolver viewResolver(){
+      InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+      viewResolver.setViewClass(JstlView.class);
+      viewResolver.setPrefix("/WEB-INF/jsp/");
+      viewResolver.setSuffix(".jsp");
+      viewResolver.setOrder(Ordered.LOWEST_PRECEDENCE-10);
+      return viewResolver;
+  }
+  ```
 
 ### 内容协商
 
@@ -389,16 +412,42 @@ public interface View {
 - @ExceptionHandler
 - HandlerExceptionResler
 - BasicErrorController
-- 
 
 ### WEB MVC REST
 
 #### 资源辅助
 
+> 请求
+
 - @RequestMapping
   - @GetMapping
-- @ResponseBody
-- @RequestBody
+- @RequestBody 获取完整请求主体内容
+  - 主要用来接收前端传递给后端的json字符串中的数据的(请求体中的数据的)
+  - 使用@RequestBody接收数据时，前端不能使用GET方式提交数据，而是用POST方式进行提交。在后端的同一个接收方法里
+  - @RequestBody与@RequestParam()可以同时使用，@RequestBody最多只能有一个，而@RequestParam()可以有多个
+  - 当同时使用@RequestParam（）和@RequestBody时，@RequestParam（）指定的参数可以是普通元素、
+- @RequestParam 请求参数
+- @PathVariable 获取请求路径变量
+- @RequestHeader 请求头数据
+- @CookieValue cookie 获取数据
+
+> 响应
+
+- @ResponseBody 响应主体
+- @ResponseEntity 响应体（包括响应头和响应数据）
+- @ResponseCookie（5.0）响应Cookie
+
+> 拦截
+
+- @RestControllerAdvice 控制器拦截
+
+- HandlerInterceptor 方法拦截接口
+
+> 跨域
+
+- CrossOrigin 资源跨域声明
+- CrossFilter  资源跨域拦截器
+- WebMvcConfigurer#addCrossMappings 注册资源跨域信息
 
 #### 资源跨越
 
@@ -407,6 +456,37 @@ public interface View {
 #### 服务发现（restful接口处理）
 
 - HATEOS
+
+#### 核心组件
+
+- 处理方法参数解析器：**HandlerMethodArgumentResolver**
+- 处理方法返回值解析器：**HandlerMethodReturnValueHandler**
+- 内容协商管理：**ContentNegotiationManager**
+- 媒体类型：MediaType
+- 消费媒体类型：@RequesMapping#consumes
+- 生产媒体类型：@RequesMapping#produces
+- Http消息转化器：HttpMessageConverter
+- Rest 配置器：WebMvcConfigurer
+
+#### 处理流程
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190510122041956.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2tvMDQ5MQ==,size_16,color_FFFFFF,t_70)
+
+- 请求发送到DispatcherServlet
+- 调用handlerMappings，HandlerMapping会把请求映射为HandlerExecutionChain对象（包含Handler）
+- 根据HandlerExecutionChain中的handler寻找适配器HandlerAdapter。
+  - HandlerAdapter处理器有多种例如，方法上有请求参数的，
+- 在HandlerAdapter中执行 HandlerExecutionChain 中的 Handler处理器
+- 由HandlerMethodReturnValueHandlerComposite处理返回结果
+  - 其中有多个处理器，由合适的处理器来处理返回结果
+
+#### 内容协商
+
+> 针对HandlerMethodReturnValueHandlerComposite处理后的返回结果，转化为合适的http消息类型
+
+<img src="/Users/luohengyi/Library/Application Support/typora-user-images/image-20191020102209802.png" alt="image-20191020102209802" style="zoom:50%;" />
+
+**由MappingJackson2HttpMessageConverter来处理响应类型，以及对象的反序列化**
 
 ###  WEB MVC 核心
 
@@ -445,7 +525,7 @@ public interface View {
 
 - 执行:    HandlerExecutionChain
 
-  - 执行 HandlerExecutionChain 中的 Handler处理器，返回ModelAndView
+  - 在HandlerAdapter中执行 HandlerExecutionChain 中的 Handler处理器，返回ModelAndView
 
   - ModelAndView 包含视图名称 view，数据 model
 
@@ -495,6 +575,98 @@ public class WebConfig {
         viewResolver.setPrefix("/WEB-INF/jsp");
         viewResolver.setSuffix(".jsp");
         return viewResolver;
+    }
+}
+```
+
+- @RequestHeader 获取请求头
+
+- @CookieValue 获取 Cookie值
+
+- @ModelAttribute 方法上标注，统一设置某个属性的值
+
+- @ControllerAdvice 控制器增强
+
+- @ExceptionHandler 异常处理
+
+  - ```java
+    //设置哪一个控制器的切面通知,如果不设置，使用全部的控制器
+    @ControllerAdvice(assignableTypes = HelloWordController.class)
+    public class HelloWordControllerAdvice {
+    		//设置拦截的异常类型
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<String> onException(Throwable throwable){
+          //补货异常后的处理方式 也可以@ResponseBody 方式直接向客户端响应错误信息
+            return  ResponseEntity.ok(throwable.getMessage());
+        }
+    }
+    ```
+
+- @Valid、@validated 参数校验
+
+#### 自动装配
+
+##### servlet Api
+
+> 在 Set 接口中允许以编程的方式动态的添加 servlet 组件，所以在springBoot中不需要手动配置DispatcherServlet
+
+```java
+public interface ServletContainerInitializer {
+    public void onStartup(Set<Class<?>> c, ServletContext ctx)
+        throws ServletException; 
+}
+```
+
+##### Spring 适配
+
+> 在spring 中对 ServletContainerInitializer进行了适配实现了一些自己东西
+
+```java
+//筛选器，告诉容器启动时那些类需要被装载
+@HandlesTypes({WebApplicationInitializer.class})
+public class SpringServletContainerInitializer implements ServletContainerInitializer {
+    public SpringServletContainerInitializer() {
+    }
+
+    public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext) throws ServletException {
+      ........
+```
+
+##### Spring spi
+
+- 基础接口：WebApplicationInitializer
+- 编程驱动:   AbstractDispatcherServletInitializer
+  - 该抽象类中的registerDispatcherServlet方法动态的添加了dispatcherServlet
+- 注解驱动：AbstractAnnotationConfigDispatcherServletInitializer
+  - 继承于AbstractDispatcherServletInitializer提供了3个抽象方法用于配置DispatcherServlet
+
+##### 示例重构
+
+```java
+@ComponentScan(basePackages = "com.imooc.web")
+public class DispatcherServletConfig {
+}
+```
+
+```java
+public class DefaultAnnotationConfigDispatcherServletInitializer
+extends AbstractAnnotationConfigDispatcherServletInitializer {
+    //web.xml
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class[0];
+    }
+
+    //DispatcherServlet的配置
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class[]{DispatcherServletConfig.class};
+    }
+
+    //映射
+    @Override
+    protected String[] getServletMappings() {
+        return new String[]{"/"};
     }
 }
 ```
