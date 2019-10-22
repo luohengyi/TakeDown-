@@ -1067,16 +1067,152 @@ public static void main(String[] args) {
 
 ### Spring Boot 配置
 
-#### 外部化配置
+#### 应用场景
 
-- ConfigurationProperty
+- XML Bean 定义的熟悉占位符
+
+  - spring springframework 时代已经实现了外部化配置
+
+    - 指定配置文件地址
+
+      ```xml
+      <?xml version="1.0" encoding="UTF-8"?>
+      <beans xmlns="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+      
+      
+          <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+              <property name="location" value="classpath:application.properties"/>
+              <property name="fileEncoding" value="UTF-8"/>
+          </bean>
+      
+      </beans>
+      ```
+
+    - 配置bean
+
+    - ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+      
+          <bean name="users" class="com.example.demo.configuration.bean.Users">
+            <property name="id" value="${users.id}"/>
+            <property name="name" value="${users.name}"/>
+          </bean>
+      
+        </beans>
+      ```
+
+    - 装载配置文件并装配bean对象
+
+      ```java
+      String[] location= {"META-INF/srping/spring-context.xml","META-INF/srping/user-context.xml"};
+      ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(location);
+      Users user = context.getBean("users",Users.class);
+      System.err.println("user对象："+user);
+      ```
+
+  - spring Boot 时代使用注解方式自动加载方式
+
+    - ```java
+      //通过ImportResource注解指定配置文件地址。spring boot 会自动加载source目录下的application.properties文件
+      @ImportResource("META-INF/srping/user-context.xml")
+      @EnableAutoConfiguration
+      public class XmlEnableConfigStrap {
+      
+          public static void main(String[] args) {
+              ConfigurableApplicationContext context = new SpringApplicationBuilder(XmlEnableConfigStrap.class)
+                      .web(WebApplicationType.NONE).run(args);
+              Users user = context.getBean("users", Users.class);
+              System.err.println("user对象：" + user);
+          }
+      
+      }
+      ```
+
+- @Value 注入
+
+  - ``@Value("${user.desc:helloWord}")`` 停工默认值的实现
+
+  - 构造注入 常用于 配置bean，
+
+    - ```java
+      @EnableAutoConfiguration // 必须被@Configuration标记
+      public class XmlEnableConfigStrap {
+      
+          private final Long id;
+          private final String name;
+          private final int age;
+          private final String desc;
+      
+          public XmlEnableConfigStrap(
+                  @Value("${user.id}")Long id,
+                  @Value("${user.name}") String name,
+                  @Value("${user.age}") int age,
+                  @Value("${user.desc:helloWord}") String desc) {
+              this.id = id;
+              this.name = name;
+              this.age = age;
+              this.desc = desc;
+          }
+      
+          @Bean
+          public User user(){
+              User user = new User();
+              user.setId(id);
+              user.setName(name);
+              user.setAge(age);
+              user.setDesc(desc);
+              return  user;
+          }
+      }
+      ```
+
+  - 方法注入的方式
 
   - ```java
-    private final ConfigurationPropertyName name;
-    private final Object value;
-    //在since 2.0.0中加入了 配置来源的属性，可以查看这个配置想是在哪里配置的
-    private final Origin origin;
+    @Bean
+    public User user(
+            @Value("${user.id}")Long id,
+            @Value("${user.name}") String name,
+            @Value("${user.age}") int age,
+            @Value("${user.desc:helloWord}") String desc){
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.setAge(age);
+        user.setDesc(desc);
+        return  user;
+    }
     ```
+
+  - 复用配置  ``@Value("${user.age:${myuser.age:32}}")`` 在配置中调用其他配置来装配自己,前提是自己这个配置不存在时，以上表达式为：user.age不存在时使用myuser.age，myuser.age也不存在时使用32
+
+  - ```java
+    @Bean
+    public User user(
+            @Value("${user.id}")Long id,
+            @Value("${user.name}") String name,
+            @Value("${user.age:${myuser.age:32}}") int age,
+            @Value("${user.desc:helloWord}") String desc){
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.setAge(age);
+        user.setDesc(desc);
+        return  user;
+    }
+    ```
+
+- Environment 读取
+
+- ConfigurationProperty Bean 绑定
+
+- @ConditionalOnProperty 判断
+
 
 #### Profile
 
