@@ -359,7 +359,7 @@ public interface ViewResolver {
 
 > view 视图   视图只关心一件事 -> **渲染**
 
-render 渲染方法需要用到应用上下文 以及 HttpServletRequest 、HttpServletResponse 具体的渲染功能又模版引擎实现
+render 渲染方法需要用到应用上下文 以及 HttpServletRequest 、HttpServletResponse 具体的渲染功能由模版引擎实现
 
 ```java
 public interface View {
@@ -1097,12 +1097,12 @@ public static void main(String[] args) {
         <beans xmlns="http://www.springframework.org/schema/beans"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-      
+        
           <bean name="users" class="com.example.demo.configuration.bean.Users">
             <property name="id" value="${users.id}"/>
             <property name="name" value="${users.name}"/>
           </bean>
-      
+        
         </beans>
       ```
 
@@ -1209,6 +1209,45 @@ public static void main(String[] args) {
 
 - Environment 读取
 
+  > Environment由SpringApplication创建，且项目中只有1个bean对象,BeanFactoryAware接口优先于EnvironmentAware接口先执行
+
+  - Environment的获取方式
+
+    - 方法/构造注入
+
+      ```
+      @Bean(name = "user2")
+      @Autowired
+      public User user2(Environment environment){
+          return  user;
+      }
+      ```
+
+    - 通过EnvironmentAware接口获取
+
+      - ```java
+        public class XmlEnableConfigStrap implements EnvironmentAware {
+        
+            private Environment environment;
+        
+            @Override
+            public void setEnvironment(Environment environment) {
+                this.environment = environment;
+            }
+        }
+        ```
+
+    - 通过BeanFactory查找Environment
+
+      - ```java
+        private Environment environment;
+        
+        @Override
+        public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+            environment = beanFactory.getBean(Environment.class);
+        }
+        ```
+
   - 通过以Environment接口（Environment实际是扩展了PropertyResolver来的，内置了很多获取配置的方法）的方式获取配置
 
     - ```java
@@ -1229,7 +1268,186 @@ public static void main(String[] args) {
 
 - ConfigurationProperty Bean 绑定
 
+  > ``@ConfigurationProperty``支持嵌套类型的绑定，使用过set，get方法注入配置值的
+
+  - 使用``@ConfigurationProperty``作用于类上
+
+    - 使用``@ConfigurationProperty``设置配置属性的前缀
+
+      ```java
+      @ConfigurationProperties(prefix = "user")
+      public class User {
+          private Long id;
+          private String name;
+      }
+      ```
+
+    - 配置bean
+
+      - 手动配置
+
+        ```java
+        @Bean
+        public User user(){
+            return  new User();
+        }
+        ```
+
+      - 注解方式``@EnableConfigurationProperties(Class<T>)``这种方式只能使用Class类型的方式去获取User类
+
+        ```java
+        @EnableAutoConfiguration
+        @EnableConfigurationProperties(User.class)
+        public class ConfigurationPropertiesStap {
+            public static void main(String[] args) {
+                ConfigurableApplicationContext context = new SpringApplicationBuilder(ConfigurationPropertiesStap.class)
+                        .web(WebApplicationType.NONE).run(args);
+                System.err.println(System.getProperty("user.name"));
+                User user = context.getBean( User.class);
+                System.err.println("user对象：" + user);
+            }
+        }
+        ```
+
+  - 作用于方法上，通常在配置第三方的类时使用，jar包中的类无法修改，所以在通过方法构建时使用注解。
+
+    - ```java
+      @Bean
+      @ConfigurationProperties(prefix = "user")
+      public User user(){
+          return  new User();
+      }
+      ```
+
+  > 同时支持 @Validated 校验
+
+  - ```java
+    @Validated
+    public class User {
+      //检验规则
+       @NotNull
+      private String name;
+    }
+    ```
+
 - @ConditionalOnProperty 判断
+
+  - ```java
+    @Bean
+    @ConfigurationProperties(prefix = "user")
+    //单独配置某个属性，name属性名称，如果配置了prefix那么带和不带前缀都可以，
+    //matchIfMissing=false时，如果没有配置该字段会报错（默认为false）
+    //该配置只有等于0571时，才会通过验证
+    @ConditionalOnProperty(name = "name",matchIfMissing = false,havingValue = "0571")
+    public User user(){
+        return  new User();
+    }
+    ```
+
+#### 配置来源优先级
+
+1. Java System Properties
+2. 环境变量
+3. application.properties
+
+> 查看当前上下文中的配置来源，通过environment类查看
+
+```java
+ConfigurableApplicationContext context =
+        new SpringApplicationBuilder(ExtendPropertyStart.class)
+        .web(WebApplicationType.NONE).run(args);
+ConfigurableEnvironment environment = context.getEnvironment();
+
+environment.getPropertySources().forEach(propertySource -> {
+    System.out.printf("propertySource[名称：%s]: %s\n",propertySource.getName(),propertySource);
+});
+```
+
+#### 拓展外部化配置
+
+- 基于SpringApplicationRunListener#environment拓展（会发送 一个事件**ApplicationEnvironmentPreparedEvent**）
+
+  > 利用工厂机制实现一个自己的 SpringApplicationRunListener 实现类，**参考spring boot的事件处理机制**
+
+  - META-INF/spring.factories下
+
+    ```properties
+    org.springframework.boot.SpringApplicationRunListener=\
+    com.example.demo.listener.ExtendPropertySourceRunListener
+    ```
+
+  - 实现接口 SpringApplicationRunListener 以及Ordered 接口（保证配置涞源的优先级），**从springboot2.0.x开始springboot拥有18种配置来源**
+
+    ```java
+    public class ExtendPropertySourceRunListener implements SpringApplicationRunListener, Ordered {
+    
+        private SpringApplication springApplication;
+        private String[] args;
+    
+        public ExtendPropertySourceRunListener(SpringApplication springApplication, String[] args) {
+            this.springApplication = springApplication;
+            this.args = args;
+        }
+    
+        @Override
+        public void starting() {
+    
+        }
+    
+        @Override
+        public void environmentPrepared(ConfigurableEnvironment environment) {
+            MutablePropertySources propertySources = environment.getPropertySources();
+    
+    				//此处实现自己的扩展配置
+            HashMap<String, Object> prepared = new HashMap<>();
+            prepared.put("user.id",999);
+    
+            MapPropertySource mapPropertySource = new MapPropertySource("from-environmentPrepared", prepared);
+    
+            //添加配置源到最前面，保证优先级
+            propertySources.addFirst(mapPropertySource);
+        }
+      
+       //保证当前类的加载顺序一定在 框架 EventPublishingRunListener 类 的后面
+        @Override
+        public int getOrder() {
+            return new EventPublishingRunListener(springApplication, args).getOrder() + 1;
+        }
+    
+        @Override
+        public void contextPrepared(ConfigurableApplicationContext context) {
+    
+        }
+    
+        @Override
+        public void contextLoaded(ConfigurableApplicationContext context) {
+    
+        }
+    
+        @Override
+        public void started(ConfigurableApplicationContext context) {
+    
+        }
+    
+        @Override
+        public void running(ConfigurableApplicationContext context) {
+    
+        }
+    
+        @Override
+        public void failed(ConfigurableApplicationContext context, Throwable exception) {
+    
+        }
+    
+    }
+    ```
+
+- 基于 EnvironmentPostProcessor 拓展
+
+- 基于 ApplicationContextInitialized 拓展 
+
+- 基于 SpringApplicationRunListener#contextPrepared 拓展（会发送一个事件 ApplicationPreparedEvent事件）
+
 
 
 #### Profile
@@ -1281,3 +1499,27 @@ public static void main(String[] args) {
   - 在spring boot的源码目录下有这样一份文件：spring-boot-source\spring-boot-project\spring-boot-autoconfigure\src\main\resources\META-INF\spring.factories，可以看到这份文件有两类内容：
 
     1.一对多键值对的方式记录了一些接口/抽象类与实现类的关系
+
+### IOC控制反转
+
+所有的类的创建、销毁都由`spring`来控制，也就是说控制对象生存周期的不再是引用它的对象，而是`spring`，
+
+对于某个具体的对象而言，以前是它控制其他对象，现在是所有对象都被`spring`控制，所以这叫控制反转。
+
+### 依赖注入
+
+这一点是通过`DI`（`Dependency Injection`，依赖注入）来实现的。比如`对象A`需要操作数据库，以前我们总是要在`A`中自己编写代码来获得一个`Connection`对象，有了 `spring`我们就只需要告诉`spring`，`A`中需要一个`Connection`，至于这个`Connection`怎么构造，何时构造，`A`不需要知道。在系统运行时，`spring`会在适当的时候制造一个`Connection`，然后像打针一样，注射到`A`当中，这样就完成了对各个对象之间关系的控制。`A`需要依赖 `Connection`才能正常运行，而这个`Connection`是由`spring`注入到`A`中的，依赖注入的名字就这么来的。
+
+#### BeanFactory和ApplicationContext
+
+> 两者的关系图，`ApplicationContext`是`BeanFactory`的子类，所以，`ApplicationContext`可以看做更强大的`BeanFactory`，他们两个之间的区别如下
+
+![image-20191023092426204](/Users/luohengyi/Library/Application Support/typora-user-images/image-20191023092426204.png)
+
+- `BeanFactory`。基础类型`IoC容器`，提供完整的`IoC`服务支持。如果没有特殊指定，**<u>默认采用延迟初始化策略</u>**（`lazy-load`）。只有当客户端对象需要访问容器中的某个受管对象的时候，才对该受管对象进行初始化以及依赖注入操作。所以，相对来说，容器启动初期速度较快，所需要的资源有限。对于资源有限，并且功能要求不是很严格的场景，`BeanFactory`是比较合适的`IoC容器`选择。
+
+- `ApplicationContext`。`ApplicationContext`在`BeanFactory`的基础上构建，是相对比较高级的容器实现，除了拥有`BeanFactory`的所有支持，`ApplicationContext`还提供了其他高级特性，比如<u>**事件发布、国际化信息支持**等</u>，`ApplicationContext`所管理的对象，<u>**在该类型容器启动之后，默认全部初始化并绑定完成**</u>。所以，相对于`BeanFactory`来说，`ApplicationContext`要求更多的系统资源，同时，因为在启动时就完成所有初始化，容器启动时间较之`BeanFactory`也会长一些。在那些系统资源充足，并且要求更多功能的场景中，`ApplicationContext`类型的容器是比较合适的选择。
+
+#### 一个接口多个实现
+
+通过``@Autowired``是通过类型来判断的，这时可以加上``@Qualifier(name)``同时满足名称相同,``@Component``上可以标记名称，所以由其衍生出来的注解也阔以指定bean的名称
