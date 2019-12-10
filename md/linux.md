@@ -11,13 +11,15 @@
    
 2. 重启：reboot
 
-3. 查看时间：date
+3. 查看系统位数 getconf LONG_BIT
 
-4. 设置日期 :   date -s 09/10/2018
-   
+4. 查看时间：date
+
+5. 设置日期 :   date -s 09/10/2018
+
    - 设置时间 date -s 10:46:30
-   
-5. ip配置目录： vi  /etc/sysconfig/network-scripts/ifcfg-eth0
+
+6. ip配置目录： vi  /etc/sysconfig/network-scripts/ifcfg-eth0
 
    1. 配置静态ip
 
@@ -38,21 +40,21 @@
       NAME="System eth0"
       ```
 
-6. 重启网卡：service network restart
+7. 重启网卡：service network restart
 
-7. 执行上一次命令： cd -
+8. 执行上一次命令： cd -
 
-8. 查看当前目录：pwd
+9. 查看当前目录：pwd
 
-9. 查看ip：ifconfig
+10. 查看ip：ifconfig
 
-10. 清屏：clear
+11. 清屏：clear
 
-11. pwd 显示路径
+12. pwd 显示路径
 
-12. 建立软连接：ln -s 地址。 //当前地址生成一个镜像地址
+13. 建立软连接：ln -s 地址。 //当前地址生成一个镜像地址
 
-13. 查找安装包
+14. 查找安装包
 
     1. yum -y list java*
 
@@ -118,6 +120,29 @@
 6. rpm -ivh *.rpm --nodeps --force 强制安装
 
    1. --nodeps就是安装时不检查依赖关系，比如你这个rpm需要A，但是你没装A，这样你的包就装不上，用了--nodeps你就能装上了。--force就是强制安装，比如你装过这个rpm的版本1，如果你想装这个rpm的版本2，就需要用--force强制安装
+
+##### 挂载镜像安装
+
+```shell
+#光盘镜像路径/tmp/CentOS-6.8-x86_64-bin-DVD1.iso
+#挂载目录/tmp/cd
+#1、挂载光盘
+mount /tmp/CentOS-6.8-x86_64-bin-DVD1.iso -o loop /tmp/cd/
+#2、修改yum源
+/etc/yum.repos.d/CentOS-Base.repo#备份，将原文件内容清空后添加下面内容
+[base]
+name=CentOS
+baseurl=file:///tmp/cd
+enabled=1
+gpgckeck=0
+gpgkey=file:///tmp/cd/RPM-GPG-KEY-CentOS-6
+#3、清理yum缓存
+yum clean all
+#4、安装rpm包
+yum install compat-libstdc++*
+```
+
+
 
 #### 端口类
 

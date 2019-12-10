@@ -51,7 +51,7 @@
    1. 线程方式：fpm sudo pkill -INT -o php-fpm
    2. 安装的方法停止：brew services stop php@7.0
    3. 安装的方法启动：brew services start php@7.0
-   4. 重启：brew services restart php@7.0
+   4. 重启：c
 
 3. **配置/拓展**：
 

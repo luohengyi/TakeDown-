@@ -293,3 +293,5 @@ old: 修改或者删除之前的那一行数据可以通过 . 获取这一行的
    cd /scripts
 
    ./mysql_secure_installation 定义初始化密码
+   
+10. mysql --verbose --help | grep my.cnf 查看配置文件地址
