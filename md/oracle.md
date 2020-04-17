@@ -21,13 +21,17 @@ grant connect ,resource,dba to laolu;
 
 1. su - oracle //切换到自己的oracle账户
 2. sqlplus /nolog //登录oracle
-   1. sqlplus username/password
+   1. sqlplus / as sysdba
+   2. sqlplus username/password
 3. startup //启动oracle
 4. conn /as sysdba //连接服务
-5. lsnrctl start //启动oracle监听
+5. lsnrctl start //启动oracle监听 命令行命令不在sqlplus中
 
 #### 导出exp/导入imp
 
 exp username/password file=url/sql.dmp owner=username
 
-Imp username/password file=url/sql.dump
+Imp username/password file=url/sql.dump  full=y ignore=y;
+
+- full=y 是导入文件中全部内容
+- ignore=y相当于，如果没有的表，创建并倒入数据，如果已经有的表，忽略创建的，但不忽略倒入

@@ -314,7 +314,7 @@
               <id property="id" column="id"></id>
               <result property="username" column="username"></result>
               <result property="password" column="password"></result>
-          <!--使用其他包里面查询  Role对应Role对象 对应关系 user类用来装ruole类的属性名 -->
+          <!--使用其他包里面查询  Role对应Role对象 对应关系 user类用来装ruole类的属性名 ！！此处的column属性是传入getRoleByid中的那个属性！！ -->
               <association  select="com.lhy.mapper.RoleMapper.getRoleByid" javaType="Role" column="role_id" property="role">
                   <id property="role_id" column="role_id"></id>
                   <result property="name" column="name"></result>
@@ -360,6 +360,7 @@
               <id property="role_id" column="role_id"></id>
               <result property="name" column="name"></result>
               <result property="ruleconten" column="ruleconten"></result>
+        <!--！！此处的column属性是传入getRoleByid中的那个属性！！-->
               <collection select="com.lhy.mapper.UserMapper.getUserByRoleId" property="users" column="role_id" javaType="List" ofType="User">
                   <id property="id" column="id"></id>
                   <result property="username" column="username"></result>
@@ -493,3 +494,19 @@
       	System.out.println(user);
       }
       ```
+
+## 细节问题总结
+
+##### date时间类型无法映射
+
+```java
+private Date checkTime = new Date();
+```
+
+```xml
+<result property="checkTime" column="check_time" javaType="TIMESTAMP" />
+```
+
+##### 数据无法映射
+
+一对多嵌套子bean类字段和数据库不对应时，应该修改子查询时的resultMap，而不是在嵌套时的collection中做映射

@@ -310,6 +310,30 @@ yum install compat-libstdc++*
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar 
    ```
 
+修改默认版本
+
+```properties
+配置 vi /etc/profile
+
+在最后加上
+
+JAVA_HOME=/usr/local/jdk1.6.0_34
+
+PATH=$PATH:$JAVA_HOME/bin
+
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+export JAVA_HOME
+
+export PATH
+
+export CLASSPATH
+#重载配置文件
+resources /etc/profile
+```
+
+
+
 #### Tomcat
 
 1. 启动 sudo sh startup.sh

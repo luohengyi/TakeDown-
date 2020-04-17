@@ -32,3 +32,17 @@
   })
   ```
 
+### 自组件监听父组件的变换
+
+```vue
+watch: {
+    // 监听 查询条件的 改变
+    table :  {
+        handler(newVal, oldVal) {
+            console.info('value changed 2', newVal)
+        },
+        deep: true
+    }
+
+}
+```
