@@ -15,11 +15,13 @@
 
 4. 查看时间：date
 
-5. 设置日期 :   date -s 09/10/2018
+5. nohup ./my-shell-script.sh &  让命令在后台启动，关闭远程窗口不会关闭服务
+
+6. 设置日期 :   date -s 09/10/2018
 
    - 设置时间 date -s 10:46:30
 
-6. ip配置目录： vi  /etc/sysconfig/network-scripts/ifcfg-eth0
+7. ip配置目录： vi  /etc/sysconfig/network-scripts/ifcfg-eth0
 
    1. 配置静态ip
 
@@ -40,21 +42,21 @@
       NAME="System eth0"
       ```
 
-7. 重启网卡：service network restart
+8. 重启网卡：service network restart
 
-8. 执行上一次命令： cd -
+9. 执行上一次命令： cd -
 
-9. 查看当前目录：pwd
+10. 查看当前目录：pwd
 
-10. 查看ip：ifconfig
+11. 查看ip：ifconfig
 
-11. 清屏：clear
+12. 清屏：clear
 
-12. pwd 显示路径
+13. pwd 显示路径
 
-13. 建立软连接：ln -s 地址。 //当前地址生成一个镜像地址
+14. 建立软连接：ln -s 地址。 //当前地址生成一个镜像地址
 
-14. 查找安装包
+15. 查找安装包
 
     1. yum -y list java*
 

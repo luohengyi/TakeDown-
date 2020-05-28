@@ -51,7 +51,7 @@
    1. 线程方式：fpm sudo pkill -INT -o php-fpm
    2. 安装的方法停止：brew services stop php@7.0
    3. 安装的方法启动：brew services start php@7.0
-   4. 重启：c
+   4. 重启：brew services restart php@7.0
 
 3. **配置/拓展**：
 
@@ -83,6 +83,44 @@
          6. 打开php的配置文件/etc/php.ini，增加代码 extension=redis.so （如果找不到php.ini文件执行php --ini找到php.ini）
 
             　　然后重启fpm就有redis扩展了。
+
+   2.x-debug
+
+   1. 进入网站 https://xdebug.org/wizard 
+
+   2. 将 php -i 信息输入框中，更具页面提示下载相关文件
+
+   3. 解压进入目录
+
+      >指定要添加拓展的php版本 
+
+      ​	/usr/local/Cellar/php@7.0/7.0.33/bin/phpize
+
+      > 配置 使用php配置版本 
+
+        ./configure --with-php-config=/usr/local/Cellar/php@7.0/7.0.33/bin/php-config
+
+      > 编译
+
+        make
+
+      > 保存编译后的so文件
+
+      cp modules/xdebug.so /usr/lib/php/extensions/no-debug-non-zts-20160303
+
+      > 配置php.ini
+
+      zend_extension=/usr/lib/php/extensions/no-debug-non-zts-20160303/xdebug.so
+
+      xdebug.remote_enable = 1　　//是否运行远程终端，必须开启
+
+      xdebug.remote_handler = "dbgp"
+
+      xdebug.remote_host = "localhost"
+
+      xdebug.remote_port = 9000 //这个端口号要和phpstorm中的保持一致，示例的端口是9001
+
+      xdebug.idekey = PHPSTROM　　//调试器关键字
 
 #### nginx
 

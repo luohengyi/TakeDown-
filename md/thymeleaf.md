@@ -1,5 +1,20 @@
 # thymeleaf
 
+## springBoot整合
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf -->
+<dependency>
+    <groupId>org.thymeleaf</groupId>
+    <artifactId>thymeleaf</artifactId>
+</dependency>
+```
+
 ## 模版结构
 
 1. th:fragment="key" 将这个标签标记为一个模块提供给其他页面使用
@@ -7,6 +22,12 @@
    1. th:include="top::commonNav" 
 
 ## 赋值
+
+### 路径语法
+
+```html
+  <script th:src="@{/layui/layui.all.js}"></script>
+```
 
 ### js中赋值
 

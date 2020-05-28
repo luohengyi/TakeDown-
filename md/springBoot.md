@@ -31,3 +31,13 @@
       - 日（0~31）的某天，需计算
       - 月（0~11）
       - 周几（ 可填1-7 或 SUN/MON/TUE/WED/THU/FRI/SAT
+
+### 常用注解
+
+@Repository dao层交给spring管理
+
+@Resource 注入dao
+
+@Service 标记为业务层
+
+ @Autowired 注入业务层
