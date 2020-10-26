@@ -93,6 +93,8 @@
 
    yum install yum-utils
 
+   yum install yum-utils -y
+
 3. 一旦安装完成，运行如下命令去下载一个软件包，例如 httpd:
 
    ```shell
@@ -172,14 +174,17 @@ yum install compat-libstdc++*
 
    1. 查看所有端口使用情况：netstat -ant  
    2. 查看某个端口的使用情况：firewall-cmd --query-port=666/tcp
-
 2. 添加指定需要开放的端口：
 
    1. firewall-cmd --add-port=123/tcp --permanent
    2. 重载入添加的端口：firewall-cmd --reload
    3. 查询指定端口是否开启成功：firewall-cmd --query-port=123/tcp
+3. 关闭端口
+   1. firewall-cmd --permanent --zone=public --remove-port=22/tcp
+   2. 重载入添加的端口：firewall-cmd --reload
+4. 查看防火墙防火
 
-   
+
 
 #### 进程类
 
@@ -451,12 +456,19 @@ resources /etc/profile
 ##### nginx
 
 1. 检查依赖：yum -y install gcc zlib zlib-devel pcre-devel openssl openssl-devel
+
 2. 下载源码：wget http://nginx.org/download/nginx-1.13.7.tar.gz
+
 3. 解压文件夹下：./configure --prefix=/usr/local/bin/nginx
+
 4. cd  编译配置安装目录
+
 5. 安装：make && make install
+
 6. 启动：/usr/local/bin/ningx/sbin/nginx
+   
    1. 重启：nginx -s reload
+   
 7. 开启端口
    1. 开启端口
       1. iptables -I INPUT -p tcp --dport 80 -j ACCEPT  
@@ -464,6 +476,20 @@ resources /etc/profile
       1. service iptables save
    3. 重启防火墙
       1. service iptables restart
+   
+8. 代理 ip 剪切 路由
+
+   rewrite ^.+prod-api/?(.*)$ /$1 break;
+
+   ```shell
+    location /prod-api{
+           rewrite ^.+prod-api/?(.*)$ /$1 break;
+            proxy_pass http://192.168.1.157:8080;
+    }
+   
+   ```
+
+   
 
 ###### //php nginx 通用配置
 

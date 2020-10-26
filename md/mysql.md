@@ -225,6 +225,14 @@ old: 修改或者删除之前的那一行数据可以通过 . 获取这一行的
    
    ```
 
+### 事务
+
+- BEGIN 开始一个事务
+- ROLLBACK 事务回滚
+- COMMIT 事务确认
+- SET AUTOCOMMIT=0 禁止自动提交
+- SET AUTOCOMMIT=1 开启自动提交
+
 ### 环境搭建
 
 1. 依赖：yum -y install ncurses-devel gcc gcc-c++

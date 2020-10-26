@@ -46,3 +46,34 @@ watch: {
 
 }
 ```
+
+### 一些常见问题
+
+#### 使用 npm 下载慢的问题
+
+```bash
+npm install --registry=https://registry.npm.taobao.org
+```
+
+#### Nginx 刷新404问题
+
+```shell
+  location / {
+        rewrite .* /index.html break;
+        index index.html;
+        try_files $uri $uri/ /index.html;
+  }
+
+```
+
+#### deserve nginx 代理  
+
+- 只代理 前缀 为 prod-api 的路由例如（ prod-api/login）实际路由为 /login 
+
+```shell
+ location /prod-api{
+        rewrite ^.+prod-api/?(.*)$ /$1 break;
+        proxy_pass http://192.168.1.157:8080;
+ }
+```
+

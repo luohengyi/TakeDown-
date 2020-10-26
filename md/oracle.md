@@ -35,3 +35,24 @@ Imp username/password file=url/sql.dump  full=y ignore=y;
 
 - full=y 是导入文件中全部内容
 - ignore=y相当于，如果没有的表，创建并倒入数据，如果已经有的表，忽略创建的，但不忽略倒入
+
+### 函数
+
+##### merge into 
+
+> 使用b表去更新a表的数据存在就更新不存在就插入
+
+```sql
+merge into a_merge a using (select b.aid,b.name,b.year from b_merge b) c on (a.id=c.aid)  
+when matched then  
+  update set a.year=c.year   
+when not matched then  
+  insert(a.id,a.name,a.year) values(c.aid,c.name,c.year);  
+```
+
+
+
+### 常见bug
+
+##### Oracle启动监听报错：The listener supports no services解决
+
