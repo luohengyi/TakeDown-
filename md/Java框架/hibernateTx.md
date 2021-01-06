@@ -774,6 +774,38 @@ transaction.commit();
   private List<SystemRole> systemRoles;
   ```
 
+##### @OneToMany
+
+- mappedBy
+
+  定义关系所在的字段名（在ManyToOne 上定义了JoinColumn 的变量名）
+
+  mappedBy="suggInfo"
+
+- fetch
+
+  数据如何加载
+
+   fetch=FetchType.EAGER
+
+- cascade
+
+  级联关系
+
+  cascade={CascadeType.ALL}
+
+```java
+@MyModel("归口部门")
+@OneToMany(mappedBy = "applyInfo",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
+private List<ApplyInfoDataDept>  dataDepts;
+
+//**-----------------------
+@MyModel("所属工单")
+@ManyToOne
+@JoinColumn(name = "APPLY_INFO_ID")
+private ApplyInfo applyInfo;
+```
+
 ### 延迟加载
 
 > 延迟加载的禁用：lazy="false"

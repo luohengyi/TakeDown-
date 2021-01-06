@@ -1651,6 +1651,8 @@ System.out.println(msg);
 2. notifiable(); 唤醒此同步监视器之上的某个线程
 3. notifiableAll();  唤醒此同步监视器之上的所有线程
 
+### 并发编程
+
 ## Socket
 
 ### 协议
@@ -2419,6 +2421,12 @@ System.out.println(msg);
     
 
    现使用适配器模式设计一个系统，在不修改已有代码的前提下将类QuickSortClass和类BinarySearchClass的相关方法适配到ScoreOperation接口中
+
+## webservice
+
+下载 生成service文件
+
+ wsimport -keep -d ./ -s ./ -verbose http://127.0.0.1:20002/services/syncFunction\?wsdl 
 
 
 ## AWT

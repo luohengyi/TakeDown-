@@ -16,7 +16,11 @@
 
    ​       sudo /usr/local/mysql/support-files/mysql.server   start
 
-3. 
+3. openssl 1.0 库的版本安装
+
+   1. brew install rbenv/tap/openssl@1.0
+
+4. 查看端口被谁使用。 lsof -i:9001   
 
 ### 系统命令：
 
@@ -120,7 +124,39 @@
 
       xdebug.remote_port = 9000 //这个端口号要和phpstorm中的保持一致，示例的端口是9001
 
-      xdebug.idekey = PHPSTROM　　//调试器关键字
+      xdebug.idekey = PHPSTORM　　//调试器关键字
+      
+      实际配置：
+      
+      ```
+      ;;;;;;;;;;;;;;;;;;;
+      ; Module Settings ;
+      ;;;;;;;;;;;;;;;;;;;
+      [xdebug]
+      zend_extension=/usr/lib/php/extensions/no-debug-non-zts-20160303/xdebug.so
+      #/usr/local/lib/php/pecl/20160303/xdebug.so
+      xdebug.profiler_append = 0
+      xdebug.profiler_enable = 1
+      xdebug.profiler_enable_trigger = 0
+      ;日志地址
+      xdebug.profiler_output_dir ="/usr/local/Cellar/xdebug-2.5.5"
+      xdebug.profiler_output_name = cachegrind.out.%t.%p
+      xdebug.remote_mode = "req"
+      ;日志地址
+      xdebug.remote_log="/usr/local/Cellar/xdebug-2.5.5/log/xdebug.log"
+      
+      xdebug.remote_autostart = 1
+      xdebug.remote_enable=1
+      xdebug.remote_handler = "dbgp"
+      ;localhost不行时使用127.0.0.1
+      xdebug.remote_host = localhost
+      xdebug.remote_port = 9001
+      xdebug.idekey = PHPSTORM　
+      ```
+      
+      
+
+
 
 #### nginx
 

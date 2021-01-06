@@ -13,7 +13,7 @@ grant connect ,resource,dba to laolu;
 
 导入数据库：@/Users/luohengyi/Downloads/export.sql
 
-删除用户DROP USER gis CASCADE
+删除用户 DROP USER gis CASCADE
 
 删除当前所得的表：select 'drop table '||table_name||';' from cat where table_type='TABLE'
 
@@ -50,9 +50,27 @@ when not matched then
   insert(a.id,a.name,a.year) values(c.aid,c.name,c.year);  
 ```
 
+查询约束所在表
 
+select constraint_name,constraint_type,table_name from all_constraints where CONSTRAINT_NAME='PK_ID';
+
+##### to_date
+
+```sql
+to_date('2020-09-21 18:21:00','yyyy-mm-dd,hh24:mi:ss')
+```
 
 ### 常见bug
 
 ##### Oracle启动监听报错：The listener supports no services解决
+
+##### 关闭session连接
+
+```sql
+select  *  from v$session where OSUSER='luohengyi' and program='JDBC Thin Client'
+
+ select 'alter system DISCONNECT session '''||sid||','||serial#||''' POST_TRANSACTION;'  
+    from v$session  
+    where  OSUSER='luohengyi' and program='JDBC Thin Client'
+```
 
