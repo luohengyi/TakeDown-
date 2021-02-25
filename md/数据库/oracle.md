@@ -31,6 +31,10 @@ grant connect ,resource,dba to laolu;
 
 exp username/password file=url/sql.dmp owner=username
 
+```sql
+expdp sc_cbd/W1serS0ft_ directory=DUMP_DIR dumpfile=sc_cbd_n.dmp tables=N_DATA_TABLE,N_class_info,N_data_class
+```
+
 Imp username/password file=url/sql.dump  full=y ignore=y;
 
 - full=y 是导入文件中全部内容
@@ -50,15 +54,23 @@ when not matched then
   insert(a.id,a.name,a.year) values(c.aid,c.name,c.year);  
 ```
 
-查询约束所在表
+##### 查询约束所在表
 
+```sql
 select constraint_name,constraint_type,table_name from all_constraints where CONSTRAINT_NAME='PK_ID';
+```
+
+
 
 ##### to_date
 
 ```sql
 to_date('2020-09-21 18:21:00','yyyy-mm-dd,hh24:mi:ss')
 ```
+
+##### SYS_GUID
+
+主键生成
 
 ### 常见bug
 
@@ -71,6 +83,9 @@ select  *  from v$session where OSUSER='luohengyi' and program='JDBC Thin Client
 
  select 'alter system DISCONNECT session '''||sid||','||serial#||''' POST_TRANSACTION;'  
     from v$session  
-    where  OSUSER='luohengyi' and program='JDBC Thin Client'
+    where  OSUSER='luohengyi' and program='JDBC Thin Client';
+    
+    
+    oraclekill sid;
 ```
 

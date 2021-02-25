@@ -1217,3 +1217,18 @@ for (Object[] objects : list) {
     </joined-subclass>
 </class>
 ```
+
+## 常见问题
+
+### 参数打印
+
+```
+#log4j.rootLogger=ERROR,A1,R
+#核心就是这一句
+log4j.logger.org.hibernate.type.descriptor.sql.BasicBinder=TRACE 
+
+log4j.appender.A1=org.apache.log4j.ConsoleAppender
+log4j.appender.A1.Target=System.out
+log4j.appender.A1.layout=org.apache.log4j.PatternLayout
+log4j.appender.A1.layout.ConversionPattern=[%c]%m%n
+```
